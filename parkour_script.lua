@@ -28,10 +28,10 @@ ScreenGui.Parent = player.PlayerGui
 local Bubble = Instance.new("ImageButton")
 Bubble.Size = UDim2.new(0, 58, 0, 58)
 Bubble.Position = UDim2.new(0, 12, 0.5, 0)
-Bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Bubble.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Bubble.BorderSizePixel = 0
 Bubble.ZIndex = 200
-Bubble.Image = "https://cdn.upanhlaylink.com/i/nNnEGNnE.jpeg"
+Bubble.Image = ""
 Bubble.ScaleType = Enum.ScaleType.Crop
 Bubble.Visible = false
 Bubble.Parent = ScreenGui
@@ -40,6 +40,15 @@ Instance.new("UICorner", Bubble).CornerRadius = UDim.new(1,0)
 local BS = Instance.new("UIStroke", Bubble)
 BS.Color = Color3.fromRGB(160, 100, 230)
 BS.Thickness = 2
+
+local BubText = Instance.new("TextLabel", Bubble)
+BubText.Size = UDim2.new(1,0,1,0)
+BubText.BackgroundTransparency = 1
+BubText.Text = "DZI"
+BubText.TextColor3 = Color3.fromRGB(255,255,255)
+BubText.TextSize = 16
+BubText.Font = Enum.Font.GothamBold
+BubText.ZIndex = 201
 
 local bubPulse = TweenService:Create(Bubble, TweenInfo.new(0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
     Size = UDim2.new(0,63,0,63), Position = UDim2.new(0,9,0.5,-2)
@@ -68,8 +77,8 @@ end)
 
 -- MAIN FRAME (dọc, style Lennon Hub)
 local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 300, 0, 480)
-Main.Position = UDim2.new(1, -315, 0, 60)
+Main.Size = UDim2.new(0, 240, 0, 400)
+Main.Position = UDim2.new(1, -255, 0, 60)
 Main.BackgroundColor3 = Color3.fromRGB(13, 10, 20)
 Main.BorderSizePixel = 0
 Main.ClipsDescendants = true
@@ -82,7 +91,7 @@ MS.Thickness = 1.5
 
 -- HEADER
 local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1,0,0,64)
+Header.Size = UDim2.new(1,0,0,54)
 Header.BackgroundColor3 = Color3.fromRGB(20, 15, 30)
 Header.BorderSizePixel = 0
 Header.Parent = Main
@@ -94,42 +103,51 @@ HFix.BackgroundColor3 = Color3.fromRGB(20,15,30); HFix.BorderSizePixel = 0
 
 -- Avatar header
 local HAv = Instance.new("ImageLabel", Header)
-HAv.Size = UDim2.new(0,40,0,40)
-HAv.Position = UDim2.new(0,12,0.5,-20)
-HAv.BackgroundColor3 = Color3.fromRGB(30,40,30)
+HAv.Size = UDim2.new(0,32,0,32)
+HAv.Position = UDim2.new(0,10,0.5,-16)
+HAv.BackgroundColor3 = Color3.fromRGB(0,0,0)
 HAv.BorderSizePixel = 0
-HAv.Image = "https://cdn.upanhlaylink.com/i/nNnEGNnE.jpeg"
+HAv.Image = ""
 HAv.ScaleType = Enum.ScaleType.Crop
 Instance.new("UICorner", HAv).CornerRadius = UDim.new(0,8)
 local HAvS = Instance.new("UIStroke", HAv)
 HAvS.Color = Color3.fromRGB(160,100,230); HAvS.Thickness = 1.5
 
+local HAvText = Instance.new("TextLabel", HAv)
+HAvText.Size = UDim2.new(1,0,1,0)
+HAvText.BackgroundTransparency = 1
+HAvText.Text = "DZI"
+HAvText.TextColor3 = Color3.fromRGB(255,255,255)
+HAvText.TextSize = 11
+HAvText.Font = Enum.Font.GothamBold
+HAvText.ZIndex = 5
+
 local HTitle = Instance.new("TextLabel", Header)
-HTitle.Size = UDim2.new(0,160,0,22)
-HTitle.Position = UDim2.new(0,60,0,10)
+HTitle.Size = UDim2.new(0,140,0,18)
+HTitle.Position = UDim2.new(0,50,0,8)
 HTitle.BackgroundTransparency = 1
 HTitle.Text = "DZI MEO MEO"
 HTitle.TextColor3 = Color3.fromRGB(240,240,240)
-HTitle.TextSize = 15
+HTitle.TextSize = 13
 HTitle.Font = Enum.Font.GothamBold
 HTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local HSub = Instance.new("TextLabel", Header)
-HSub.Size = UDim2.new(0,180,0,16)
-HSub.Position = UDim2.new(0,60,0,33)
+HSub.Size = UDim2.new(0,160,0,14)
+HSub.Position = UDim2.new(0,50,0,28)
 HSub.BackgroundTransparency = 1
 HSub.Text = "SCRIPT HỖ TRỢ PARKOUR"
 HSub.TextColor3 = Color3.fromRGB(180,140,255)
-HSub.TextSize = 10
+HSub.TextSize = 9
 HSub.Font = Enum.Font.Gotham
 HSub.TextXAlignment = Enum.TextXAlignment.Left
 
 -- Nút X
 local CloseBtn = Instance.new("TextButton", Header)
-CloseBtn.Size = UDim2.new(0,28,0,28)
-CloseBtn.Position = UDim2.new(1,-38,0.5,-14)
+CloseBtn.Size = UDim2.new(0,24,0,24)
+CloseBtn.Position = UDim2.new(1,-34,0.5,-12)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(40,50,40)
-CloseBtn.Text = "✕"
+CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(200,200,200)
 CloseBtn.TextSize = 12
 CloseBtn.Font = Enum.Font.GothamBold
@@ -155,8 +173,8 @@ end)
 
 -- SCROLL
 local Scroll = Instance.new("ScrollingFrame", Main)
-Scroll.Size = UDim2.new(1,-8,1,-72)
-Scroll.Position = UDim2.new(0,4,0,68)
+Scroll.Size = UDim2.new(1,-8,1,-62)
+Scroll.Position = UDim2.new(0,4,0,58)
 Scroll.BackgroundTransparency = 1
 Scroll.ScrollBarThickness = 2
 Scroll.ScrollBarImageColor3 = Color3.fromRGB(160,100,230)
@@ -172,7 +190,7 @@ SPad.PaddingTop = UDim.new(0,4)
 -- HÀM TẠO SECTION (bấm mở rộng)
 local function makeSection(icon, title)
     local Sec = Instance.new("Frame", Scroll)
-    Sec.Size = UDim2.new(1,-8,0,44)
+    Sec.Size = UDim2.new(1,-8,0,38)
     Sec.BackgroundColor3 = Color3.fromRGB(22,15,35)
     Sec.BorderSizePixel = 0
     Instance.new("UICorner", Sec).CornerRadius = UDim.new(0,8)
@@ -239,7 +257,7 @@ end
 -- HÀM TOGGLE
 local function makeToggle(parent, lbl, sublbl, cb)
     local Row = Instance.new("Frame", parent)
-    Row.Size = UDim2.new(1,-12,0,48)
+    Row.Size = UDim2.new(1,-12,0,42)
     Row.BackgroundTransparency = 1
     Row.BorderSizePixel = 0
 
@@ -293,7 +311,7 @@ end
 -- HÀM SLIDER
 local function makeSlider(parent, lbl, minV, maxV, defV, cb)
     local Row = Instance.new("Frame", parent)
-    Row.Size = UDim2.new(1,-12,0,52)
+    Row.Size = UDim2.new(1,-12,0,46)
     Row.BackgroundTransparency = 1
     Row.BorderSizePixel = 0
 
@@ -360,7 +378,7 @@ local function makeSlider(parent, lbl, minV, maxV, defV, cb)
 end
 
 -- SECTION: NHẢY CAO
-local jumpContent, jumpList = makeSection("⬆️", "Nhảy Cao")
+local jumpContent, jumpList = makeSection("^", "Nhảy Cao")
 makeToggle(jumpContent, "Nhảy Cao", "Bật để nhảy cao hơn bình thường", function(on)
     Settings.JumpEnabled = on
     if not on then humanoid.JumpPower = defaultJump end
@@ -371,7 +389,7 @@ makeSlider(jumpContent, "Độ nhảy (x lần)", 1, 100, 1, function(v)
 end)
 
 -- SECTION: CHẠY NHANH
-local speedContent, speedList = makeSection("🏃", "Chạy Nhanh")
+local speedContent, speedList = makeSection(">", "Chạy Nhanh")
 makeToggle(speedContent, "Chạy Nhanh", "Bật để tăng tốc độ di chuyển", function(on)
     Settings.SpeedEnabled = on
     if not on then humanoid.WalkSpeed = defaultSpeed end
@@ -382,7 +400,7 @@ makeSlider(speedContent, "Tốc độ (x lần)", 1, 100, 1, function(v)
 end)
 
 -- SECTION: BẤT TỬ
-local godContent, _ = makeSection("🛡️", "Bất Tử")
+local godContent, _ = makeSection("*", "Bất Tử")
 makeToggle(godContent, "Bất Tử", "Không thể bị giết bởi bất kỳ thứ gì", function(on)
     Settings.GodEnabled = on
     if on then humanoid.MaxHealth = math.huge; humanoid.Health = math.huge
@@ -390,13 +408,13 @@ makeToggle(godContent, "Bất Tử", "Không thể bị giết bởi bất kỳ 
 end)
 
 -- SECTION: ONE HIT
-local hitContent, _ = makeSection("💀", "One Hit Kill")
+local hitContent, _ = makeSection("X", "One Hit Kill")
 makeToggle(hitContent, "One Hit Kill", "Lại gần < 5 studs = đối thủ chết", function(on)
     Settings.OneHitEnabled = on
 end)
 
 -- SECTION: ĐI TRÊN KHÔNG
-local airContent, _ = makeSection("🌫️", "Đi Trên Không")
+local airContent, _ = makeSection("~", "Đi Trên Không")
 makeToggle(airContent, "Đi Trên Không", "Nhảy 2x = bay | Nhảy 3x = huỷ", function(on)
     airWalkEnabled = on
     if not on then Settings.NoClipEnabled = false end
@@ -404,7 +422,7 @@ end)
 
 -- NÚT LIÊN HỆ (dưới cùng)
 local ContactRow = Instance.new("Frame", Scroll)
-ContactRow.Size = UDim2.new(1,-8,0,40)
+ContactRow.Size = UDim2.new(1,-8,0,34)
 ContactRow.BackgroundColor3 = Color3.fromRGB(30,15,50)
 ContactRow.BorderSizePixel = 0
 Instance.new("UICorner", ContactRow).CornerRadius = UDim.new(0,8)
@@ -414,7 +432,7 @@ CS2.Color = Color3.fromRGB(160,100,230); CS2.Thickness = 1
 local CLbl = Instance.new("TextLabel", ContactRow)
 CLbl.Size = UDim2.new(1,0,1,0)
 CLbl.BackgroundTransparency = 1
-CLbl.Text = "📞  Liên Hệ Admin"
+CLbl.Text = "Lien He Admin"
 CLbl.TextColor3 = Color3.fromRGB(190,150,255)
 CLbl.TextSize = 12; CLbl.Font = Enum.Font.GothamBold
 
@@ -447,13 +465,13 @@ CPHFix.BackgroundColor3 = Color3.fromRGB(30,15,50); CPHFix.BorderSizePixel = 0; 
 
 local CPTitle = Instance.new("TextLabel", CPH)
 CPTitle.Size = UDim2.new(1,-40,1,0); CPTitle.Position = UDim2.new(0,12,0,0)
-CPTitle.BackgroundTransparency = 1; CPTitle.Text = "📞 Liên Hệ Admin"
+CPTitle.BackgroundTransparency = 1; CPTitle.Text = "Lien He Admin"
 CPTitle.TextColor3 = Color3.fromRGB(190,150,255); CPTitle.TextSize = 13
 CPTitle.Font = Enum.Font.GothamBold; CPTitle.TextXAlignment = Enum.TextXAlignment.Left; CPTitle.ZIndex = 52
 
 local CPClose = Instance.new("TextButton", CPH)
 CPClose.Size = UDim2.new(0,24,0,24); CPClose.Position = UDim2.new(1,-30,0.5,-12)
-CPClose.BackgroundColor3 = Color3.fromRGB(40,55,40); CPClose.Text = "✕"
+CPClose.BackgroundColor3 = Color3.fromRGB(40,55,40); CPClose.Text = "X"
 CPClose.TextColor3 = Color3.fromRGB(200,200,200); CPClose.TextSize = 11
 CPClose.Font = Enum.Font.GothamBold; CPClose.BorderSizePixel = 0; CPClose.ZIndex = 53
 Instance.new("UICorner", CPClose).CornerRadius = UDim.new(1,0)
@@ -470,7 +488,7 @@ local function makeLink(yPos, icon, txt, color, link)
         pcall(function() setclipboard(link) end)
         local T = Instance.new("TextLabel", ScreenGui)
         T.Size = UDim2.new(0,200,0,28); T.Position = UDim2.new(0.5,-100,0,20)
-        T.BackgroundColor3 = Color3.fromRGB(20,40,20); T.Text = "✅ Đã copy!"
+        T.BackgroundColor3 = Color3.fromRGB(20,40,20); T.Text = "Da copy!"
         T.TextColor3 = Color3.fromRGB(80,220,80); T.TextSize = 11
         T.Font = Enum.Font.Gotham; T.BorderSizePixel = 0; T.ZIndex = 100
         Instance.new("UICorner", T).CornerRadius = UDim.new(0,7)
@@ -480,14 +498,14 @@ local function makeLink(yPos, icon, txt, color, link)
         end)
     end)
 end
-makeLink(44, "💬", "Discord", Color3.fromRGB(88,101,242), "https://discord.gg/ESZkGwk6v")
-makeLink(82, "📘", "Facebook", Color3.fromRGB(24,119,242), "https://www.facebook.com/share/14rHaf7efam/?mibextid=wwXIfr")
-makeLink(120, "📱", "Zalo: 0993329535", Color3.fromRGB(0,150,220), "84993329535")
+makeLink(44, "Discord", "Discord", Color3.fromRGB(88,101,242), "https://discord.gg/ESZkGwk6v")
+makeLink(82, "Facebook", "Facebook", Color3.fromRGB(24,119,242), "https://www.facebook.com/share/14rHaf7efam/?mibextid=wwXIfr")
+makeLink(120, "Zalo", "Zalo: 0993329535", Color3.fromRGB(0,150,220), "84993329535")
 
 -- ĐÓNG/MỞ
 CloseBtn.MouseButton1Click:Connect(function()
     TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Size = UDim2.new(0,300,0,0)
+        Size = UDim2.new(0,240,0,0)
     }):Play()
     task.delay(0.2, function()
         Main.Visible = false; Bubble.Visible = true; bubPulse:Play()
@@ -497,9 +515,9 @@ end)
 Bubble.InputEnded:Connect(function(i)
     if (i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch) and not bubDrag then
         bubPulse:Pause(); Bubble.Visible = false
-        Main.Visible = true; Main.Size = UDim2.new(0,300,0,0)
+        Main.Visible = true; Main.Size = UDim2.new(0,240,0,0)
         TweenService:Create(Main, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0,300,0,480)
+            Size = UDim2.new(0,240,0,400)
         }):Play()
     end
 end)
