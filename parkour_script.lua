@@ -9,13 +9,9 @@ local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
 
 local Settings = {
-    JumpEnabled = false,
-    JumpPower = 1,
-    SpeedEnabled = false,
-    SpeedPower = 1,
-    GodEnabled = false,
-    OneHitEnabled = false,
-    NoClipEnabled = false,
+    JumpEnabled = false, JumpPower = 1,
+    SpeedEnabled = false, SpeedPower = 1,
+    GodEnabled = false, OneHitEnabled = false, NoClipEnabled = false,
 }
 
 local defaultJump = 50
@@ -29,573 +25,571 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = player.PlayerGui
 
+-- BONG BÓNG
 local BubbleBtn = Instance.new("ImageButton")
-BubbleBtn.Name = "BubbleBtn"
-BubbleBtn.Size = UDim2.new(0, 64, 0, 64)
-BubbleBtn.Position = UDim2.new(0, 16, 1, -90)
-BubbleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-BubbleBtn.BorderSizePixel = 0
-BubbleBtn.ZIndex = 10
+BubbleBtn.Size = UDim2.new(0, 54, 0, 54)
+BubbleBtn.Position = UDim2.new(0, 10, 0.5, 0)
+BubbleBtn.BackgroundTransparency = 1
+BubbleBtn.ZIndex = 200
 BubbleBtn.Image = "https://cdn.upanhlaylink.com/i/nNnEGNnE.jpeg"
 BubbleBtn.ScaleType = Enum.ScaleType.Crop
+BubbleBtn.Visible = false
 BubbleBtn.Parent = ScreenGui
 
-local BubbleCorner = Instance.new("UICorner")
-BubbleCorner.CornerRadius = UDim.new(1, 0)
-BubbleCorner.Parent = BubbleBtn
+local BC = Instance.new("UICorner")
+BC.CornerRadius = UDim.new(1, 0)
+BC.Parent = BubbleBtn
 
-local BubbleStroke = Instance.new("UIStroke")
-BubbleStroke.Color = Color3.fromRGB(220, 220, 220)
-BubbleStroke.Thickness = 2
-BubbleStroke.Parent = BubbleBtn
+local BS = Instance.new("UIStroke")
+BS.Color = Color3.fromRGB(255, 255, 255)
+BS.Thickness = 2
+BS.Parent = BubbleBtn
 
-local pulseTween = TweenService:Create(BubbleBtn, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-    Size = UDim2.new(0, 70, 0, 70),
-    Position = UDim2.new(0, 13, 1, -93)
+local pulseTween = TweenService:Create(BubbleBtn, TweenInfo.new(0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+    Size = UDim2.new(0, 58, 0, 58),
+    Position = UDim2.new(0, 8, 0.5, -2)
 })
-pulseTween:Play()
 
-local bubbleDragging = false
-local bubbleDragStart, bubbleStartPos
-
+-- BUBBLE DRAG
+local bubDrag, bubDragStart, bubStartPos = false, nil, nil
 BubbleBtn.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        bubbleDragging = false
-        bubbleDragStart = i.Position
-        bubbleStartPos = BubbleBtn.Position
+        bubDrag = false
+        bubDragStart = i.Position
+        bubStartPos = BubbleBtn.Position
     end
 end)
-
 UserInputService.InputChanged:Connect(function(i)
-    if bubbleDragStart and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-        local delta = i.Position - bubbleDragStart
-        if delta.Magnitude > 5 then
-            bubbleDragging = true
+    if bubDragStart and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local d = i.Position - bubDragStart
+        if d.Magnitude > 6 then
+            bubDrag = true
             pulseTween:Pause()
-            BubbleBtn.Size = UDim2.new(0, 64, 0, 64)
-            BubbleBtn.Position = UDim2.new(
-                bubbleStartPos.X.Scale,
-                bubbleStartPos.X.Offset + delta.X,
-                bubbleStartPos.Y.Scale,
-                bubbleStartPos.Y.Offset + delta.Y
-            )
+            BubbleBtn.Size = UDim2.new(0, 54, 0, 54)
+            BubbleBtn.Position = UDim2.new(bubStartPos.X.Scale, bubStartPos.X.Offset + d.X, bubStartPos.Y.Scale, bubStartPos.Y.Offset + d.Y)
         end
     end
 end)
-
 UserInputService.InputEnded:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        if not bubbleDragging then
-        else
-            bubbleDragging = false
-            bubbleDragStart = nil
-            pulseTween:Play()
-        end
+        if bubDrag then bubDrag = false; bubDragStart = nil; pulseTween:Play() end
+    end
+end)
+BubbleBtn.InputEnded:Connect(function(i)
+    if (i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch) and not bubDrag then
+        pulseTween:Pause()
+        BubbleBtn.Visible = false
+        MainFrame.Visible = true
+        TweenService:Create(MainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 420, 0, 200)
+        }):Play()
     end
 end)
 
+-- MAIN FRAME (ngang)
 local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 360, 0, 560)
-MainFrame.Position = UDim2.new(0.5, -180, 0.5, -280)
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+MainFrame.Size = UDim2.new(0, 420, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -210, 0, 60)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
 MainFrame.BorderSizePixel = 0
 MainFrame.Visible = true
 MainFrame.Parent = ScreenGui
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 14)
-MainCorner.Parent = MainFrame
+local MFC = Instance.new("UICorner")
+MFC.CornerRadius = UDim.new(0, 12)
+MFC.Parent = MainFrame
 
-local Stroke = Instance.new("UIStroke")
-Stroke.Thickness = 2
-Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-Stroke.Color = Color3.fromRGB(200, 200, 200)
-Stroke.Parent = MainFrame
+local MFS = Instance.new("UIStroke")
+MFS.Thickness = 1.5
+MFS.Color = Color3.fromRGB(180, 180, 180)
+MFS.Parent = MainFrame
 
+-- HEADER NHỎ
 local Header = Instance.new("Frame")
-Header.Name = "Header"
-Header.Size = UDim2.new(1, 0, 0, 60)
-Header.Position = UDim2.new(0, 0, 0, 0)
-Header.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Header.Size = UDim2.new(1, 0, 0, 36)
+Header.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Header.BorderSizePixel = 0
 Header.Parent = MainFrame
 
-local HeaderCorner = Instance.new("UICorner")
-HeaderCorner.CornerRadius = UDim.new(0, 14)
-HeaderCorner.Parent = Header
+local HC = Instance.new("UICorner")
+HC.CornerRadius = UDim.new(0, 12)
+HC.Parent = Header
 
-local HeaderFix = Instance.new("Frame")
-HeaderFix.Size = UDim2.new(1, 0, 0, 14)
-HeaderFix.Position = UDim2.new(0, 0, 1, -14)
-HeaderFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-HeaderFix.BorderSizePixel = 0
-HeaderFix.Parent = Header
+local HFix = Instance.new("Frame")
+HFix.Size = UDim2.new(1, 0, 0, 12)
+HFix.Position = UDim2.new(0, 0, 1, -12)
+HFix.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+HFix.BorderSizePixel = 0
+HFix.Parent = Header
 
-local HeaderGradient = Instance.new("UIGradient")
-HeaderGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 60)),
+local HG = Instance.new("UIGradient")
+HG.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(80,80,80)),
 })
-HeaderGradient.Rotation = 90
-HeaderGradient.Parent = Header
+HG.Rotation = 90
+HG.Parent = Header
 
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -20, 0, 28)
-Title.Position = UDim2.new(0, 15, 0, 6)
-Title.BackgroundTransparency = 1
-Title.Text = "Script Hỗ Trợ Parkour"
-Title.TextColor3 = Color3.fromRGB(10, 10, 10)
-Title.TextSize = 20
-Title.Font = Enum.Font.GothamBold
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Parent = Header
+-- Avatar nhỏ trong header
+local AvatarImg = Instance.new("ImageLabel")
+AvatarImg.Size = UDim2.new(0, 26, 0, 26)
+AvatarImg.Position = UDim2.new(0, 6, 0.5, -13)
+AvatarImg.BackgroundTransparency = 1
+AvatarImg.Image = "https://cdn.upanhlaylink.com/i/nNnEGNnE.jpeg"
+AvatarImg.ScaleType = Enum.ScaleType.Crop
+AvatarImg.ZIndex = 2
+AvatarImg.Parent = Header
 
-local SubTitle = Instance.new("TextLabel")
-SubTitle.Size = UDim2.new(1, -20, 0, 16)
-SubTitle.Position = UDim2.new(0, 15, 0, 36)
-SubTitle.BackgroundTransparency = 1
-SubTitle.Text = "Admin Dzi Meo Meo"
-SubTitle.TextColor3 = Color3.fromRGB(30, 30, 30)
-SubTitle.TextSize = 11
-SubTitle.Font = Enum.Font.Gotham
-SubTitle.TextXAlignment = Enum.TextXAlignment.Left
-SubTitle.Parent = Header
+local AIC = Instance.new("UICorner")
+AIC.CornerRadius = UDim.new(1, 0)
+AIC.Parent = AvatarImg
+
+local TitleLbl = Instance.new("TextLabel")
+TitleLbl.Size = UDim2.new(0, 180, 1, 0)
+TitleLbl.Position = UDim2.new(0, 38, 0, 0)
+TitleLbl.BackgroundTransparency = 1
+TitleLbl.Text = "Script Hỗ Trợ Parkour"
+TitleLbl.TextColor3 = Color3.fromRGB(15, 15, 15)
+TitleLbl.TextSize = 13
+TitleLbl.Font = Enum.Font.GothamBold
+TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+TitleLbl.Parent = Header
+
+local SubLbl = Instance.new("TextLabel")
+SubLbl.Size = UDim2.new(0, 130, 0, 14)
+SubLbl.Position = UDim2.new(0, 38, 0.5, 2)
+SubLbl.BackgroundTransparency = 1
+SubLbl.Text = "Admin Dzi Meo Meo"
+SubLbl.TextColor3 = Color3.fromRGB(40, 40, 40)
+SubLbl.TextSize = 9
+SubLbl.Font = Enum.Font.Gotham
+SubLbl.TextXAlignment = Enum.TextXAlignment.Left
+SubLbl.Parent = Header
 
 local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 32, 0, 32)
-CloseBtn.Position = UDim2.new(1, -42, 0, 14)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.Position = UDim2.new(1, -32, 0.5, -13)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 CloseBtn.Text = "✕"
 CloseBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
-CloseBtn.TextSize = 14
+CloseBtn.TextSize = 12
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.BorderSizePixel = 0
 CloseBtn.ZIndex = 5
 CloseBtn.Parent = Header
 
-local CloseBtnCorner = Instance.new("UICorner")
-CloseBtnCorner.CornerRadius = UDim.new(1, 0)
-CloseBtnCorner.Parent = CloseBtn
+local CBC = Instance.new("UICorner")
+CBC.CornerRadius = UDim.new(1, 0)
+CBC.Parent = CloseBtn
 
-local ScrollFrame = Instance.new("ScrollingFrame")
-ScrollFrame.Size = UDim2.new(1, -10, 1, -130)
-ScrollFrame.Position = UDim2.new(0, 5, 0, 65)
-ScrollFrame.BackgroundTransparency = 1
-ScrollFrame.ScrollBarThickness = 3
-ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 150)
-ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 650)
-ScrollFrame.Parent = MainFrame
-
-local ListLayout = Instance.new("UIListLayout")
-ListLayout.Padding = UDim.new(0, 8)
-ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-ListLayout.Parent = ScrollFrame
-
-local Padding = Instance.new("UIPadding")
-Padding.PaddingTop = UDim.new(0, 8)
-Padding.Parent = ScrollFrame
-
-local ContactBtn = Instance.new("TextButton")
-ContactBtn.Size = UDim2.new(1, -24, 0, 44)
-ContactBtn.Position = UDim2.new(0, 12, 1, -58)
-ContactBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-ContactBtn.Text = "📞  Liên Hệ Admin"
-ContactBtn.TextColor3 = Color3.fromRGB(230, 230, 230)
-ContactBtn.TextSize = 14
-ContactBtn.Font = Enum.Font.GothamBold
-ContactBtn.BorderSizePixel = 0
-ContactBtn.ZIndex = 3
-ContactBtn.Parent = MainFrame
-
-local ContactCorner = Instance.new("UICorner")
-ContactCorner.CornerRadius = UDim.new(0, 10)
-ContactCorner.Parent = ContactBtn
-
-local ContactStroke = Instance.new("UIStroke")
-ContactStroke.Color = Color3.fromRGB(80, 80, 80)
-ContactStroke.Thickness = 1
-ContactStroke.Parent = ContactBtn
-
-local ContactGradient = Instance.new("UIGradient")
-ContactGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20)),
-})
-ContactGradient.Rotation = 90
-ContactGradient.Parent = ContactBtn
-
-local ContactPopup = Instance.new("Frame")
-ContactPopup.Name = "ContactPopup"
-ContactPopup.Size = UDim2.new(0, 340, 0, 190)
-ContactPopup.Position = UDim2.new(0.5, -170, 0.5, -95)
-ContactPopup.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-ContactPopup.BorderSizePixel = 0
-ContactPopup.Visible = false
-ContactPopup.ZIndex = 20
-ContactPopup.Parent = ScreenGui
-
-local PopupCorner = Instance.new("UICorner")
-PopupCorner.CornerRadius = UDim.new(0, 14)
-PopupCorner.Parent = ContactPopup
-
-local PopupStroke = Instance.new("UIStroke")
-PopupStroke.Color = Color3.fromRGB(180, 180, 180)
-PopupStroke.Thickness = 2
-PopupStroke.Parent = ContactPopup
-
-local PopupHeader = Instance.new("Frame")
-PopupHeader.Size = UDim2.new(1, 0, 0, 44)
-PopupHeader.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-PopupHeader.BorderSizePixel = 0
-PopupHeader.ZIndex = 20
-PopupHeader.Parent = ContactPopup
-
-local PopupHCorner = Instance.new("UICorner")
-PopupHCorner.CornerRadius = UDim.new(0, 14)
-PopupHCorner.Parent = PopupHeader
-
-local PopupHFix = Instance.new("Frame")
-PopupHFix.Size = UDim2.new(1, 0, 0, 14)
-PopupHFix.Position = UDim2.new(0, 0, 1, -14)
-PopupHFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-PopupHFix.BorderSizePixel = 0
-PopupHFix.ZIndex = 20
-PopupHFix.Parent = PopupHeader
-
-local PopupHGrad = Instance.new("UIGradient")
-PopupHGrad.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(80,80,80)),
-})
-PopupHGrad.Rotation = 90
-PopupHGrad.Parent = PopupHeader
-
-local PopupTitle = Instance.new("TextLabel")
-PopupTitle.Size = UDim2.new(1, -50, 1, 0)
-PopupTitle.Position = UDim2.new(0, 14, 0, 0)
-PopupTitle.BackgroundTransparency = 1
-PopupTitle.Text = "📞 Liên Hệ Admin"
-PopupTitle.TextColor3 = Color3.fromRGB(10, 10, 10)
-PopupTitle.TextSize = 15
-PopupTitle.Font = Enum.Font.GothamBold
-PopupTitle.TextXAlignment = Enum.TextXAlignment.Left
-PopupTitle.ZIndex = 21
-PopupTitle.Parent = PopupHeader
-
-local PopupClose = Instance.new("TextButton")
-PopupClose.Size = UDim2.new(0, 28, 0, 28)
-PopupClose.Position = UDim2.new(1, -36, 0.5, -14)
-PopupClose.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-PopupClose.Text = "✕"
-PopupClose.TextColor3 = Color3.fromRGB(220, 220, 220)
-PopupClose.TextSize = 12
-PopupClose.Font = Enum.Font.GothamBold
-PopupClose.BorderSizePixel = 0
-PopupClose.ZIndex = 22
-PopupClose.Parent = PopupHeader
-
-local PopupCloseCorner = Instance.new("UICorner")
-PopupCloseCorner.CornerRadius = UDim.new(1, 0)
-PopupCloseCorner.Parent = PopupClose
-
-local function makeContactLink(parent, yPos, icon, labelText, color)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, -24, 0, 38)
-    Btn.Position = UDim2.new(0, 12, 0, yPos)
-    Btn.BackgroundColor3 = color
-    Btn.Text = icon .. "  " .. labelText
-    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.TextSize = 13
-    Btn.Font = Enum.Font.GothamBold
-    Btn.BorderSizePixel = 0
-    Btn.ZIndex = 21
-    Btn.Parent = parent
-    local BtnCorner = Instance.new("UICorner")
-    BtnCorner.CornerRadius = UDim.new(0, 9)
-    BtnCorner.Parent = Btn
-    return Btn
-end
-
-local DiscordBtn = makeContactLink(ContactPopup, 50, "💬", "Discord: discord.gg/ESZkGwk6v", Color3.fromRGB(88, 101, 242))
-local FbBtn      = makeContactLink(ContactPopup, 96, "📘", "Facebook: fb.com/dzimeomeo", Color3.fromRGB(24, 119, 242))
-local ZaloBtn    = makeContactLink(ContactPopup, 142, "📱", "Zalo: 0993329535", Color3.fromRGB(0, 150, 220))
-
-local function showCopyToast(msg)
-    local Toast = Instance.new("TextLabel")
-    Toast.Size = UDim2.new(0, 260, 0, 36)
-    Toast.Position = UDim2.new(0.5, -130, 0, 30)
-    Toast.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Toast.Text = "✅ " .. msg
-    Toast.TextColor3 = Color3.fromRGB(200, 200, 200)
-    Toast.TextSize = 12
-    Toast.Font = Enum.Font.Gotham
-    Toast.BorderSizePixel = 0
-    Toast.ZIndex = 30
-    Toast.Parent = ScreenGui
-    local TC = Instance.new("UICorner")
-    TC.CornerRadius = UDim.new(0, 8)
-    TC.Parent = Toast
-    task.delay(2.5, function()
-        TweenService:Create(Toast, TweenInfo.new(0.4), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
-        task.delay(0.4, function() Toast:Destroy() end)
-    end)
-end
-
-DiscordBtn.MouseButton1Click:Connect(function()
-    showCopyToast("Discord đã copy!")
-    setclipboard("https://discord.gg/ESZkGwk6v")
+-- KÉO MENU
+local mDrag, mDragStart, mStartPos = false, nil, nil
+Header.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        mDrag = true; mDragStart = i.Position; mStartPos = MainFrame.Position
+    end
+end)
+UserInputService.InputChanged:Connect(function(i)
+    if mDrag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local d = i.Position - mDragStart
+        MainFrame.Position = UDim2.new(mStartPos.X.Scale, mStartPos.X.Offset + d.X, mStartPos.Y.Scale, mStartPos.Y.Offset + d.Y)
+    end
+end)
+UserInputService.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then mDrag = false end
 end)
 
-FbBtn.MouseButton1Click:Connect(function()
-    showCopyToast("Facebook đã copy link!")
-    setclipboard("https://www.facebook.com/share/14rHaf7efam/?mibextid=wwXIfr")
-end)
+-- CONTENT (2 cột)
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, -8, 1, -44)
+Content.Position = UDim2.new(0, 4, 0, 40)
+Content.BackgroundTransparency = 1
+Content.Parent = MainFrame
 
-ZaloBtn.MouseButton1Click:Connect(function()
-    showCopyToast("Zalo đã copy số!")
-    setclipboard("84993329535")
-end)
+-- CỘT TRÁI
+local ColLeft = Instance.new("Frame")
+ColLeft.Size = UDim2.new(0.5, -4, 1, 0)
+ColLeft.Position = UDim2.new(0, 0, 0, 0)
+ColLeft.BackgroundTransparency = 1
+ColLeft.Parent = Content
 
-PopupClose.MouseButton1Click:Connect(function()
-    ContactPopup.Visible = false
-end)
+local LL = Instance.new("UIListLayout")
+LL.Padding = UDim.new(0, 4)
+LL.Parent = ColLeft
 
-ContactBtn.MouseButton1Click:Connect(function()
-    ContactPopup.Visible = not ContactPopup.Visible
-end)
+-- CỘT PHẢI
+local ColRight = Instance.new("Frame")
+ColRight.Size = UDim2.new(0.5, -4, 1, 0)
+ColRight.Position = UDim2.new(0.5, 4, 0, 0)
+ColRight.BackgroundTransparency = 1
+ColRight.Parent = Content
 
-local function createToggleSection(parent, labelText, subText, onToggle)
+local LR = Instance.new("UIListLayout")
+LR.Padding = UDim.new(0, 4)
+LR.Parent = ColRight
+
+-- HÀM TẠO TOGGLE NHỎ
+local function makeToggle(parent, icon, label, onToggle)
     local Card = Instance.new("Frame")
-    Card.Size = UDim2.new(1, -16, 0, 56)
-    Card.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+    Card.Size = UDim2.new(1, 0, 0, 36)
+    Card.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     Card.BorderSizePixel = 0
     Card.Parent = parent
 
-    local CardCorner = Instance.new("UICorner")
-    CardCorner.CornerRadius = UDim.new(0, 10)
-    CardCorner.Parent = Card
+    local CC = Instance.new("UICorner")
+    CC.CornerRadius = UDim.new(0, 8)
+    CC.Parent = Card
 
-    local CardStroke = Instance.new("UIStroke")
-    CardStroke.Color = Color3.fromRGB(50, 50, 50)
-    CardStroke.Thickness = 1
-    CardStroke.Parent = Card
+    local CS = Instance.new("UIStroke")
+    CS.Color = Color3.fromRGB(45, 45, 45)
+    CS.Thickness = 1
+    CS.Parent = Card
 
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(0.65, 0, 0.55, 0)
-    Label.Position = UDim2.new(0, 14, 0, 6)
-    Label.BackgroundTransparency = 1
-    Label.Text = labelText
-    Label.TextColor3 = Color3.fromRGB(240, 240, 240)
-    Label.TextSize = 14
-    Label.Font = Enum.Font.GothamBold
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = Card
+    local Ico = Instance.new("TextLabel")
+    Ico.Size = UDim2.new(0, 22, 1, 0)
+    Ico.Position = UDim2.new(0, 6, 0, 0)
+    Ico.BackgroundTransparency = 1
+    Ico.Text = icon
+    Ico.TextSize = 14
+    Ico.Font = Enum.Font.GothamBold
+    Ico.Parent = Card
 
-    local SubLabel = Instance.new("TextLabel")
-    SubLabel.Size = UDim2.new(0.65, 0, 0.4, 0)
-    SubLabel.Position = UDim2.new(0, 14, 0.55, 0)
-    SubLabel.BackgroundTransparency = 1
-    SubLabel.Text = subText
-    SubLabel.TextColor3 = Color3.fromRGB(120, 120, 120)
-    SubLabel.TextSize = 10
-    SubLabel.Font = Enum.Font.Gotham
-    SubLabel.TextXAlignment = Enum.TextXAlignment.Left
-    SubLabel.Parent = Card
+    local Lbl = Instance.new("TextLabel")
+    Lbl.Size = UDim2.new(1, -60, 1, 0)
+    Lbl.Position = UDim2.new(0, 28, 0, 0)
+    Lbl.BackgroundTransparency = 1
+    Lbl.Text = label
+    Lbl.TextColor3 = Color3.fromRGB(220, 220, 220)
+    Lbl.TextSize = 11
+    Lbl.Font = Enum.Font.GothamBold
+    Lbl.TextXAlignment = Enum.TextXAlignment.Left
+    Lbl.TextWrapped = true
+    Lbl.Parent = Card
 
-    local ToggleBg = Instance.new("Frame")
-    ToggleBg.Size = UDim2.new(0, 50, 0, 26)
-    ToggleBg.Position = UDim2.new(1, -64, 0.5, -13)
-    ToggleBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    ToggleBg.BorderSizePixel = 0
-    ToggleBg.Parent = Card
+    local TBg = Instance.new("Frame")
+    TBg.Size = UDim2.new(0, 36, 0, 18)
+    TBg.Position = UDim2.new(1, -40, 0.5, -9)
+    TBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TBg.BorderSizePixel = 0
+    TBg.Parent = Card
 
-    local ToggleBgCorner = Instance.new("UICorner")
-    ToggleBgCorner.CornerRadius = UDim.new(1, 0)
-    ToggleBgCorner.Parent = ToggleBg
+    local TBC = Instance.new("UICorner")
+    TBC.CornerRadius = UDim.new(1, 0)
+    TBC.Parent = TBg
 
     local Knob = Instance.new("Frame")
-    Knob.Size = UDim2.new(0, 20, 0, 20)
-    Knob.Position = UDim2.new(0, 3, 0.5, -10)
-    Knob.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+    Knob.Size = UDim2.new(0, 14, 0, 14)
+    Knob.Position = UDim2.new(0, 2, 0.5, -7)
+    Knob.BackgroundColor3 = Color3.fromRGB(160, 160, 160)
     Knob.BorderSizePixel = 0
-    Knob.Parent = ToggleBg
+    Knob.Parent = TBg
 
-    local KnobCorner = Instance.new("UICorner")
-    KnobCorner.CornerRadius = UDim.new(1, 0)
-    KnobCorner.Parent = Knob
+    local KC = Instance.new("UICorner")
+    KC.CornerRadius = UDim.new(1, 0)
+    KC.Parent = Knob
 
     local isOn = false
-
-    local function toggle()
-        isOn = not isOn
-        local goal = isOn and UDim2.new(1, -23, 0.5, -10) or UDim2.new(0, 3, 0.5, -10)
-        local bgColor = isOn and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(50, 50, 50)
-        local knobColor = isOn and Color3.fromRGB(10, 10, 10) or Color3.fromRGB(180, 180, 180)
-        TweenService:Create(Knob, TweenInfo.new(0.15), {Position = goal, BackgroundColor3 = knobColor}):Play()
-        TweenService:Create(ToggleBg, TweenInfo.new(0.15), {BackgroundColor3 = bgColor}):Play()
-        onToggle(isOn)
-    end
-
-    ToggleBg.InputBegan:Connect(function(i)
+    TBg.InputBegan:Connect(function(i)
         if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-            toggle()
+            isOn = not isOn
+            TweenService:Create(Knob, TweenInfo.new(0.15), {
+                Position = isOn and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7),
+                BackgroundColor3 = isOn and Color3.fromRGB(10,10,10) or Color3.fromRGB(160,160,160)
+            }):Play()
+            TweenService:Create(TBg, TweenInfo.new(0.15), {
+                BackgroundColor3 = isOn and Color3.fromRGB(200,200,200) or Color3.fromRGB(50,50,50)
+            }):Play()
+            onToggle(isOn)
         end
     end)
-
     return Card
 end
 
-local function createSlider(parent, labelText, minVal, maxVal, defaultVal, onChange)
+-- HÀM TẠO SLIDER NHỎ
+local function makeSlider(parent, label, minV, maxV, defV, onChange)
     local Card = Instance.new("Frame")
-    Card.Size = UDim2.new(1, -16, 0, 70)
-    Card.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+    Card.Size = UDim2.new(1, 0, 0, 44)
+    Card.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     Card.BorderSizePixel = 0
     Card.Parent = parent
 
-    local CardCorner = Instance.new("UICorner")
-    CardCorner.CornerRadius = UDim.new(0, 10)
-    CardCorner.Parent = Card
+    local CC = Instance.new("UICorner")
+    CC.CornerRadius = UDim.new(0, 8)
+    CC.Parent = Card
 
-    local CardStroke = Instance.new("UIStroke")
-    CardStroke.Color = Color3.fromRGB(50, 50, 50)
-    CardStroke.Thickness = 1
-    CardStroke.Parent = Card
+    local CS = Instance.new("UIStroke")
+    CS.Color = Color3.fromRGB(45, 45, 45)
+    CS.Thickness = 1
+    CS.Parent = Card
 
-    local Label = Instance.new("TextLabel")
-    Label.Size = UDim2.new(0.7, 0, 0, 22)
-    Label.Position = UDim2.new(0, 14, 0, 8)
-    Label.BackgroundTransparency = 1
-    Label.Text = labelText
-    Label.TextColor3 = Color3.fromRGB(200, 200, 200)
-    Label.TextSize = 12
-    Label.Font = Enum.Font.Gotham
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Parent = Card
+    local Lbl = Instance.new("TextLabel")
+    Lbl.Size = UDim2.new(0.7, 0, 0, 18)
+    Lbl.Position = UDim2.new(0, 8, 0, 4)
+    Lbl.BackgroundTransparency = 1
+    Lbl.Text = label
+    Lbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+    Lbl.TextSize = 10
+    Lbl.Font = Enum.Font.Gotham
+    Lbl.TextXAlignment = Enum.TextXAlignment.Left
+    Lbl.Parent = Card
 
-    local ValueLabel = Instance.new("TextLabel")
-    ValueLabel.Size = UDim2.new(0.25, 0, 0, 22)
-    ValueLabel.Position = UDim2.new(0.75, 0, 0, 8)
-    ValueLabel.BackgroundTransparency = 1
-    ValueLabel.Text = tostring(defaultVal)
-    ValueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ValueLabel.TextSize = 14
-    ValueLabel.Font = Enum.Font.GothamBold
-    ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
-    ValueLabel.Parent = Card
+    local ValLbl = Instance.new("TextLabel")
+    ValLbl.Size = UDim2.new(0.28, 0, 0, 18)
+    ValLbl.Position = UDim2.new(0.72, 0, 0, 4)
+    ValLbl.BackgroundTransparency = 1
+    ValLbl.Text = tostring(defV)
+    ValLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ValLbl.TextSize = 11
+    ValLbl.Font = Enum.Font.GothamBold
+    ValLbl.TextXAlignment = Enum.TextXAlignment.Right
+    ValLbl.Parent = Card
 
     local Track = Instance.new("Frame")
-    Track.Size = UDim2.new(1, -28, 0, 6)
-    Track.Position = UDim2.new(0, 14, 0, 40)
+    Track.Size = UDim2.new(1, -16, 0, 5)
+    Track.Position = UDim2.new(0, 8, 0, 28)
     Track.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     Track.BorderSizePixel = 0
     Track.Parent = Card
 
-    local TrackCorner = Instance.new("UICorner")
-    TrackCorner.CornerRadius = UDim.new(1, 0)
-    TrackCorner.Parent = Track
+    local TC = Instance.new("UICorner")
+    TC.CornerRadius = UDim.new(1, 0)
+    TC.Parent = Track
 
     local Fill = Instance.new("Frame")
-    Fill.Size = UDim2.new((defaultVal - minVal) / (maxVal - minVal), 0, 1, 0)
-    Fill.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+    Fill.Size = UDim2.new((defV-minV)/(maxV-minV), 0, 1, 0)
+    Fill.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     Fill.BorderSizePixel = 0
     Fill.Parent = Track
 
-    local FillCorner = Instance.new("UICorner")
-    FillCorner.CornerRadius = UDim.new(1, 0)
-    FillCorner.Parent = Fill
+    local FC = Instance.new("UICorner")
+    FC.CornerRadius = UDim.new(1, 0)
+    FC.Parent = Fill
 
-    local SliderKnob = Instance.new("Frame")
-    SliderKnob.Size = UDim2.new(0, 16, 0, 16)
-    SliderKnob.AnchorPoint = Vector2.new(0.5, 0.5)
-    SliderKnob.Position = UDim2.new((defaultVal - minVal) / (maxVal - minVal), 0, 0.5, 0)
-    SliderKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    SliderKnob.BorderSizePixel = 0
-    SliderKnob.ZIndex = 5
-    SliderKnob.Parent = Track
+    local SK = Instance.new("Frame")
+    SK.Size = UDim2.new(0, 13, 0, 13)
+    SK.AnchorPoint = Vector2.new(0.5, 0.5)
+    SK.Position = UDim2.new((defV-minV)/(maxV-minV), 0, 0.5, 0)
+    SK.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SK.BorderSizePixel = 0
+    SK.ZIndex = 5
+    SK.Parent = Track
 
-    local SKCorner = Instance.new("UICorner")
-    SKCorner.CornerRadius = UDim.new(1, 0)
-    SKCorner.Parent = SliderKnob
+    local SKC = Instance.new("UICorner")
+    SKC.CornerRadius = UDim.new(1, 0)
+    SKC.Parent = SK
 
-    local dragging = false
-
-    local function updateSlider(input)
-        local trackPos = Track.AbsolutePosition.X
-        local trackSize = Track.AbsoluteSize.X
-        local relative = math.clamp((input.Position.X - trackPos) / trackSize, 0, 1)
-        local value = math.floor(minVal + relative * (maxVal - minVal))
-        Fill.Size = UDim2.new(relative, 0, 1, 0)
-        SliderKnob.Position = UDim2.new(relative, 0, 0.5, 0)
-        ValueLabel.Text = tostring(value)
-        onChange(value)
-    end
-
+    local drag = false
     Track.InputBegan:Connect(function(i)
         if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            updateSlider(i)
+            drag = true
+            local r = math.clamp((i.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
+            local v = math.floor(minV + r*(maxV-minV))
+            Fill.Size = UDim2.new(r, 0, 1, 0)
+            SK.Position = UDim2.new(r, 0, 0.5, 0)
+            ValLbl.Text = tostring(v)
+            onChange(v)
         end
     end)
-
     UserInputService.InputChanged:Connect(function(i)
-        if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-            updateSlider(i)
+        if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local r = math.clamp((i.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
+            local v = math.floor(minV + r*(maxV-minV))
+            Fill.Size = UDim2.new(r, 0, 1, 0)
+            SK.Position = UDim2.new(r, 0, 0.5, 0)
+            ValLbl.Text = tostring(v)
+            onChange(v)
         end
     end)
-
     UserInputService.InputEnded:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
-        end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = false end
     end)
-
     return Card
 end
 
-createToggleSection(ScrollFrame, "⬆️  Nhảy Cao", "Bật/tắt nhảy cao hơn bình thường", function(on)
+-- CỘT TRÁI: toggle + slider nhảy, toggle + slider chạy
+makeToggle(ColLeft, "⬆️", "Nhảy Cao", function(on)
     Settings.JumpEnabled = on
     if not on then humanoid.JumpPower = defaultJump end
 end)
-
-createSlider(ScrollFrame, "Độ nhảy cao (x lần)", 1, 100, 1, function(val)
-    Settings.JumpPower = val
-    if Settings.JumpEnabled then humanoid.JumpPower = defaultJump * val end
+makeSlider(ColLeft, "Nhảy (x lần)", 1, 100, 1, function(v)
+    Settings.JumpPower = v
+    if Settings.JumpEnabled then humanoid.JumpPower = defaultJump * v end
 end)
-
-createToggleSection(ScrollFrame, "🏃  Chạy Nhanh", "Bật/tắt tốc độ chạy tăng cao", function(on)
+makeToggle(ColLeft, "🏃", "Chạy Nhanh", function(on)
     Settings.SpeedEnabled = on
     if not on then humanoid.WalkSpeed = defaultSpeed end
 end)
-
-createSlider(ScrollFrame, "Tốc độ chạy (x lần)", 1, 100, 1, function(val)
-    Settings.SpeedPower = val
-    if Settings.SpeedEnabled then humanoid.WalkSpeed = defaultSpeed * val end
+makeSlider(ColLeft, "Tốc độ (x lần)", 1, 100, 1, function(v)
+    Settings.SpeedPower = v
+    if Settings.SpeedEnabled then humanoid.WalkSpeed = defaultSpeed * v end
 end)
 
-createToggleSection(ScrollFrame, "🛡️  Bất Tử", "Không thể bị giết bởi bất kỳ thứ gì", function(on)
+-- CỘT PHẢI: bất tử, onehit, đi trên không, liên hệ
+makeToggle(ColRight, "🛡️", "Bất Tử", function(on)
     Settings.GodEnabled = on
-    if on then
-        humanoid.MaxHealth = math.huge
-        humanoid.Health = math.huge
-    else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
-    end
+    if on then humanoid.MaxHealth = math.huge; humanoid.Health = math.huge
+    else humanoid.MaxHealth = 100; humanoid.Health = 100 end
 end)
-
-createToggleSection(ScrollFrame, "💀  One Hit Kill", "Một đấm = đối thủ chết ngay lập tức", function(on)
+makeToggle(ColRight, "💀", "One Hit", function(on)
     Settings.OneHitEnabled = on
 end)
-
-createToggleSection(ScrollFrame, "🌫️  Đi Trên Không", "Nhảy 2 lần = bay | Nhảy 3 lần = huỷ", function(on)
+makeToggle(ColRight, "🌫️", "Đi Trên Không", function(on)
     airWalkEnabled = on
     if not on then Settings.NoClipEnabled = false end
 end)
 
+-- NÚT LIÊN HỆ cột phải
+local CBtn = Instance.new("TextButton")
+CBtn.Size = UDim2.new(1, 0, 0, 36)
+CBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+CBtn.Text = "📞 Liên Hệ"
+CBtn.TextColor3 = Color3.fromRGB(220, 220, 220)
+CBtn.TextSize = 11
+CBtn.Font = Enum.Font.GothamBold
+CBtn.BorderSizePixel = 0
+CBtn.Parent = ColRight
+
+local CBTC = Instance.new("UICorner")
+CBTC.CornerRadius = UDim.new(0, 8)
+CBTC.Parent = CBtn
+
+local CBTS = Instance.new("UIStroke")
+CBTS.Color = Color3.fromRGB(70, 70, 70)
+CBTS.Thickness = 1
+CBTS.Parent = CBtn
+
+-- POPUP LIÊN HỆ
+local Popup = Instance.new("Frame")
+Popup.Size = UDim2.new(0, 260, 0, 170)
+Popup.Position = UDim2.new(0.5, -130, 0.5, -85)
+Popup.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+Popup.BorderSizePixel = 0
+Popup.Visible = false
+Popup.ZIndex = 50
+Popup.Parent = ScreenGui
+
+local PC = Instance.new("UICorner")
+PC.CornerRadius = UDim.new(0, 12)
+PC.Parent = Popup
+
+local PS = Instance.new("UIStroke")
+PS.Color = Color3.fromRGB(180, 180, 180)
+PS.Thickness = 1.5
+PS.Parent = Popup
+
+local PH = Instance.new("Frame")
+PH.Size = UDim2.new(1, 0, 0, 36)
+PH.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PH.BorderSizePixel = 0
+PH.ZIndex = 51
+PH.Parent = Popup
+
+local PHC = Instance.new("UICorner")
+PHC.CornerRadius = UDim.new(0, 12)
+PHC.Parent = PH
+
+local PHFix = Instance.new("Frame")
+PHFix.Size = UDim2.new(1, 0, 0, 12)
+PHFix.Position = UDim2.new(0, 0, 1, -12)
+PHFix.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PHFix.BorderSizePixel = 0
+PHFix.ZIndex = 51
+PHFix.Parent = PH
+
+local PHG = Instance.new("UIGradient")
+PHG.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(80,80,80))})
+PHG.Rotation = 90
+PHG.Parent = PH
+
+local PTit = Instance.new("TextLabel")
+PTit.Size = UDim2.new(1, -40, 1, 0)
+PTit.Position = UDim2.new(0, 10, 0, 0)
+PTit.BackgroundTransparency = 1
+PTit.Text = "📞 Liên Hệ Admin"
+PTit.TextColor3 = Color3.fromRGB(15, 15, 15)
+PTit.TextSize = 13
+PTit.Font = Enum.Font.GothamBold
+PTit.TextXAlignment = Enum.TextXAlignment.Left
+PTit.ZIndex = 52
+PTit.Parent = PH
+
+local PClose = Instance.new("TextButton")
+PClose.Size = UDim2.new(0, 24, 0, 24)
+PClose.Position = UDim2.new(1, -30, 0.5, -12)
+PClose.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+PClose.Text = "✕"
+PClose.TextColor3 = Color3.fromRGB(220, 220, 220)
+PClose.TextSize = 11
+PClose.Font = Enum.Font.GothamBold
+PClose.BorderSizePixel = 0
+PClose.ZIndex = 53
+PClose.Parent = PH
+
+local PCC = Instance.new("UICorner")
+PCC.CornerRadius = UDim.new(1, 0)
+PCC.Parent = PClose
+
+local function makeLink(yPos, icon, txt, color, link)
+    local B = Instance.new("TextButton")
+    B.Size = UDim2.new(1, -20, 0, 32)
+    B.Position = UDim2.new(0, 10, 0, yPos)
+    B.BackgroundColor3 = color
+    B.Text = icon .. "  " .. txt
+    B.TextColor3 = Color3.fromRGB(255,255,255)
+    B.TextSize = 11
+    B.Font = Enum.Font.GothamBold
+    B.BorderSizePixel = 0
+    B.ZIndex = 52
+    B.Parent = Popup
+    local BC2 = Instance.new("UICorner")
+    BC2.CornerRadius = UDim.new(0, 7)
+    BC2.Parent = B
+    B.MouseButton1Click:Connect(function()
+        local T = Instance.new("TextLabel")
+        T.Size = UDim2.new(0, 220, 0, 30)
+        T.Position = UDim2.new(0.5, -110, 0, 20)
+        T.BackgroundColor3 = Color3.fromRGB(30,30,30)
+        T.Text = "✅ Đã copy!"
+        T.TextColor3 = Color3.fromRGB(200,200,200)
+        T.TextSize = 11
+        T.Font = Enum.Font.Gotham
+        T.BorderSizePixel = 0
+        T.ZIndex = 100
+        T.Parent = ScreenGui
+        local TC2 = Instance.new("UICorner")
+        TC2.CornerRadius = UDim.new(0, 7)
+        TC2.Parent = T
+        setclipboard(link)
+        task.delay(2, function()
+            TweenService:Create(T, TweenInfo.new(0.3), {TextTransparency=1, BackgroundTransparency=1}):Play()
+            task.delay(0.3, function() T:Destroy() end)
+        end)
+    end)
+end
+
+makeLink(42, "💬", "Discord", Color3.fromRGB(88,101,242), "https://discord.gg/ESZkGwk6v")
+makeLink(82, "📘", "Facebook", Color3.fromRGB(24,119,242), "https://www.facebook.com/share/14rHaf7efam/?mibextid=wwXIfr")
+makeLink(122, "📱", "Zalo: 0993329535", Color3.fromRGB(0,150,220), "84993329535")
+
+PClose.MouseButton1Click:Connect(function() Popup.Visible = false end)
+CBtn.MouseButton1Click:Connect(function() Popup.Visible = not Popup.Visible end)
+
+-- ĐÓNG MENU
+CloseBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(MainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 420, 0, 0)
+    }):Play()
+    task.delay(0.2, function()
+        MainFrame.Visible = false
+        BubbleBtn.Visible = true
+        pulseTween:Play()
+    end)
+end)
+
+-- LOGIC
 humanoid.StateChanged:Connect(function(_, new)
     if new == Enum.HumanoidStateType.Jumping then
-        jumpCount = jumpCount + 1
+        jumpCount += 1
         if airWalkEnabled then
             if jumpCount == 2 then
                 Settings.NoClipEnabled = true
@@ -626,73 +620,24 @@ end)
 
 RunService.Stepped:Connect(function()
     if not Settings.OneHitEnabled then return end
-    for _, otherPlayer in ipairs(Players:GetPlayers()) do
-        if otherPlayer ~= player then
-            local otherChar = otherPlayer.Character
-            if otherChar then
-                local otherRoot = otherChar:FindFirstChild("HumanoidRootPart")
-                local otherHuman = otherChar:FindFirstChild("Humanoid")
-                if otherRoot and otherHuman then
-                    if (rootPart.Position - otherRoot.Position).Magnitude < 5 then
-                        otherHuman.Health = 0
-                    end
+    for _, op in ipairs(Players:GetPlayers()) do
+        if op ~= player then
+            local oc = op.Character
+            if oc then
+                local or2 = oc:FindFirstChild("HumanoidRootPart")
+                local oh = oc:FindFirstChild("Humanoid")
+                if or2 and oh and (rootPart.Position - or2.Position).Magnitude < 5 then
+                    oh.Health = 0
                 end
             end
         end
     end
 end)
 
-local draggingGui, dragStart, startPos = false, nil, nil
-
-Header.InputBegan:Connect(function(i)
-    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        draggingGui = true
-        dragStart = i.Position
-        startPos = MainFrame.Position
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(i)
-    if draggingGui and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-        local delta = i.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
-UserInputService.InputEnded:Connect(function(i)
-    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        draggingGui = false
-    end
-end)
-
-CloseBtn.MouseButton1Click:Connect(function()
-    TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Size = UDim2.new(0, 360, 0, 0),
-        Position = UDim2.new(MainFrame.Position.X.Scale, MainFrame.Position.X.Offset, MainFrame.Position.Y.Scale, MainFrame.Position.Y.Offset + 280)
-    }):Play()
-    task.delay(0.25, function()
-        MainFrame.Visible = false
-        BubbleBtn.Visible = true
-        pulseTween:Play()
-    end)
-end)
-
-BubbleBtn.InputEnded:Connect(function(i)
-    if (i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch) and not bubbleDragging then
-        pulseTween:Pause()
-        BubbleBtn.Visible = false
-        MainFrame.Visible = true
-        MainFrame.Size = UDim2.new(0, 360, 0, 0)
-        TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 360, 0, 560)
-        }):Play()
-    end
-end)
-
-player.CharacterAdded:Connect(function(newChar)
-    character = newChar
-    humanoid = newChar:WaitForChild("Humanoid")
-    rootPart = newChar:WaitForChild("HumanoidRootPart")
+player.CharacterAdded:Connect(function(c)
+    character = c
+    humanoid = c:WaitForChild("Humanoid")
+    rootPart = c:WaitForChild("HumanoidRootPart")
     jumpCount = 0
     Settings.NoClipEnabled = false
 end)
