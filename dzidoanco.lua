@@ -204,29 +204,6 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = player.PlayerGui
 
--- ==================== MAIN PANEL (chỉ title, không hiện lượt) ====================
-local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 220, 0, 28)
-Main.Position = UDim2.new(0.5, -110, 0, 6)
-Main.BackgroundColor3 = Color3.fromRGB(10, 8, 18)
-Main.BorderSizePixel = 0
-Main.ZIndex = 100
-Main.Parent = ScreenGui
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
-local MS = Instance.new("UIStroke", Main)
-MS.Color = Color3.fromRGB(140, 80, 200); MS.Thickness = 1.5
-makeDrag(Main)
-
-local TitleLbl = Instance.new("TextLabel", Main)
-TitleLbl.Size = UDim2.new(1, -30, 1, 0)
-TitleLbl.Position = UDim2.new(0, 0, 0, 0)
-TitleLbl.BackgroundTransparency = 1
-TitleLbl.Text = "🏴 DZI AUTO FLAG"
-TitleLbl.TextColor3 = Color3.fromRGB(180, 140, 255)
-TitleLbl.TextSize = 11
-TitleLbl.Font = Enum.Font.GothamBold
-TitleLbl.ZIndex = 101
-
 -- ==================== HINT PANEL ====================
 local HP_W = 240
 local HP_BTN_H = 28
