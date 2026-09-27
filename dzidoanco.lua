@@ -161,13 +161,84 @@ local function tryMatch(n)
     return ANSWER_MAP[s] or ANSWER_MAP[n]
 end
 
-local function getFlagUrl(name)
-    local iso=COUNTRY_ISO[name]
-    if iso then
-        -- thử dùng setfflag hoặc direct URL
-        return "https://flagcdn.com/w160/"..iso..".png"
+-- cache: iso → asset string đã load
+local flagCache = {}
+
+local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
+    local iso = COUNTRY_ISO[name]
+    if not iso then
+        imgLabel.Visible = false
+        noFlagLabel.Text = "❌ Không có cờ:\n" .. name
+        noFlagLabel.Visible = true
+        nameLbl.Text = name; nameLbl.Visible = true
+        return
     end
-    return nil
+
+    -- hiện loading
+    imgLabel.Visible = false
+    noFlagLabel.Text = "⏳ Đang tải cờ..."
+    noFlagLabel.Visible = true
+    nameLbl.Text = "🏳 " .. name; nameLbl.Visible = true
+
+    -- Nếu đã cache
+    if flagCache[iso] then
+        imgLabel.Image = flagCache[iso]
+        imgLabel.Visible = true
+        noFlagLabel.Visible = false
+        return
+    end
+
+    task.spawn(function()
+        local url = "https://flagcdn.com/w160/" .. iso .. ".png"
+        local fname = "dziflag_" .. iso .. ".png"
+
+        -- Thử dùng getcustomasset (Synapse X, Wave, Solara...)
+        local reqFn = nil
+        if syn and syn.request then reqFn = syn.request
+        elseif request then reqFn = request
+        elseif http_request then reqFn = http_request end
+
+        if reqFn and writefile and getcustomasset then
+            local ok, res = pcall(reqFn, {Url=url, Method="GET"})
+            if ok and res and res.Body and #res.Body > 100 then
+                pcall(writefile, fname, res.Body)
+                local ok2, asset = pcall(getcustomasset, fname)
+                if ok2 and asset then
+                    flagCache[iso] = asset
+                    imgLabel.Image = asset
+                    imgLabel.Visible = true
+                    noFlagLabel.Visible = false
+                    return
+                end
+            end
+        end
+
+        -- Fallback: thử set URL trực tiếp (một số executor patch được)
+        local ok3 = pcall(function()
+            imgLabel.Image = url
+        end)
+        if ok3 then
+            -- chờ 1s xem có load không (Image sẽ thành "" nếu fail)
+            task.wait(1.5)
+            if imgLabel.Image ~= "" and imgLabel.Image ~= url then
+                -- đã được convert thành asset → OK
+                flagCache[iso] = imgLabel.Image
+                imgLabel.Visible = true
+                noFlagLabel.Visible = false
+                return
+            elseif imgLabel.Image == url then
+                -- vẫn là URL → executor không support, thử content hash
+                imgLabel.Visible = true
+                noFlagLabel.Visible = false
+                return
+            end
+        end
+
+        -- Hoàn toàn fail
+        imgLabel.Visible = false
+        noFlagLabel.Text = "❌ Executor không hỗ trợ load ảnh\n(" .. iso .. ")"
+        noFlagLabel.Visible = true
+    end)
 end
 
 -- ==================== GUI HELPERS ====================
@@ -270,9 +341,10 @@ local function makeFlagViewer(parent, yOffset)
     local noFlag=Instance.new("TextLabel",container)
     noFlag.Size=UDim2.new(1,-4,0,90);noFlag.Position=UDim2.new(0,2,0,0)
     noFlag.BackgroundColor3=Color3.fromRGB(15,10,30);noFlag.BorderSizePixel=0
-    noFlag.Text="❌ Chưa có cờ\ncho nước này"
-    noFlag.TextColor3=Color3.fromRGB(200,100,100);noFlag.TextSize=12
+    noFlag.Text=""
+    noFlag.TextColor3=Color3.fromRGB(200,150,100);noFlag.TextSize=11
     noFlag.Font=Enum.Font.GothamBold;noFlag.TextWrapped=true
+    noFlag.TextXAlignment=Enum.TextXAlignment.Center
     noFlag.ZIndex=204;noFlag.Visible=false;mkCorner(noFlag,8)
 
     local lbl=Instance.new("TextLabel",container)
@@ -282,19 +354,12 @@ local function makeFlagViewer(parent, yOffset)
     lbl.Font=Enum.Font.GothamBold;lbl.ZIndex=204;lbl.Visible=false
 
     local function show(name)
-        local url=getFlagUrl(name)
-        lbl.Text="🏳 "..name;lbl.Visible=true
-        if url then
-            -- thử set URL trực tiếp (works in Synapse/Wave)
-            img.Image=url;img.Visible=true;noFlag.Visible=false
-            container.Size=UDim2.new(1,0,0,116)
-        else
-            img.Visible=false;noFlag.Visible=true
-            container.Size=UDim2.new(1,0,0,116)
-        end
+        container.Size=UDim2.new(1,0,0,116)
+        loadFlagAsync(name, img, noFlag, lbl)
     end
     local function hide()
         img.Visible=false;noFlag.Visible=false;lbl.Visible=false
+        img.Image=""
         container.Size=UDim2.new(1,0,0,0)
     end
     return container,show,hide
