@@ -5,7 +5,43 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
 local ANSWER_MAP = {
-    ["viet nam"] = "Việt Nam", ["việt nam"] = "Việt Nam",
+    ["viet nam"] = "Việt Nam", ["việt nam"] = "Việt Nam", ["vietnam"] = "Việt Nam",
+    ["thai lan"] = "Thái Lan", ["thái lan"] = "Thái Lan",
+    ["han quoc"] = "Hàn Quốc", ["hàn quốc"] = "Hàn Quốc",
+    ["trung quoc"] = "Trung Quốc", ["trung quốc"] = "Trung Quốc",
+    ["nhat ban"] = "Nhật Bản", ["nhật bản"] = "Nhật Bản",
+    ["thuy dien"] = "Thụy Điển", ["thụy điển"] = "Thụy Điển",
+    ["thuy si"] = "Thụy Sĩ", ["thụy sĩ"] = "Thụy Sĩ",
+    ["tay ban nha"] = "Tây Ban Nha", ["tây ban nha"] = "Tây Ban Nha",
+    ["bo dao nha"] = "Bồ Đào Nha", ["bồ đào nha"] = "Bồ Đào Nha",
+    ["ha lan"] = "Hà Lan", ["hà lan"] = "Hà Lan",
+    ["dan mach"] = "Đan Mạch", ["đan mạch"] = "Đan Mạch",
+    ["phan lan"] = "Phần Lan", ["phần lan"] = "Phần Lan",
+    ["na uy"] = "Na Uy",
+    ["ba lan"] = "Ba Lan",
+    ["hy lap"] = "Hy Lạp", ["hy lạp"] = "Hy Lạp",
+    ["ai cap"] = "Ai Cập", ["ai cập"] = "Ai Cập",
+    ["an do"] = "Ấn Độ", ["ấn độ"] = "Ấn Độ",
+    ["a rap xe ut"] = "Ả Rập Xê Út", ["ả rập xê út"] = "Ả Rập Xê Út",
+    ["nam phi"] = "Nam Phi",
+    ["nam sudan"] = "Nam Sudan",
+    ["bac trieu tien"] = "Bắc Triều Tiên", ["bắc triều tiên"] = "Bắc Triều Tiên",
+    ["hoa ky"] = "Hoa Kỳ", ["hoa kỳ"] = "Hoa Kỳ",
+    ["vuong quoc anh"] = "Vương quốc Anh", ["vương quốc anh"] = "Vương quốc Anh",
+    ["anh"] = "Anh",
+    ["phap"] = "Pháp", ["pháp"] = "Pháp",
+    ["duc"] = "Đức", ["đức"] = "Đức",
+    ["nga"] = "Nga",
+    ["bi"] = "Bỉ", ["bỉ"] = "Bỉ",
+    ["ao"] = "Áo", ["áo"] = "Áo",
+    ["sec"] = "Séc", ["séc"] = "Séc",
+    ["sip"] = "Síp", ["síp"] = "Síp",
+    ["uc"] = "Úc", ["úc"] = "Úc",
+    ["y"] = "Ý", ["ý"] = "Ý",
+    ["dai loan"] = "Đài Loan", ["đài loan"] = "Đài Loan",
+    ["mong co"] = "Mông Cổ", ["mông cổ"] = "Mông Cổ",
+    ["tho nhi ky"] = "Thổ Nhĩ Kỳ", ["thổ nhĩ kỳ"] = "Thổ Nhĩ Kỳ",
+    ["cong hoa dominican"] = "Cộng Hòa Dominican", ["cộng hòa dominican"] = "Cộng Hòa Dominican",
     ["thai lan"] = "Thái Lan", ["thái lan"] = "Thái Lan", ["thailand"] = "Thái Lan",
     ["philippines"] = "Philippines",
     ["indonesia"] = "Indonesia",
@@ -160,7 +196,7 @@ local ANSWER_MAP = {
     ["angola"] = "Angola",
     ["namibia"] = "Namibia",
     ["botswana"] = "Botswana",
-    ["nam phi"] = "Nam Phi", ["nam phi"] = "Nam Phi", ["south africa"] = "Nam Phi",
+    ["nam phi"] = "Nam Phi", ["south africa"] = "Nam Phi",
     ["lesotho"] = "Lesotho",
     ["madagascar"] = "Madagascar",
     ["mauritius"] = "Mauritius",
@@ -175,6 +211,61 @@ local ANSWER_MAP = {
     ["tonga"] = "Tonga",
 }
 
+-- ISO code để lấy ảnh cờ từ flagcdn.com
+local FLAG_CODE = {
+    ["Việt Nam"]="vn",["Thái Lan"]="th",["Hàn Quốc"]="kr",["Trung Quốc"]="cn",
+    ["Nhật Bản"]="jp",["Thụy Điển"]="se",["Thụy Sĩ"]="ch",["Tây Ban Nha"]="es",
+    ["Bồ Đào Nha"]="pt",["Hà Lan"]="nl",["Đan Mạch"]="dk",["Phần Lan"]="fi",
+    ["Na Uy"]="no",["Ba Lan"]="pl",["Hy Lạp"]="gr",["Ai Cập"]="eg",
+    ["Ấn Độ"]="in",["Ả Rập Xê Út"]="sa",["Nam Phi"]="za",["Nam Sudan"]="ss",
+    ["Bắc Triều Tiên"]="kp",["Hoa Kỳ"]="us",["Anh"]="gb",["Vương quốc Anh"]="gb",
+    ["Pháp"]="fr",["Đức"]="de",["Nga"]="ru",["Bỉ"]="be",["Áo"]="at",
+    ["Séc"]="cz",["Síp"]="cy",["Úc"]="au",["Ý"]="it",["Đài Loan"]="tw",
+    ["Mông Cổ"]="mn",["Thổ Nhĩ Kỳ"]="tr",["Cộng Hòa Dominican"]="do",
+    ["Philippines"]="ph",["Indonesia"]="id",["Malaysia"]="my",["Singapore"]="sg",
+    ["Myanmar"]="mm",["Campuchia"]="kh",["Lào"]="la",["Brunei"]="bn",
+    ["Timor-Leste"]="tl",["Pakistan"]="pk",["Bangladesh"]="bd",["Sri Lanka"]="lk",
+    ["Nepal"]="np",["Bhutan"]="bt",["Maldives"]="mv",["Afghanistan"]="af",
+    ["Kazakhstan"]="kz",["Uzbekistan"]="uz",["Turkmenistan"]="tm",
+    ["Kyrgyzstan"]="kg",["Tajikistan"]="tj",["Iran"]="ir",["Iraq"]="iq",
+    ["Syria"]="sy",["Jordan"]="jo",["Lebanon"]="lb",["Israel"]="il",
+    ["Palestine"]="ps",["Yemen"]="ye",["Oman"]="om",["UAE"]="ae",
+    ["Qatar"]="qa",["Bahrain"]="bh",["Kuwait"]="kw",["Azerbaijan"]="az",
+    ["Armenia"]="am",["Georgia"]="ge",["Luxembourg"]="lu",["Liechtenstein"]="li",
+    ["Monaco"]="mc",["Ireland"]="ie",["Iceland"]="is",["Estonia"]="ee",
+    ["Latvia"]="lv",["Lithuania"]="lt",["Slovakia"]="sk",["Hungary"]="hu",
+    ["Romania"]="ro",["Bulgaria"]="bg",["Serbia"]="rs",["Croatia"]="hr",
+    ["Slovenia"]="si",["Bosnia"]="ba",["Montenegro"]="me",["Albania"]="al",
+    ["Macedonia"]="mk",["Ukraine"]="ua",["Belarus"]="by",["Moldova"]="md",
+    ["Malta"]="mt",["Kosovo"]="xk",["Canada"]="ca",["Mexico"]="mx",
+    ["Guatemala"]="gt",["Belize"]="bz",["Honduras"]="hn",["El Salvador"]="sv",
+    ["Nicaragua"]="ni",["Costa Rica"]="cr",["Panama"]="pa",["Cuba"]="cu",
+    ["Jamaica"]="jm",["Haiti"]="ht",["Cộng Hòa Dominican"]="do",
+    ["Trinidad & Tobago"]="tt",["Barbados"]="bb",["Bahamas"]="bs",
+    ["Brazil"]="br",["Argentina"]="ar",["Colombia"]="co",["Venezuela"]="ve",
+    ["Peru"]="pe",["Chile"]="cl",["Bolivia"]="bo",["Ecuador"]="ec",
+    ["Paraguay"]="py",["Uruguay"]="uy",["Guyana"]="gy",["Suriname"]="sr",
+    ["Libya"]="ly",["Tunisia"]="tn",["Algeria"]="dz",["Morocco"]="ma",
+    ["Sudan"]="sd",["Nigeria"]="ng",["Ghana"]="gh",["Senegal"]="sn",
+    ["Côte d'Ivoire"]="ci",["Guinea"]="gn",["Mali"]="ml",["Burkina Faso"]="bf",
+    ["Niger"]="ne",["Togo"]="tg",["Benin"]="bj",["Cameroon"]="cm",
+    ["Gabon"]="ga",["Congo"]="cg",["DR Congo"]="cd",["Liberia"]="lr",
+    ["Sierra Leone"]="sl",["Kenya"]="ke",["Ethiopia"]="et",["Tanzania"]="tz",
+    ["Uganda"]="ug",["Rwanda"]="rw",["Somalia"]="so",["Mozambique"]="mz",
+    ["Zambia"]="zm",["Zimbabwe"]="zw",["Angola"]="ao",["Namibia"]="na",
+    ["Botswana"]="bw",["Lesotho"]="ls",["Madagascar"]="mg",["Mauritius"]="mu",
+    ["Seychelles"]="sc",["New Zealand"]="nz",["Papua New Guinea"]="pg",
+    ["Fiji"]="fj",["Solomon Islands"]="sb",["Vanuatu"]="vu",["Samoa"]="ws",["Tonga"]="to",
+}
+
+local function getFlagUrl(countryName)
+    local code = FLAG_CODE[countryName]
+    if code then
+        return "https://flagcdn.com/w160/" .. code .. ".png"
+    end
+    return nil
+end
+
 local function norm(s)
     return tostring(s):lower()
         :gsub("[àáảãạăắặằẳẵâấầẩẫậ]","a")
@@ -187,12 +278,14 @@ local function norm(s)
         :gsub("%s+"," "):gsub("^%s*(.-)%s*$","%1")
 end
 
+-- ==================== GUI ====================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "DziAutoFlag"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = player.PlayerGui
 
+-- Main panel (title + answer)
 local Main = Instance.new("Frame")
 Main.Size = UDim2.new(0, 250, 0, 76)
 Main.Position = UDim2.new(0.5, -125, 0, 6)
@@ -230,6 +323,7 @@ Instance.new("UITextSizeConstraint", AnsLbl).MaxTextSize = 17
 local ABS = Instance.new("UIStroke", AnsLbl)
 ABS.Color = Color3.fromRGB(100, 60, 160); ABS.Thickness = 1
 
+-- Drag
 local mDrag, mStart, mPos = false, nil, nil
 Main.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
@@ -246,6 +340,156 @@ UserInputService.InputEnded:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then mDrag = false end
 end)
 
+-- ==================== HINT PANEL (4 nút gợi ý + preview cờ) ====================
+local HintPanel = Instance.new("Frame")
+HintPanel.Size = UDim2.new(0, 250, 0, 10) -- sẽ resize động
+HintPanel.Position = UDim2.new(0.5, -125, 0, 90)
+HintPanel.BackgroundColor3 = Color3.fromRGB(10, 8, 18)
+HintPanel.BorderSizePixel = 0
+HintPanel.ZIndex = 100
+HintPanel.Visible = false
+HintPanel.Parent = ScreenGui
+Instance.new("UICorner", HintPanel).CornerRadius = UDim.new(0, 10)
+local HPS = Instance.new("UIStroke", HintPanel)
+HPS.Color = Color3.fromRGB(140, 80, 200); HPS.Thickness = 1.5
+
+-- Label "Gợi ý cờ:"
+local HintTitle = Instance.new("TextLabel", HintPanel)
+HintTitle.Size = UDim2.new(1, 0, 0, 18)
+HintTitle.Position = UDim2.new(0, 0, 0, 4)
+HintTitle.BackgroundTransparency = 1
+HintTitle.Text = "🏳 GỢI Ý CỜ"
+HintTitle.TextColor3 = Color3.fromRGB(180, 140, 255)
+HintTitle.TextSize = 9
+HintTitle.Font = Enum.Font.GothamBold
+HintTitle.ZIndex = 101
+
+-- Preview cờ (ImageLabel) - hiện khi bấm nút
+local FlagPreview = Instance.new("ImageLabel", HintPanel)
+FlagPreview.Size = UDim2.new(1, -12, 0, 80)
+FlagPreview.Position = UDim2.new(0, 6, 0, 26)
+FlagPreview.BackgroundColor3 = Color3.fromRGB(20, 14, 34)
+FlagPreview.BorderSizePixel = 0
+FlagPreview.Image = ""
+FlagPreview.ScaleType = Enum.ScaleType.Fit
+FlagPreview.ZIndex = 102
+FlagPreview.Visible = false
+Instance.new("UICorner", FlagPreview).CornerRadius = UDim.new(0, 6)
+
+-- Country name label dưới ảnh cờ
+local FlagName = Instance.new("TextLabel", HintPanel)
+FlagName.Size = UDim2.new(1, -12, 0, 18)
+FlagName.Position = UDim2.new(0, 6, 0, 110)
+FlagName.BackgroundTransparency = 1
+FlagName.Text = ""
+FlagName.TextColor3 = Color3.fromRGB(220, 220, 255)
+FlagName.TextSize = 11
+FlagName.Font = Enum.Font.GothamBold
+FlagName.ZIndex = 102
+FlagName.Visible = false
+
+-- 4 nút hint (tạo sẵn, ẩn/hiện + đổi text động)
+local hintBtns = {}
+for i = 1, 4 do
+    local btn = Instance.new("TextButton", HintPanel)
+    btn.Size = UDim2.new(0.5, -8, 0, 24)
+    -- 2x2 grid
+    local col = (i-1) % 2
+    local row = math.floor((i-1) / 2)
+    btn.Position = UDim2.new(col * 0.5, col == 0 and 6 or 2, 0, 132 + row * 28)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 20, 50)
+    btn.BorderSizePixel = 0
+    btn.Text = "..."
+    btn.TextColor3 = Color3.fromRGB(200, 200, 255)
+    btn.TextSize = 10
+    btn.Font = Enum.Font.GothamBold
+    btn.TextScaled = true
+    btn.ZIndex = 103
+    btn.Visible = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    Instance.new("UITextSizeConstraint", btn).MaxTextSize = 11
+    local bs = Instance.new("UIStroke", btn)
+    bs.Color = Color3.fromRGB(100, 60, 180); bs.Thickness = 1
+
+    hintBtns[i] = btn
+end
+
+local currentHintCountries = {}
+local selectedBtn = nil
+
+local function showFlagPreview(countryName, btn)
+    -- toggle: bấm lại nút đang chọn thì ẩn
+    if selectedBtn == btn then
+        FlagPreview.Visible = false
+        FlagName.Visible = false
+        selectedBtn = nil
+        -- reset màu tất cả nút
+        for _, b in ipairs(hintBtns) do
+            b.BackgroundColor3 = Color3.fromRGB(30, 20, 50)
+        end
+        HintPanel.Size = UDim2.new(0, 250, 0, 132 + math.ceil(#currentHintCountries/2)*28 + 6)
+        return
+    end
+
+    selectedBtn = btn
+    -- highlight nút được chọn
+    for _, b in ipairs(hintBtns) do
+        b.BackgroundColor3 = Color3.fromRGB(30, 20, 50)
+    end
+    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 100)
+
+    local url = getFlagUrl(countryName)
+    if url then
+        FlagPreview.Image = url
+        FlagPreview.Visible = true
+        FlagName.Text = countryName
+        FlagName.Visible = true
+        -- resize panel để chứa preview
+        HintPanel.Size = UDim2.new(0, 250, 0, 132 + math.ceil(#currentHintCountries/2)*28 + 6 + 90 + 22)
+    else
+        FlagPreview.Visible = false
+        FlagName.Text = countryName .. " (no flag)"
+        FlagName.Visible = true
+        HintPanel.Size = UDim2.new(0, 250, 0, 132 + math.ceil(#currentHintCountries/2)*28 + 6 + 22)
+    end
+end
+
+local function updateHintButtons(countries)
+    currentHintCountries = countries
+    selectedBtn = nil
+    FlagPreview.Visible = false
+    FlagName.Visible = false
+
+    local n = #countries
+    if n == 0 then
+        HintPanel.Visible = false
+        return
+    end
+
+    HintPanel.Visible = true
+    local rows = math.ceil(n / 2)
+    HintPanel.Size = UDim2.new(0, 250, 0, 132 + rows * 28 + 6)
+
+    for i = 1, 4 do
+        local btn = hintBtns[i]
+        if countries[i] then
+            btn.Text = countries[i]
+            btn.Visible = true
+            -- recalc position
+            local col = (i-1) % 2
+            local row = math.floor((i-1) / 2)
+            btn.Position = UDim2.new(col * 0.5, col == 0 and 6 or 2, 0, 132 + row * 28)
+            -- disconnect cũ, connect mới
+            btn.MouseButton1Click:Connect(function()
+                showFlagPreview(countries[i], btn)
+            end)
+        else
+            btn.Visible = false
+        end
+    end
+end
+
+-- ==================== ANSWER LOGIC ====================
 local function setAnswer(txt, correct)
     AnsLbl.Text = txt
     if correct then
@@ -263,21 +507,11 @@ end
 
 local currentFlag = nil
 
+-- ==================== REMOTE HOOKS ====================
 local oldNamecall
 oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
     local method = getnamecallmethod()
-    local args = {...}
-
-    if method == "FireServer" or method == "InvokeServer" then
-    end
-
-    if method == "FireAllClients" or method == "FireClient" or method == "OnClientEvent" then
-    end
-
     local result = oldNamecall(self, ...)
-
-    if method == "GetPropertyChangedSignal" then end
-
     return result
 end)
 
@@ -304,7 +538,7 @@ local function scanRemotes()
                 end
             end)
         end
-        if obj:IsA("StringValue") or obj:IsA("StringValue") then
+        if obj:IsA("StringValue") then
             obj.Changed:Connect(function(v)
                 local n = norm(v)
                 if ANSWER_MAP[n] then
@@ -390,28 +624,27 @@ pcall(hookFireClient)
 pcall(scanRemotes)
 pcall(scanValues)
 
+-- ==================== SCAN GUI + LẤY 4 GỢI Ý ====================
 local myTurn = false
 
 local function tryMatch(n)
     if ANSWER_MAP[n] then return ANSWER_MAP[n] end
-    local stripped = n:gsub("^nuoc ", ""):gsub("^nuoc$","")
+    local stripped = n:gsub("^nuoc ", "")
     if ANSWER_MAP[stripped] then return ANSWER_MAP[stripped] end
-    for k, v in pairs(ANSWER_MAP) do
-        if n == k then return v end
-        if stripped == k then return v end
-        if #k >= 3 and (n:find(k,1,true) or stripped:find(k,1,true)) then return v end
-    end
     return nil
 end
 
-local function scanGUI()
-    local BLACKLIST = {
-        "dzi","auto flag","hub","players","win","tham gia","cua hang",
-        "kho do","troll","hang ngay","goi y","tiet lo","phan hoi",
-        "lan thang","chuoi thang","tien mat","bao cao","nguoi moi",
-        "x2","2x","bat dau","de ","kho ","trung binh",
-    }
+local BLACKLIST = {
+    "dzi","auto flag","hub","players","win","tham gia","cua hang",
+    "kho do","troll","hang ngay","goi y","tiet lo","phan hoi",
+    "lan thang","chuoi thang","tien mat","bao cao","nguoi moi",
+    "x2","2x","bat dau","de ","kho ","trung binh",
+}
 
+-- Lưu 4 lựa chọn đang hiện (raw text của 4 button trong game)
+local lastHintList = {}
+
+local function scanGUI()
     local allTexts = {}
     local function collect(obj)
         if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
@@ -434,27 +667,60 @@ local function scanGUI()
         if g.Name ~= "DziAutoFlag" then collect(g) end
     end
 
+    -- Tìm 4 lựa chọn (matched với ANSWER_MAP)
     local matched = {}
+    local seen = {}
     for _, c in ipairs(allTexts) do
         local m = tryMatch(c.norm)
-        if m then
+        if m and not seen[m] then
+            seen[m] = true
             matched[#matched+1] = {mapped=m, raw=c.text}
         end
     end
 
+    -- Cập nhật hint buttons nếu danh sách thay đổi
     if #matched >= 1 then
         myTurn = true
-        local best = matched[1].mapped
-        if currentFlag ~= best then
-            currentFlag = best
-            setAnswer("✔ " .. currentFlag, true)
+
+        -- Lấy tên mapped (VN) để hiện nút
+        local newList = {}
+        for _, v in ipairs(matched) do
+            newList[#newList+1] = v.mapped
+            if #newList >= 4 then break end
         end
-    else
-        if myTurn then
-            myTurn = false
-            currentFlag = nil
+
+        -- Check xem list có thay đổi không
+        local changed = (#newList ~= #lastHintList)
+        if not changed then
+            for i, v in ipairs(newList) do
+                if v ~= lastHintList[i] then changed = true; break end
+            end
         end
-        if #allTexts == 0 then
+        if changed then
+            lastHintList = newList
+            updateHintButtons(newList)
+        end
+
+        -- Không setAnswer nữa - để người chơi tự xem cờ rồi đoán
+        -- (nếu muốn vẫn hiện đáp án thì bỏ comment dòng dưới)
+        -- setAnswer("👀 Xem cờ bên dưới", false)
+
+    elseif myTurn then
+        myTurn = false
+        currentFlag = nil
+        lastHintList = {}
+        updateHintButtons({})
+        AnsLbl.Text = "⏳ Lượt đối thủ..."
+        AnsLbl.TextColor3 = Color3.fromRGB(255, 165, 0)
+        ABS.Color = Color3.fromRGB(150, 90, 0)
+    elseif not myTurn and currentFlag == nil then
+        local hasGameText = false
+        for _, c in ipairs(allTexts) do
+            if c.norm:find("nguoi moi",1,true) or c.norm:find("tham gia",1,true) or c.norm:find("bat dau",1,true) then
+                hasGameText = true; break
+            end
+        end
+        if hasGameText or #allTexts == 0 then
             AnsLbl.Text = "⏳ Chờ vào bàn..."
             AnsLbl.TextColor3 = Color3.fromRGB(150, 150, 150)
             ABS.Color = Color3.fromRGB(80, 80, 80)
