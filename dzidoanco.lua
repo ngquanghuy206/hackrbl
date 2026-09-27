@@ -392,26 +392,38 @@ pcall(scanValues)
 
 local myTurn = false
 
+local function tryMatch(n)
+    if ANSWER_MAP[n] then return ANSWER_MAP[n] end
+    local stripped = n:gsub("^nuoc ", ""):gsub("^nuoc$","")
+    if ANSWER_MAP[stripped] then return ANSWER_MAP[stripped] end
+    for k, v in pairs(ANSWER_MAP) do
+        if n == k then return v end
+        if stripped == k then return v end
+        if #k >= 3 and (n:find(k,1,true) or stripped:find(k,1,true)) then return v end
+    end
+    return nil
+end
+
 local function scanGUI()
     local BLACKLIST = {
-        ["dzi"] = true, ["script"] = true, ["hub"] = true,
-        ["$"] = true, ["players"] = true, ["goi y"] = true,
-        ["tiet lo"] = true, ["de"] = true, ["kho"] = true,
-        ["trung binh"] = true, ["diem"] = true, ["tim"] = true,
+        "dzi","auto flag","hub","players","win","tham gia","cua hang",
+        "kho do","troll","hang ngay","goi y","tiet lo","phan hoi",
+        "lan thang","chuoi thang","tien mat","bao cao","nguoi moi",
+        "x2","2x","bat dau","de ","kho ","trung binh",
     }
 
-    local candidates = {}
+    local allTexts = {}
     local function collect(obj)
         if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
             local t = obj.Text
-            if t and #t >= 2 and #t <= 50 then
+            if t and #t >= 2 and #t <= 60 then
                 local n = norm(t)
                 local skip = false
-                for bad in pairs(BLACKLIST) do
+                for _, bad in ipairs(BLACKLIST) do
                     if n:find(bad, 1, true) then skip = true; break end
                 end
-                if not skip and not n:match("^%d") then
-                    candidates[#candidates+1] = {text=t, norm=n, obj=obj}
+                if not skip and not n:match("^[%d%$]") and not n:match("^%s*$") then
+                    allTexts[#allTexts+1] = {text=t, norm=n}
                 end
             end
         end
@@ -422,37 +434,31 @@ local function scanGUI()
         if g.Name ~= "DziAutoFlag" then collect(g) end
     end
 
-    local counts = {}
-    for _, c in ipairs(candidates) do
-        counts[c.norm] = (counts[c.norm] or 0) + 1
-    end
-
-    local choices = {}
-    for _, c in ipairs(candidates) do
-        if counts[c.norm] == 1 then
-            if ANSWER_MAP[c.norm] then
-                choices[#choices+1] = {mapped=ANSWER_MAP[c.norm], raw=c.text}
-            else
-                for k, v in pairs(ANSWER_MAP) do
-                    if c.norm == k then
-                        choices[#choices+1] = {mapped=v, raw=c.text}
-                        break
-                    end
-                end
-            end
+    local matched = {}
+    for _, c in ipairs(allTexts) do
+        local m = tryMatch(c.norm)
+        if m then
+            matched[#matched+1] = {mapped=m, raw=c.text}
         end
     end
 
-    if #choices == 1 then
+    if #matched >= 1 then
         myTurn = true
-        if currentFlag ~= choices[1].mapped then
-            currentFlag = choices[1].mapped
+        local best = matched[1].mapped
+        if currentFlag ~= best then
+            currentFlag = best
             setAnswer("✔ " .. currentFlag, true)
         end
-    elseif #choices == 0 then
+    else
         if myTurn then
             myTurn = false
             currentFlag = nil
+        end
+        if #allTexts == 0 then
+            AnsLbl.Text = "⏳ Chờ vào bàn..."
+            AnsLbl.TextColor3 = Color3.fromRGB(150, 150, 150)
+            ABS.Color = Color3.fromRGB(80, 80, 80)
+        else
             AnsLbl.Text = "⏳ Lượt đối thủ..."
             AnsLbl.TextColor3 = Color3.fromRGB(255, 165, 0)
             ABS.Color = Color3.fromRGB(150, 90, 0)
