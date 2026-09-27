@@ -10,132 +10,389 @@ local placeId = game.PlaceId
 -- ==================== ISO CODE MAP (tên hiển thị → ISO) ====================
 -- Dùng flagcdn.com: https://flagcdn.com/w160/vn.png
 local COUNTRY_ISO = {
-    ["Việt Nam"]="vn",["Thái Lan"]="th",["Hàn Quốc"]="kr",["Trung Quốc"]="cn",
-    ["Nhật Bản"]="jp",["Thụy Điển"]="se",["Thụy Sĩ"]="ch",["Tây Ban Nha"]="es",
-    ["Bồ Đào Nha"]="pt",["Hà Lan"]="nl",["Đan Mạch"]="dk",["Phần Lan"]="fi",
-    ["Na Uy"]="no",["Ba Lan"]="pl",["Hy Lạp"]="gr",["Ai Cập"]="eg",
-    ["Ấn Độ"]="in",["Ả Rập Xê Út"]="sa",["Nam Phi"]="za",["Nam Sudan"]="ss",
-    ["Bắc Triều Tiên"]="kp",["Hoa Kỳ"]="us",["Anh"]="gb",["Pháp"]="fr",
-    ["Đức"]="de",["Nga"]="ru",["Bỉ"]="be",["Áo"]="at",["Séc"]="cz",
-    ["Síp"]="cy",["Úc"]="au",["Ý"]="it",["Đài Loan"]="tw",["Mông Cổ"]="mn",
-    ["Thổ Nhĩ Kỳ"]="tr",["Cộng Hòa Dominican"]="do",["Philippines"]="ph",
-    ["Indonesia"]="id",["Malaysia"]="my",["Singapore"]="sg",["Myanmar"]="mm",
-    ["Campuchia"]="kh",["Lào"]="la",["Brunei"]="bn",["Timor-Leste"]="tl",
-    ["Pakistan"]="pk",["Bangladesh"]="bd",["Sri Lanka"]="lk",["Nepal"]="np",
-    ["Bhutan"]="bt",["Maldives"]="mv",["Afghanistan"]="af",["Kazakhstan"]="kz",
-    ["Uzbekistan"]="uz",["Turkmenistan"]="tm",["Kyrgyzstan"]="kg",["Tajikistan"]="tj",
-    ["Iran"]="ir",["Iraq"]="iq",["Syria"]="sy",["Jordan"]="jo",["Lebanon"]="lb",
-    ["Israel"]="il",["Palestine"]="ps",["Yemen"]="ye",["Oman"]="om",["UAE"]="ae",
-    ["Qatar"]="qa",["Bahrain"]="bh",["Kuwait"]="kw",["Azerbaijan"]="az",
-    ["Armenia"]="am",["Georgia"]="ge",["Luxembourg"]="lu",["Liechtenstein"]="li",
-    ["Monaco"]="mc",["Ireland"]="ie",["Iceland"]="is",["Estonia"]="ee",
-    ["Latvia"]="lv",["Lithuania"]="lt",["Slovakia"]="sk",["Hungary"]="hu",
-    ["Romania"]="ro",["Bulgaria"]="bg",["Serbia"]="rs",["Croatia"]="hr",
-    ["Slovenia"]="si",["Bosnia"]="ba",["Montenegro"]="me",["Albania"]="al",
-    ["Macedonia"]="mk",["Ukraine"]="ua",["Belarus"]="by",["Moldova"]="md",
-    ["Malta"]="mt",["Kosovo"]="xk",["Canada"]="ca",["Mexico"]="mx",
-    ["Guatemala"]="gt",["Belize"]="bz",["Honduras"]="hn",["El Salvador"]="sv",
-    ["Nicaragua"]="ni",["Costa Rica"]="cr",["Panama"]="pa",["Cuba"]="cu",
-    ["Jamaica"]="jm",["Haiti"]="ht",["Trinidad & Tobago"]="tt",["Barbados"]="bb",
-    ["Bahamas"]="bs",["Brazil"]="br",["Argentina"]="ar",["Colombia"]="co",
-    ["Venezuela"]="ve",["Peru"]="pe",["Chile"]="cl",["Bolivia"]="bo",
-    ["Ecuador"]="ec",["Paraguay"]="py",["Uruguay"]="uy",["Guyana"]="gy",
-    ["Suriname"]="sr",["Libya"]="ly",["Tunisia"]="tn",["Algeria"]="dz",
-    ["Morocco"]="ma",["Sudan"]="sd",["Nigeria"]="ng",["Ghana"]="gh",
-    ["Senegal"]="sn",["Côte d'Ivoire"]="ci",["Guinea"]="gn",["Mali"]="ml",
-    ["Burkina Faso"]="bf",["Niger"]="ne",["Togo"]="tg",["Benin"]="bj",
-    ["Cameroon"]="cm",["Gabon"]="ga",["Congo"]="cg",["DR Congo"]="cd",
-    ["Liberia"]="lr",["Sierra Leone"]="sl",["Kenya"]="ke",["Ethiopia"]="et",
-    ["Tanzania"]="tz",["Uganda"]="ug",["Rwanda"]="rw",["Somalia"]="so",
-    ["Mozambique"]="mz",["Zambia"]="zm",["Zimbabwe"]="zw",["Angola"]="ao",
-    ["Namibia"]="na",["Botswana"]="bw",["Lesotho"]="ls",["Madagascar"]="mg",
-    ["Mauritius"]="mu",["Seychelles"]="sc",["New Zealand"]="nz",
-    ["Papua New Guinea"]="pg",["Fiji"]="fj",["Solomon Islands"]="sb",
-    ["Vanuatu"]="vu",["Samoa"]="ws",["Tonga"]="to",
-    -- Thêm nước hay xuất hiện trong game
-    ["Greenland"]="gl",["Grenada"]="gd",["Bermuda"]="bm",["Puerto Rico"]="pr",
-    ["Aruba"]="aw",["Curaçao"]="cw",["Martinique"]="mq",["Guadeloupe"]="gp",
-    ["Réunion"]="re",["Mayotte"]="yt",["Gibraltar"]="gi",["Andorra"]="ad",
-    ["San Marino"]="sm",["Vatican"]="va",["Faroe Islands"]="fo",
-    ["Cayman Islands"]="ky",["Turks and Caicos"]="tc",["Virgin Islands"]="vi",
-    ["Guam"]="gu",["Northern Mariana"]="mp",["American Samoa"]="as",
-    ["New Caledonia"]="nc",["French Polynesia"]="pf",["Palau"]="pw",
-    ["Micronesia"]="fm",["Marshall Islands"]="mh",["Kiribati"]="ki",["Nauru"]="nr",
-    ["Tuvalu"]="tv",["Djibouti"]="dj",["Eritrea"]="er",["Comoros"]="km",
-    ["Cape Verde"]="cv",["São Tomé and Príncipe"]="st",["Equatorial Guinea"]="gq",
-    ["Central African Republic"]="cf",["South Sudan"]="ss",["Eswatini"]="sz",
-    ["Malawi"]="mw",["Burundi"]="bi",["Chad"]="td",["Gambia"]="gm",
-    ["Guinea-Bissau"]="gw",["Cabo Verde"]="cv",["Mauritania"]="mr",
-    ["Western Sahara"]="eh",["Libya"]="ly",
+    -- ===== ĐÔNG NAM Á =====
+    ["Việt Nam"]="vn",["Thái Lan"]="th",["Philippines"]="ph",
+    ["Indonesia"]="id",["Malaysia"]="my",["Singapore"]="sg",
+    ["Myanmar"]="mm",["Campuchia"]="kh",["Lào"]="la",
+    ["Brunei"]="bn",["Timor-Leste"]="tl",
+    -- ===== ĐÔNG Á =====
+    ["Hàn Quốc"]="kr",["Trung Quốc"]="cn",["Nhật Bản"]="jp",
+    ["Đài Loan"]="tw",["Mông Cổ"]="mn",["Bắc Triều Tiên"]="kp",
+    ["Hồng Kông"]="hk",["Ma Cao"]="mo",
+    -- ===== NAM Á =====
+    ["Ấn Độ"]="in",["Pakistan"]="pk",["Bangladesh"]="bd",
+    ["Sri Lanka"]="lk",["Nepal"]="np",["Bhutan"]="bt",
+    ["Maldives"]="mv",["Afghanistan"]="af",
+    -- ===== TRUNG Á =====
+    ["Kazakhstan"]="kz",["Uzbekistan"]="uz",["Turkmenistan"]="tm",
+    ["Kyrgyzstan"]="kg",["Tajikistan"]="tj",
+    -- ===== TRUNG ĐÔNG =====
+    ["Iran"]="ir",["Iraq"]="iq",["Syria"]="sy",["Jordan"]="jo",
+    ["Lebanon"]="lb",["Israel"]="il",["Palestine"]="ps",
+    ["Yemen"]="ye",["Oman"]="om",["Ả Rập Xê Út"]="sa",
+    ["Các Tiểu Vương Quốc Ả Rập"]="ae",["Qatar"]="qa",
+    ["Bahrain"]="bh",["Kuwait"]="kw",["Azerbaijan"]="az",
+    ["Armenia"]="am",["Georgia"]="ge",
+    -- ===== CHÂU ÂU TÂY =====
+    ["Anh"]="gb",["Pháp"]="fr",["Đức"]="de",["Ý"]="it",
+    ["Tây Ban Nha"]="es",["Bồ Đào Nha"]="pt",["Hà Lan"]="nl",
+    ["Bỉ"]="be",["Áo"]="at",["Thụy Sĩ"]="ch",
+    ["Luxembourg"]="lu",["Liechtenstein"]="li",["Monaco"]="mc",
+    ["Andorra"]="ad",["San Marino"]="sm",["Vatican"]="va",
+    ["Malta"]="mt",["Ireland"]="ie",["Gibraltar"]="gi",
+    -- ===== CHÂU ÂU BẮC =====
+    ["Thụy Điển"]="se",["Đan Mạch"]="dk",["Phần Lan"]="fi",
+    ["Na Uy"]="no",["Iceland"]="is",
+    ["Quần Đảo Faroe"]="fo",["Greenland"]="gl",
+    -- ===== CHÂU ÂU ĐÔNG =====
+    ["Nga"]="ru",["Ba Lan"]="pl",["Séc"]="cz",["Slovakia"]="sk",
+    ["Hungary"]="hu",["Romania"]="ro",["Bulgaria"]="bg",
+    ["Ukraine"]="ua",["Belarus"]="by",["Moldova"]="md",
+    ["Estonia"]="ee",["Latvia"]="lv",["Lithuania"]="lt",
+    -- ===== BALKAN =====
+    ["Hy Lạp"]="gr",["Thổ Nhĩ Kỳ"]="tr",["Síp"]="cy",
+    ["Serbia"]="rs",["Croatia"]="hr",["Slovenia"]="si",
+    ["Bosnia"]="ba",["Montenegro"]="me",["Albania"]="al",
+    ["Bắc Macedonia"]="mk",["Kosovo"]="xk",
+    -- ===== BẮC MỸ =====
+    ["Hoa Kỳ"]="us",["Canada"]="ca",["Mexico"]="mx",
+    -- ===== TRUNG MỸ =====
+    ["Guatemala"]="gt",["Belize"]="bz",["Honduras"]="hn",
+    ["El Salvador"]="sv",["Nicaragua"]="ni",
+    ["Costa Rica"]="cr",["Panama"]="pa",
+    -- ===== CARIBBEAN =====
+    ["Cuba"]="cu",["Jamaica"]="jm",["Haiti"]="ht",
+    ["Cộng Hòa Dominican"]="do",["Trinidad & Tobago"]="tt",
+    ["Barbados"]="bb",["Bahamas"]="bs",["Grenada"]="gd",
+    ["Dominica"]="dm",["Saint Lucia"]="lc",
+    ["Saint Vincent & Grenadines"]="vc",
+    ["Antigua & Barbuda"]="ag",["Saint Kitts & Nevis"]="kn",
+    ["Puerto Rico"]="pr",["Bermuda"]="bm",
+    ["Quần Đảo Cayman"]="ky",["Turks & Caicos"]="tc",
+    ["Quần Đảo Virgin Mỹ"]="vi",["Quần Đảo Virgin Anh"]="vg",
+    ["Aruba"]="aw",["Curazao"]="cw",["Martinique"]="mq",
+    ["Guadeloupe"]="gp",["Sint Maarten"]="sx",
+    ["Anguilla"]="ai",["Montserrat"]="ms",
+    -- ===== NAM MỸ =====
+    ["Brazil"]="br",["Argentina"]="ar",["Colombia"]="co",
+    ["Venezuela"]="ve",["Peru"]="pe",["Chile"]="cl",
+    ["Bolivia"]="bo",["Ecuador"]="ec",["Paraguay"]="py",
+    ["Uruguay"]="uy",["Guyana"]="gy",["Suriname"]="sr",
+    ["Guiana Thuộc Pháp"]="gf",["Quần Đảo Falkland"]="fk",
+    -- ===== CHÂU PHI BẮC =====
+    ["Ai Cập"]="eg",["Libya"]="ly",["Tunisia"]="tn",
+    ["Algeria"]="dz",["Morocco"]="ma",["Sudan"]="sd",
+    ["Mauritania"]="mr",["Tây Sahara"]="eh",
+    -- ===== CHÂU PHI TÂY =====
+    ["Nigeria"]="ng",["Ghana"]="gh",["Senegal"]="sn",
+    ["Bờ Biển Ngà"]="ci",["Guinea"]="gn",["Mali"]="ml",
+    ["Burkina Faso"]="bf",["Niger"]="ne",["Togo"]="tg",
+    ["Benin"]="bj",["Liberia"]="lr",["Sierra Leone"]="sl",
+    ["Guinea-Bissau"]="gw",["Gambia"]="gm",["Cabo Verde"]="cv",
+    -- ===== CHÂU PHI TRUNG =====
+    ["Cameroon"]="cm",["Gabon"]="ga",["Congo"]="cg",
+    ["Cộng Hòa Dân Chủ Congo"]="cd",["Cộng Hòa Trung Phi"]="cf",
+    ["Guinea Xích Đạo"]="gq",["Sao Tome & Principe"]="st",
+    ["Chad"]="td",["Angola"]="ao",
+    -- ===== CHÂU PHI ĐÔNG =====
+    ["Kenya"]="ke",["Ethiopia"]="et",["Tanzania"]="tz",
+    ["Uganda"]="ug",["Rwanda"]="rw",["Somalia"]="so",
+    ["Djibouti"]="dj",["Eritrea"]="er",["Burundi"]="bi",
+    ["Nam Sudan"]="ss",["Comoros"]="km",["Seychelles"]="sc",
+    ["Mauritius"]="mu",["Madagascar"]="mg",["Mozambique"]="mz",
+    ["Reunion"]="re",["Mayotte"]="yt",
+    -- ===== CHÂU PHI NAM =====
+    ["Nam Phi"]="za",["Zambia"]="zm",["Zimbabwe"]="zw",
+    ["Namibia"]="na",["Botswana"]="bw",["Lesotho"]="ls",
+    ["Eswatini"]="sz",["Malawi"]="mw",
+    -- ===== CHÂU ĐẠI DƯƠNG =====
+    ["Úc"]="au",["New Zealand"]="nz",["Papua New Guinea"]="pg",
+    ["Fiji"]="fj",["Solomon Islands"]="sb",["Vanuatu"]="vu",
+    ["Samoa"]="ws",["Tonga"]="to",["Palau"]="pw",
+    ["Micronesia"]="fm",["Marshall Islands"]="mh",
+    ["Kiribati"]="ki",["Nauru"]="nr",["Tuvalu"]="tv",
+    ["New Caledonia"]="nc",["French Polynesia"]="pf",
+    ["Guam"]="gu",["American Samoa"]="as",
+    ["Northern Mariana"]="mp",["Cook Islands"]="ck",
+    ["Niue"]="nu",["Tokelau"]="tk",["Wallis & Futuna"]="wf",
+    ["Pitcairn"]="pn",
+    -- ===== VÙNG LÃNH THỔ CÒN LẠI =====
+    ["Aland Islands"]="ax",["Svalbard"]="sj",
+    ["Jersey"]="je",["Guernsey"]="gg",["Isle of Man"]="im",
+    ["Saint Pierre & Miquelon"]="pm",
+    ["Cocos Islands"]="cc",["Christmas Island"]="cx",
+    ["Norfolk Island"]="nf",["Saint Helena"]="sh",
 }
 
 -- ==================== ANSWER MAP (text trong game → tên chuẩn) ====================
 local ANSWER_MAP = {}
--- Build từ COUNTRY_ISO keys + thêm alias
 local ALIASES = {
-    -- VN names
-    ["viet nam"]="Việt Nam",["thailand"]="Thái Lan",["thai lan"]="Thái Lan",
-    ["han quoc"]="Hàn Quốc",["south korea"]="Hàn Quốc",["korea"]="Hàn Quốc",
-    ["trung quoc"]="Trung Quốc",["china"]="Trung Quốc",
-    ["nhat ban"]="Nhật Bản",["japan"]="Nhật Bản",
-    ["thuy dien"]="Thụy Điển",["sweden"]="Thụy Điển",
-    ["thuy si"]="Thụy Sĩ",["switzerland"]="Thụy Sĩ",
-    ["tay ban nha"]="Tây Ban Nha",["spain"]="Tây Ban Nha",
+    -- ===== ĐÔNG NAM Á =====
+    ["viet nam"]="Việt Nam",["nuoc viet"]="Việt Nam",["vietnam"]="Việt Nam",
+    ["thai lan"]="Thái Lan",["thailand"]="Thái Lan",["nuoc thai"]="Thái Lan",
+    ["philippines"]="Philippines",["phi luat tan"]="Philippines",
+    ["indonesia"]="Indonesia",["in do ne sia"]="Indonesia",
+    ["malaysia"]="Malaysia",["ma lai"]="Malaysia",["ma lai a"]="Malaysia",
+    ["singapore"]="Singapore",
+    ["myanmar"]="Myanmar",["mien dien"]="Myanmar",["burma"]="Myanmar",
+    ["campuchia"]="Campuchia",["cambodia"]="Campuchia",["khmer"]="Campuchia",
+    ["lao"]="Lào",["laos"]="Lào",["nuoc lao"]="Lào",
+    ["brunei"]="Brunei",
+    ["timor leste"]="Timor-Leste",["dong timor"]="Timor-Leste",["east timor"]="Timor-Leste",
+    -- ===== ĐÔNG Á =====
+    ["han quoc"]="Hàn Quốc",["south korea"]="Hàn Quốc",["korea"]="Hàn Quốc",["nuoc han"]="Hàn Quốc",
+    ["trung quoc"]="Trung Quốc",["china"]="Trung Quốc",["tau"]="Trung Quốc",["nuoc tau"]="Trung Quốc",
+    ["nhat ban"]="Nhật Bản",["japan"]="Nhật Bản",["nuoc nhat"]="Nhật Bản",
+    ["dai loan"]="Đài Loan",["taiwan"]="Đài Loan",["tai wan"]="Đài Loan",
+    ["mong co"]="Mông Cổ",["mongolia"]="Mông Cổ",
+    ["bac trieu tien"]="Bắc Triều Tiên",["north korea"]="Bắc Triều Tiên",["trieu tien"]="Bắc Triều Tiên",
+    ["hong kong"]="Hồng Kông",["hk"]="Hồng Kông",["nuoc hong kong"]="Hồng Kông",
+    ["ma cao"]="Ma Cao",["macao"]="Ma Cao",["macau"]="Ma Cao",
+    -- ===== NAM Á =====
+    ["an do"]="Ấn Độ",["india"]="Ấn Độ",["nuoc an do"]="Ấn Độ",
+    ["pakistan"]="Pakistan",["pa ki xtan"]="Pakistan",
+    ["bangladesh"]="Bangladesh",["bang la det"]="Bangladesh",
+    ["sri lanka"]="Sri Lanka",["xi lan"]="Sri Lanka",
+    ["nepal"]="Nepal",["ne pan"]="Nepal",
+    ["bhutan"]="Bhutan",["bu tan"]="Bhutan",
+    ["maldives"]="Maldives",["mal div"]="Maldives",
+    ["afghanistan"]="Afghanistan",["a phu han"]="Afghanistan",
+    -- ===== TRUNG Á =====
+    ["kazakhstan"]="Kazakhstan",["cac xu tan"]="Kazakhstan",
+    ["uzbekistan"]="Uzbekistan",["u be ki xtan"]="Uzbekistan",
+    ["turkmenistan"]="Turkmenistan",["tuoc me ni xtan"]="Turkmenistan",
+    ["kyrgyzstan"]="Kyrgyzstan",["cur ghi xtan"]="Kyrgyzstan",
+    ["tajikistan"]="Tajikistan",["ta gich xtan"]="Tajikistan",
+    -- ===== TRUNG ĐÔNG =====
+    ["iran"]="Iran",["ba tu"]="Iran",["persia"]="Iran",
+    ["iraq"]="Iraq",["i rac"]="Iraq",
+    ["syria"]="Syria",["xi ri a"]="Syria",
+    ["jordan"]="Jordan",["gior dan"]="Jordan",
+    ["lebanon"]="Lebanon",["li bang"]="Lebanon",
+    ["israel"]="Israel",["it xa ra en"]="Israel",
+    ["palestine"]="Palestine",["pa le xtin"]="Palestine",
+    ["yemen"]="Yemen",["ye men"]="Yemen",
+    ["oman"]="Oman",["o man"]="Oman",
+    ["a rap xe ut"]="Ả Rập Xê Út",["saudi arabia"]="Ả Rập Xê Út",["saudi"]="Ả Rập Xê Út",
+    ["cac tieu vuong quoc a rap"]="Các Tiểu Vương Quốc Ả Rập",
+    ["cac tieu vuong quoc"]="Các Tiểu Vương Quốc Ả Rập",
+    ["tieu vuong quoc a rap"]="Các Tiểu Vương Quốc Ả Rập",
+    ["uae"]="Các Tiểu Vương Quốc Ả Rập",["united arab emirates"]="Các Tiểu Vương Quốc Ả Rập",
+    ["emirates"]="Các Tiểu Vương Quốc Ả Rập",
+    ["qatar"]="Qatar",["ca ta"]="Qatar",
+    ["bahrain"]="Bahrain",["ba ren"]="Bahrain",
+    ["kuwait"]="Kuwait",["coi oet"]="Kuwait",
+    ["azerbaijan"]="Azerbaijan",["a dec bai gian"]="Azerbaijan",
+    ["armenia"]="Armenia",["ac me ni a"]="Armenia",
+    ["georgia"]="Georgia",["gru zia"]="Georgia",
+    -- ===== CHÂU ÂU TÂY =====
+    ["anh"]="Anh",["vuong quoc anh"]="Anh",["uk"]="Anh",["united kingdom"]="Anh",["england"]="Anh",["britain"]="Anh",["nuoc anh"]="Anh",
+    ["phap"]="Pháp",["nuoc phap"]="Pháp",["france"]="Pháp",
+    ["duc"]="Đức",["nuoc duc"]="Đức",["germany"]="Đức",
+    ["y"]="Ý",["nuoc y"]="Ý",["italy"]="Ý",
+    ["tay ban nha"]="Tây Ban Nha",["spain"]="Tây Ban Nha",["espana"]="Tây Ban Nha",
     ["bo dao nha"]="Bồ Đào Nha",["portugal"]="Bồ Đào Nha",
-    ["ha lan"]="Hà Lan",["netherlands"]="Hà Lan",["holland"]="Hà Lan",
+    ["ha lan"]="Hà Lan",["netherlands"]="Hà Lan",["holland"]="Hà Lan",["nuoc ha lan"]="Hà Lan",
+    ["bi"]="Bỉ",["nuoc bi"]="Bỉ",["belgium"]="Bỉ",
+    ["ao"]="Áo",["nuoc ao"]="Áo",["austria"]="Áo",
+    ["thuy si"]="Thụy Sĩ",["switzerland"]="Thụy Sĩ",
+    ["luc xam bua"]="Luxembourg",["luxembourg"]="Luxembourg",
+    ["liechtenstein"]="Liechtenstein",
+    ["monaco"]="Monaco",
+    ["andorra"]="Andorra",
+    ["san marino"]="San Marino",
+    ["vatican"]="Vatican",["toa thanh vatican"]="Vatican",
+    ["malta"]="Malta",["man ta"]="Malta",
+    ["ireland"]="Ireland",["ai len"]="Ireland",
+    ["gibraltar"]="Gibraltar",
+    -- ===== CHÂU ÂU BẮC =====
+    ["thuy dien"]="Thụy Điển",["sweden"]="Thụy Điển",
     ["dan mach"]="Đan Mạch",["denmark"]="Đan Mạch",
     ["phan lan"]="Phần Lan",["finland"]="Phần Lan",
     ["na uy"]="Na Uy",["norway"]="Na Uy",
+    ["iceland"]="Iceland",["ai xo len"]="Iceland",
+    ["quan dao faroe"]="Quần Đảo Faroe",["faroe"]="Quần Đảo Faroe",["faroe islands"]="Quần Đảo Faroe",
+    ["greenland"]="Greenland",["dat xanh"]="Greenland",
+    -- ===== CHÂU ÂU ĐÔNG =====
+    ["nga"]="Nga",["nuoc nga"]="Nga",["russia"]="Nga",
     ["ba lan"]="Ba Lan",["poland"]="Ba Lan",
+    ["sec"]="Séc",["czech"]="Séc",["czechia"]="Séc",["czech republic"]="Séc",["cong hoa sec"]="Séc",
+    ["slovakia"]="Slovakia",["xlo va kia"]="Slovakia",
+    ["hungary"]="Hungary",["hung ga ri"]="Hungary",
+    ["romania"]="Romania",["ru ma ni"]="Romania",
+    ["bulgaria"]="Bulgaria",["bun ga ri"]="Bulgaria",
+    ["ukraine"]="Ukraine",["u crai na"]="Ukraine",
+    ["belarus"]="Belarus",["be la rut"]="Belarus",
+    ["moldova"]="Moldova",["mo l do va"]="Moldova",
+    ["estonia"]="Estonia",["ex to ni a"]="Estonia",
+    ["latvia"]="Latvia",["lat vi a"]="Latvia",
+    ["lithuania"]="Lithuania",["lit va"]="Lithuania",
+    -- ===== BALKAN =====
     ["hy lap"]="Hy Lạp",["greece"]="Hy Lạp",
-    ["ai cap"]="Ai Cập",["egypt"]="Ai Cập",
-    ["an do"]="Ấn Độ",["india"]="Ấn Độ",
-    ["a rap xe ut"]="Ả Rập Xê Út",["saudi arabia"]="Ả Rập Xê Út",
-    ["nam phi"]="Nam Phi",["south africa"]="Nam Phi",
-    ["nam sudan"]="Nam Sudan",["south sudan"]="Nam Sudan",
-    ["bac trieu tien"]="Bắc Triều Tiên",["north korea"]="Bắc Triều Tiên",
-    ["hoa ky"]="Hoa Kỳ",["usa"]="Hoa Kỳ",["united states"]="Hoa Kỳ",
-    ["vuong quoc anh"]="Anh",["uk"]="Anh",["united kingdom"]="Anh",["anh"]="Anh",
-    ["phap"]="Pháp",["france"]="Pháp",
-    ["duc"]="Đức",["germany"]="Đức",
-    ["nga"]="Nga",["russia"]="Nga",
-    ["bi"]="Bỉ",["belgium"]="Bỉ",
-    ["ao"]="Áo",["austria"]="Áo",
-    ["sec"]="Séc",["czech"]="Séc",["czechia"]="Séc",
-    ["sip"]="Síp",["cyprus"]="Síp",
-    ["uc"]="Úc",["nuoc uc"]="Úc",["australia"]="Úc",
-    ["y"]="Ý",["italy"]="Ý",
-    ["dai loan"]="Đài Loan",["taiwan"]="Đài Loan",
-    ["mong co"]="Mông Cổ",["mongolia"]="Mông Cổ",
     ["tho nhi ky"]="Thổ Nhĩ Kỳ",["turkey"]="Thổ Nhĩ Kỳ",["turkiye"]="Thổ Nhĩ Kỳ",
-    ["cong hoa dominican"]="Cộng Hòa Dominican",["dominican republic"]="Cộng Hòa Dominican",
-    ["campuchia"]="Campuchia",["cambodia"]="Campuchia",
-    ["lao"]="Lào",["laos"]="Lào",
-    ["uae"]="UAE",["united arab emirates"]="UAE",
-    ["ivory coast"]="Côte d'Ivoire",
-    ["dr congo"]="DR Congo",
-    ["sierra leone"]="Sierra Leone",
-    ["new zealand"]="New Zealand",
-    ["papua new guinea"]="Papua New Guinea",
-    ["solomon islands"]="Solomon Islands",
-    ["costa rica"]="Costa Rica",
+    ["sip"]="Síp",["cyprus"]="Síp",
+    ["serbia"]="Serbia",["ser bi a"]="Serbia",
+    ["croatia"]="Croatia",["croa ti a"]="Croatia",
+    ["slovenia"]="Slovenia",["xlo ve nia"]="Slovenia",
+    ["bosnia"]="Bosnia",["bosna"]="Bosnia",["bosnia and herzegovina"]="Bosnia",["bosnia herzegovina"]="Bosnia",
+    ["montenegro"]="Montenegro",["mon te ne gro"]="Montenegro",
+    ["albania"]="Albania",["al ba ni"]="Albania",
+    ["bac macedonia"]="Bắc Macedonia",["north macedonia"]="Bắc Macedonia",["macedonia"]="Bắc Macedonia",
+    ["kosovo"]="Kosovo",
+    -- ===== BẮC MỸ =====
+    ["hoa ky"]="Hoa Kỳ",["usa"]="Hoa Kỳ",["united states"]="Hoa Kỳ",["my"]="Hoa Kỳ",["nuoc my"]="Hoa Kỳ",["america"]="Hoa Kỳ",["us"]="Hoa Kỳ",
+    ["canada"]="Canada",["ca na da"]="Canada",
+    ["mexico"]="Mexico",["me hi co"]="Mexico",
+    -- ===== TRUNG MỸ =====
+    ["guatemala"]="Guatemala",
+    ["belize"]="Belize",
+    ["honduras"]="Honduras",
     ["el salvador"]="El Salvador",
+    ["nicaragua"]="Nicaragua",
+    ["costa rica"]="Costa Rica",
+    ["panama"]="Panama",
+    -- ===== CARIBBEAN =====
+    ["cuba"]="Cuba",
+    ["jamaica"]="Jamaica",
+    ["haiti"]="Haiti",
+    ["cong hoa dominican"]="Cộng Hòa Dominican",["dominican republic"]="Cộng Hòa Dominican",["dominican"]="Cộng Hòa Dominican",
+    ["trinidad"]="Trinidad & Tobago",["trinidad and tobago"]="Trinidad & Tobago",["trinidad tobago"]="Trinidad & Tobago",
+    ["barbados"]="Barbados",
+    ["bahamas"]="Bahamas",
+    ["grenada"]="Grenada",
+    ["dominica"]="Dominica",
+    ["saint lucia"]="Saint Lucia",
+    ["saint vincent"]="Saint Vincent & Grenadines",["saint vincent and the grenadines"]="Saint Vincent & Grenadines",
+    ["antigua"]="Antigua & Barbuda",["antigua and barbuda"]="Antigua & Barbuda",
+    ["saint kitts"]="Saint Kitts & Nevis",["saint kitts and nevis"]="Saint Kitts & Nevis",
+    ["puerto rico"]="Puerto Rico",
+    ["bermuda"]="Bermuda",
+    ["quan dao cayman"]="Quần Đảo Cayman",["cayman islands"]="Quần Đảo Cayman",["cayman"]="Quần Đảo Cayman",
+    ["turks caicos"]="Turks & Caicos",["turks and caicos"]="Turks & Caicos",
+    ["quan dao virgin my"]="Quần Đảo Virgin Mỹ",["us virgin islands"]="Quần Đảo Virgin Mỹ",["virgin islands"]="Quần Đảo Virgin Mỹ",
+    ["quan dao virgin anh"]="Quần Đảo Virgin Anh",["british virgin islands"]="Quần Đảo Virgin Anh",
+    ["aruba"]="Aruba",
+    ["curazao"]="Curazao",["curacao"]="Curazao",
+    ["martinique"]="Martinique",
+    ["guadeloupe"]="Guadeloupe",
+    ["sint maarten"]="Sint Maarten",
+    ["anguilla"]="Anguilla",
+    ["montserrat"]="Montserrat",
+    -- ===== NAM MỸ =====
+    ["brazil"]="Brazil",["bra xin"]="Brazil",["nuoc brazil"]="Brazil",
+    ["argentina"]="Argentina",["ac hen ti na"]="Argentina",
+    ["colombia"]="Colombia",["co lom bi a"]="Colombia",
+    ["venezuela"]="Venezuela",["ve ne zu e la"]="Venezuela",
+    ["peru"]="Peru",["pe ru"]="Peru",
+    ["chile"]="Chile",["chi le"]="Chile",
+    ["bolivia"]="Bolivia",["bo li vi a"]="Bolivia",
+    ["ecuador"]="Ecuador",["ec ua do"]="Ecuador",
+    ["paraguay"]="Paraguay",["pa ra guay"]="Paraguay",
+    ["uruguay"]="Uruguay",["u ru guay"]="Uruguay",
+    ["guyana"]="Guyana",
+    ["suriname"]="Suriname",["xu ri nam"]="Suriname",
+    ["guiana thuoc phap"]="Guiana Thuộc Pháp",["french guiana"]="Guiana Thuộc Pháp",
+    ["quan dao falkland"]="Quần Đảo Falkland",["falkland islands"]="Quần Đảo Falkland",["falkland"]="Quần Đảo Falkland",
+    -- ===== CHÂU PHI BẮC =====
+    ["ai cap"]="Ai Cập",["egypt"]="Ai Cập",["nuoc ai cap"]="Ai Cập",
+    ["libya"]="Libya",["li bi"]="Libya",
+    ["tunisia"]="Tunisia",["tu ni di"]="Tunisia",
+    ["algeria"]="Algeria",["an ge ri"]="Algeria",
+    ["morocco"]="Morocco",["ma roc"]="Morocco",
+    ["sudan"]="Sudan",
+    ["mauritania"]="Mauritania",["mau ri ta ni"]="Mauritania",
+    ["tay sahara"]="Tây Sahara",["western sahara"]="Tây Sahara",
+    -- ===== CHÂU PHI TÂY =====
+    ["nigeria"]="Nigeria",["ni ge ri a"]="Nigeria",
+    ["ghana"]="Ghana",
+    ["senegal"]="Senegal",["xe ne gan"]="Senegal",
+    ["bo bien nga"]="Bờ Biển Ngà",["ivory coast"]="Bờ Biển Ngà",["cote d ivoire"]="Bờ Biển Ngà",
+    ["guinea"]="Guinea",
+    ["mali"]="Mali",
     ["burkina faso"]="Burkina Faso",
-    ["trinidad"]="Trinidad & Tobago",["trinidad and tobago"]="Trinidad & Tobago",
-    ["sao tome"]="São Tomé and Príncipe",
-    ["equatorial guinea"]="Equatorial Guinea",
-    ["central african republic"]="Central African Republic",
+    ["niger"]="Niger",
+    ["togo"]="Togo",
+    ["benin"]="Benin",
+    ["liberia"]="Liberia",
+    ["sierra leone"]="Sierra Leone",
     ["guinea bissau"]="Guinea-Bissau",
-    ["cape verde"]="Cape Verde",["cabo verde"]="Cape Verde",
-    ["faroe islands"]="Faroe Islands",
-    ["cayman islands"]="Cayman Islands",
-    ["northern mariana"]="Northern Mariana",
-    ["american samoa"]="American Samoa",
-    ["new caledonia"]="New Caledonia",
-    ["french polynesia"]="French Polynesia",
-    ["marshall islands"]="Marshall Islands",
-    ["western sahara"]="Western Sahara",
+    ["gambia"]="Gambia",
+    ["cabo verde"]="Cabo Verde",["cape verde"]="Cabo Verde",
+    -- ===== CHÂU PHI TRUNG =====
+    ["cameroon"]="Cameroon",["ca me run"]="Cameroon",
+    ["gabon"]="Gabon",
+    ["congo"]="Congo",["congo brazzaville"]="Congo",["republic of the congo"]="Congo",
+    ["cong hoa dan chu congo"]="Cộng Hòa Dân Chủ Congo",["dr congo"]="Cộng Hòa Dân Chủ Congo",["democratic republic of the congo"]="Cộng Hòa Dân Chủ Congo",["drc"]="Cộng Hòa Dân Chủ Congo",["congo kinshasa"]="Cộng Hòa Dân Chủ Congo",["zaire"]="Cộng Hòa Dân Chủ Congo",
+    ["cong hoa trung phi"]="Cộng Hòa Trung Phi",["central african republic"]="Cộng Hòa Trung Phi",["car"]="Cộng Hòa Trung Phi",
+    ["guinea xich dao"]="Guinea Xích Đạo",["equatorial guinea"]="Guinea Xích Đạo",
+    ["sao tome"]="Sao Tome & Principe",["sao tome and principe"]="Sao Tome & Principe",
+    ["chad"]="Chad",
+    ["angola"]="Angola",
+    -- ===== CHÂU PHI ĐÔNG =====
+    ["kenya"]="Kenya",
+    ["ethiopia"]="Ethiopia",["e ti o pi a"]="Ethiopia",
+    ["tanzania"]="Tanzania",["tan za ni a"]="Tanzania",
+    ["uganda"]="Uganda",
+    ["rwanda"]="Rwanda",
+    ["somalia"]="Somalia",["xu ma li"]="Somalia",
+    ["djibouti"]="Djibouti",["gi bu ti"]="Djibouti",
+    ["eritrea"]="Eritrea",["e ri tre a"]="Eritrea",
+    ["burundi"]="Burundi",
+    ["nam sudan"]="Nam Sudan",["south sudan"]="Nam Sudan",
+    ["comoros"]="Comoros",["co mo"]="Comoros",
+    ["seychelles"]="Seychelles",["xe sel"]="Seychelles",
+    ["mauritius"]="Mauritius",["mau ri xo"]="Mauritius",
+    ["madagascar"]="Madagascar",["ma da ga xca"]="Madagascar",
+    ["mozambique"]="Mozambique",["mo dam bich"]="Mozambique",
+    ["reunion"]="Reunion",["re u niong"]="Reunion",
+    ["mayotte"]="Mayotte",
+    -- ===== CHÂU PHI NAM =====
+    ["nam phi"]="Nam Phi",["south africa"]="Nam Phi",["nuoc nam phi"]="Nam Phi",
+    ["zambia"]="Zambia",["dam bi a"]="Zambia",
+    ["zimbabwe"]="Zimbabwe",["dim ba bue"]="Zimbabwe",
+    ["namibia"]="Namibia",
+    ["botswana"]="Botswana",["bot xoa na"]="Botswana",
+    ["lesotho"]="Lesotho",["le xo to"]="Lesotho",
+    ["eswatini"]="Eswatini",["swaziland"]="Eswatini",
+    ["malawi"]="Malawi",
+    -- ===== CHÂU ĐẠI DƯƠNG =====
+    ["uc"]="Úc",["nuoc uc"]="Úc",["australia"]="Úc",
+    ["new zealand"]="New Zealand",["tan tay lan"]="New Zealand",
+    ["papua new guinea"]="Papua New Guinea",
+    ["fiji"]="Fiji",
+    ["solomon islands"]="Solomon Islands",["dao solomon"]="Solomon Islands",
+    ["vanuatu"]="Vanuatu",
+    ["samoa"]="Samoa",
+    ["tonga"]="Tonga",
+    ["palau"]="Palau",
+    ["micronesia"]="Micronesia",
+    ["marshall islands"]="Marshall Islands",["dao marshall"]="Marshall Islands",
+    ["kiribati"]="Kiribati",
+    ["nauru"]="Nauru",
+    ["tuvalu"]="Tuvalu",
+    ["new caledonia"]="New Caledonia",["tan caledonia"]="New Caledonia",
+    ["french polynesia"]="French Polynesia",["polynesia thuoc phap"]="French Polynesia",
+    ["guam"]="Guam",
+    ["american samoa"]="American Samoa",["samoa my"]="American Samoa",
+    ["northern mariana"]="Northern Mariana",["bac mariana"]="Northern Mariana",
+    ["cook islands"]="Cook Islands",["dao cook"]="Cook Islands",
+    ["niue"]="Niue",
+    ["tokelau"]="Tokelau",
+    ["wallis futuna"]="Wallis & Futuna",["wallis and futuna"]="Wallis & Futuna",
+    ["pitcairn"]="Pitcairn",
+    -- ===== VÙNG LÃNH THỔ KHÁC =====
+    ["aland islands"]="Aland Islands",["quan dao aland"]="Aland Islands",
+    ["svalbard"]="Svalbard",
+    ["jersey"]="Jersey",
+    ["guernsey"]="Guernsey",
+    ["isle of man"]="Isle of Man",["dao man"]="Isle of Man",
+    ["saint pierre miquelon"]="Saint Pierre & Miquelon",
+    ["cocos islands"]="Cocos Islands",["dao cocos"]="Cocos Islands",
+    ["christmas island"]="Christmas Island",["dao giang sinh"]="Christmas Island",
+    ["norfolk island"]="Norfolk Island",["dao norfolk"]="Norfolk Island",
+    ["saint helena"]="Saint Helena",
 }
+
 -- Merge ALIASES vào ANSWER_MAP
 for k,v in pairs(ALIASES) do ANSWER_MAP[k]=v end
 -- Thêm tất cả key trong COUNTRY_ISO theo lowercase (tên EN)
@@ -268,7 +525,7 @@ local function mkStroke(p,c,t) local s=Instance.new("UIStroke",p);s.Color=c;s.Th
 
 -- ==================== SCREEN GUI ====================
 local ScreenGui=Instance.new("ScreenGui")
-ScreenGui.Name="DziAutoFlag";ScreenGui.ResetOnSpawn=false
+ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent=player.PlayerGui
 
@@ -291,7 +548,7 @@ makeDrag(MenuPanel,TitleBar)
 
 local TitleLbl=Instance.new("TextLabel",TitleBar)
 TitleLbl.Size=UDim2.new(1,-50,1,0);TitleLbl.Position=UDim2.new(0,8,0,0)
-TitleLbl.BackgroundTransparency=1;TitleLbl.Text="🏴 DZI AUTO FLAG"
+TitleLbl.BackgroundTransparency=1;TitleLbl.Text="🏴 DZI ĐOÁN CỜ"
 TitleLbl.TextColor3=Color3.fromRGB(200,160,255);TitleLbl.TextSize=11
 TitleLbl.Font=Enum.Font.GothamBold
 TitleLbl.TextXAlignment=Enum.TextXAlignment.Left;TitleLbl.ZIndex=202
@@ -365,93 +622,112 @@ local function makeFlagViewer(parent, yOffset)
     return container,show,hide
 end
 
--- ==================== TAB: CỜ MẪU ====================
-local flagPage=makeTab("Cờ mẫu","🏳",1)
+-- ==================== TAB: ADMIN (Giới thiệu) ====================
+local flagPage=makeTab("Admin","👤",1)
+flagPage.Size=UDim2.new(1,-8,0,200)
 
-local searchBox=Instance.new("TextBox",flagPage)
-searchBox.Size=UDim2.new(1,0,0,26);searchBox.Position=UDim2.new(0,0,0,0)
-searchBox.BackgroundColor3=Color3.fromRGB(20,14,40);searchBox.BorderSizePixel=0
-searchBox.Text="";searchBox.PlaceholderText="🔍 Gõ tên nước..."
-searchBox.TextColor3=Color3.fromRGB(220,200,255)
-searchBox.PlaceholderColor3=Color3.fromRGB(100,90,140)
-searchBox.TextSize=11;searchBox.Font=Enum.Font.Gotham;searchBox.ZIndex=203
-mkCorner(searchBox,6)
-
--- Suggestion list
-local suggFrame=Instance.new("Frame",flagPage)
-suggFrame.Size=UDim2.new(1,0,0,0);suggFrame.Position=UDim2.new(0,0,0,30)
-suggFrame.BackgroundColor3=Color3.fromRGB(18,12,38);suggFrame.BorderSizePixel=0
-suggFrame.ZIndex=210;suggFrame.Visible=false;mkCorner(suggFrame,6)
-mkStroke(suggFrame,Color3.fromRGB(100,60,180),1)
-
-local SUGG_N=6
-local suggBtns={}
-for i=1,SUGG_N do
-    local sb=Instance.new("TextButton",suggFrame)
-    sb.Size=UDim2.new(1,-4,0,22);sb.Position=UDim2.new(0,2,0,(i-1)*23+2)
-    sb.BackgroundTransparency=1;sb.Text=""
-    sb.TextColor3=Color3.fromRGB(220,200,255);sb.TextSize=11
-    sb.Font=Enum.Font.Gotham;sb.ZIndex=211
-    sb.TextXAlignment=Enum.TextXAlignment.Left;suggBtns[i]=sb
+-- Thông tin admin
+local function mkInfoLbl(parent,text,y,h,tc,fs,align)
+    local l=Instance.new("TextLabel",parent)
+    l.Size=UDim2.new(1,0,0,h);l.Position=UDim2.new(0,0,0,y)
+    l.BackgroundTransparency=1;l.Text=text
+    l.TextColor3=tc or Color3.fromRGB(220,200,255)
+    l.TextSize=fs or 11;l.Font=Enum.Font.GothamBold
+    l.TextWrapped=true;l.ZIndex=203
+    l.TextXAlignment=align or Enum.TextXAlignment.Center
+    return l
 end
 
-local fvContainer,fvShow,fvHide=makeFlagViewer(flagPage,30)
-local suggVisible=false
+mkInfoLbl(flagPage,"👑 THÔNG TIN ADMIN",0,18,Color3.fromRGB(200,160,255),12)
+mkInfoLbl(flagPage,"Tên: Nguyễn Hoàng Khánh Nam",20,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,'Biệt danh: "dzi"',38,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,"Sinh: 30/05/2006",56,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,"Đến từ: Hà Đông, Hà Nội, Việt Nam",74,16,Color3.fromRGB(180,220,255),10)
 
-local function hideSugg()
-    suggVisible=false;suggFrame.Visible=false
+-- Đồng hồ live (giờ Việt Nam UTC+7)
+local clockLbl=mkInfoLbl(flagPage,"🕐 --:--:--  |  --/--/----",92,16,Color3.fromRGB(255,220,100),10)
+
+local function updateClock()
+    -- os.time() trả về UTC, cộng 7 tiếng = UTC+7
+    local t = os.time() + 7*3600
+    local sec  = t % 60
+    local min  = math.floor(t/60) % 60
+    local hour = math.floor(t/3600) % 24
+    local day  = math.floor(t/86400)
+    -- Tính ngày tháng năm từ epoch
+    local y,m,d = 1970,1,1
+    local dpm = {31,28,31,30,31,30,31,31,30,31,30,31}
+    local function isLeap(yr) return (yr%4==0 and yr%100~=0) or yr%400==0 end
+    while true do
+        local dy = isLeap(y) and 366 or 365
+        if day < dy then break end
+        day = day - dy; y = y+1
+    end
+    for i=1,12 do
+        local dm = dpm[i]; if i==2 and isLeap(y) then dm=29 end
+        if day < dm then m=i; d=day+1; break end
+        day=day-dm
+    end
+    clockLbl.Text=string.format("🕐 %02d:%02d:%02d  |  %02d/%02d/%04d",hour,min,sec,d,m,y)
 end
+updateClock()
 
-local function updateSugg(query)
-    local q=norm(query)
-    if #q<1 then hideSugg();return end
-    local results={};local seen={}
-    -- tìm trong COUNTRY_ISO keys
-    for name,_ in pairs(COUNTRY_ISO) do
-        local nname=norm(name)
-        if nname:find(q,1,true) and not seen[name] then
-            seen[name]=true;results[#results+1]=name
-        end
-        if #results>=SUGG_N then break end
+-- Chạy cập nhật đồng hồ mỗi giây
+task.spawn(function()
+    while flagPage.Parent do
+        task.wait(1)
+        pcall(updateClock)
     end
-    -- tìm thêm từ ALIASES nếu chưa đủ
-    if #results<SUGG_N then
-        for k,v in pairs(ALIASES) do
-            if k:find(q,1,true) and not seen[v] then
-                seen[v]=true;results[#results+1]=v
-            end
-            if #results>=SUGG_N then break end
-        end
-    end
-    if #results==0 then hideSugg();return end
-    suggFrame.Visible=true;suggVisible=true
-    suggFrame.Size=UDim2.new(1,0,0,math.min(#results,SUGG_N)*23+4)
-    for i=1,SUGG_N do
-        if results[i] then
-            local country=results[i]
-            suggBtns[i].Text="  "..country;suggBtns[i].Visible=true
-            suggBtns[i].MouseButton1Click:Connect(function()
-                searchBox.Text=country;hideSugg()
-                fvShow(country)
-                -- update page size
-                flagPage.Size=UDim2.new(1,-8,0,30+116)
-                refreshMenuHeight()
-            end)
-        else
-            suggBtns[i].Visible=false
-        end
-    end
-    -- sugg frame nằm đè lên fvContainer → đẩy fvContainer xuống
-    fvContainer.Position=UDim2.new(0,0,0,30+suggFrame.Size.Y.Offset+2)
-end
-
-searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    fvHide();flagPage.Size=UDim2.new(1,-8,0,58)
-    updateSugg(searchBox.Text)
-    refreshMenuHeight()
 end)
 
-flagPage.Size=UDim2.new(1,-8,0,58)
+-- Separator
+local sep=Instance.new("Frame",flagPage)
+sep.Size=UDim2.new(1,0,0,1);sep.Position=UDim2.new(0,0,0,112)
+sep.BackgroundColor3=Color3.fromRGB(100,60,180);sep.BorderSizePixel=0;sep.ZIndex=203
+
+mkInfoLbl(flagPage,"🔗 Liên hệ",116,16,Color3.fromRGB(200,160,255),11)
+
+-- Hàm mở trình duyệt (ưu tiên protecc/roblox uri, fallback clipboard)
+local function openURL(url)
+    -- Thử các hàm mở trình duyệt phổ biến của executor
+    local opened = false
+    pcall(function()
+        if typeof(openBrowser)=="function" then openBrowser(url); opened=true end
+    end)
+    if not opened then pcall(function()
+        if typeof(open_browser)=="function" then open_browser(url); opened=true end
+    end) end
+    if not opened then pcall(function()
+        if typeof(openbrowser)=="function" then openbrowser(url); opened=true end
+    end) end
+    -- Fallback: copy vào clipboard để user tự dán
+    if not opened then pcall(function()
+        if typeof(setclipboard)=="function" then setclipboard(url) end
+    end) end
+end
+
+-- Nút mạng xã hội
+local socialLinks = {
+    {label="📘 Facebook", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", color=Color3.fromRGB(24,119,242)},
+    {label="✈️ Telegram", url="https://t.me/dzimeomeo", color=Color3.fromRGB(0,136,204)},
+    {label="💬 Discord", url="https://discord.gg/FEEet5G3u", color=Color3.fromRGB(88,101,242)},
+    {label="💚 Zalo", url="https://zalo.me/84993329535", color=Color3.fromRGB(0,180,80)},
+}
+
+for i, s in ipairs(socialLinks) do
+    local col=(i-1)%2; local row=math.floor((i-1)/2)
+    local btn=Instance.new("TextButton",flagPage)
+    btn.Size=UDim2.new(0.5,-6,0,28)
+    btn.Position=UDim2.new(col*0.5,col==0 and 2 or 4,0,134+row*32)
+    btn.BackgroundColor3=s.color;btn.BorderSizePixel=0
+    btn.Text=s.label;btn.TextColor3=Color3.fromRGB(255,255,255)
+    btn.TextSize=10;btn.Font=Enum.Font.GothamBold;btn.ZIndex=203
+    mkCorner(btn,7)
+    local url=s.url
+    btn.MouseButton1Click:Connect(function() openURL(url) end)
+end
+
+flagPage.Size=UDim2.new(1,-8,0,200)
 
 -- ==================== TAB: SERVER ====================
 local svPage=makeTab("Server","🌐",2)
@@ -563,7 +839,7 @@ hintPage.Size=UDim2.new(1,-8,0,40)
 
 local hintNoGame=Instance.new("TextLabel",hintPage)
 hintNoGame.Size=UDim2.new(1,0,0,30);hintNoGame.Position=UDim2.new(0,0,0,4)
-hintNoGame.BackgroundTransparency=1;hintNoGame.Text="⏳ Chờ vào bàn chơi..."
+hintNoGame.BackgroundTransparency=1;hintNoGame.Text="⏳ Chờ cờ xuất hiện..."
 hintNoGame.TextColor3=Color3.fromRGB(150,140,200);hintNoGame.TextSize=11
 hintNoGame.Font=Enum.Font.GothamBold;hintNoGame.ZIndex=203
 
@@ -623,7 +899,7 @@ local function switchTab(name)
     activeTab=name;refreshMenuHeight()
 end
 
-tabBtns["Cờ mẫu"].MouseButton1Click:Connect(function() switchTab("Cờ mẫu") end)
+tabBtns["Admin"].MouseButton1Click:Connect(function() switchTab("Admin") end)
 tabBtns["Server"].MouseButton1Click:Connect(function() switchTab("Server") end)
 tabBtns["Gợi ý"].MouseButton1Click:Connect(function() switchTab("Gợi ý") end)
 
@@ -633,11 +909,11 @@ ToggleMenu.MouseButton1Click:Connect(function()
     refreshMenuHeight()
 end)
 
-switchTab("Cờ mẫu")
+switchTab("Admin")
 
 -- ==================== SCAN GUI ====================
 local BLACKLIST={
-    "dzi","auto flag","hub","players","win","tham gia","cua hang",
+    "dzi","doan co","hub","players","win","tham gia","cua hang",
     "kho do","troll","hang ngay","goi y","tiet lo","phan hoi",
     "lan thang","chuoi thang","tien mat","bao cao","nguoi moi",
     "x2","2x","bat dau","de ","kho ","trung binh","luot","lượt",
@@ -699,7 +975,7 @@ RunService.Heartbeat:Connect(function()
             for _,c in ipairs(obj:GetChildren()) do collect(c) end
         end
         for _,g in ipairs(player.PlayerGui:GetChildren()) do
-            if g.Name~="DziAutoFlag" then collect(g) end
+            if g.Name~="DziDoanCo" then collect(g) end
         end
 
         local matched={};local seen={}
