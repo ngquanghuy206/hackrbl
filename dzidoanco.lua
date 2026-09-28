@@ -738,20 +738,20 @@ sep.BackgroundColor3=Color3.fromRGB(100,60,180);sep.BorderSizePixel=0;sep.ZIndex
 
 mkInfoLbl(flagPage,"🔗 Liên hệ",116,16,Color3.fromRGB(200,160,255),11)
 
-local function openURL(url)
+local function openURL(url, btn)
     local opened = false
-    pcall(function()
-        if typeof(openBrowser)=="function" then openBrowser(url); opened=true end
-    end)
-    if not opened then pcall(function()
-        if typeof(open_browser)=="function" then open_browser(url); opened=true end
-    end) end
-    if not opened then pcall(function()
-        if typeof(openbrowser)=="function" then openbrowser(url); opened=true end
-    end) end
-    if not opened then pcall(function()
-        if typeof(setclipboard)=="function" then setclipboard(url) end
-    end) end
+    local origText = btn and btn.Text or ""
+    pcall(function() if openBrowser then openBrowser(url); opened=true end end)
+    if not opened then pcall(function() if open_browser then open_browser(url); opened=true end end) end
+    if not opened then pcall(function() if openbrowser then openbrowser(url); opened=true end end) end
+    if not opened then pcall(function() if shellexecute then shellexecute(url); opened=true end end) end
+    if not opened then
+        pcall(function() if setclipboard then setclipboard(url) end end)
+        if btn then
+            btn.Text="📋 Đã copy!"
+            task.delay(1.5, function() if btn.Parent then btn.Text=origText end end)
+        end
+    end
 end
 
 local socialLinks = {
@@ -771,7 +771,7 @@ for i, s in ipairs(socialLinks) do
     btn.TextSize=10;btn.Font=Enum.Font.GothamBold;btn.ZIndex=203
     mkCorner(btn,7)
     local url=s.url
-    btn.MouseButton1Click:Connect(function() openURL(url) end)
+    btn.MouseButton1Click:Connect(function() openURL(url, btn) end)
 end
 
 flagPage.Size=UDim2.new(1,-8,0,200)
@@ -879,6 +879,11 @@ hopBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+local CARD_H=70
+local CARD_GAP=4
+local CARD_IMG_H=44
+local CARD_TXT_H=18
+
 local hintPage=makeTab("Gợi ý","🎮",3)
 hintPage.Size=UDim2.new(1,-8,0,40)
 
@@ -888,37 +893,97 @@ hintNoGame.BackgroundTransparency=1;hintNoGame.Text="⏳ Chờ cờ xuất hiệ
 hintNoGame.TextColor3=Color3.fromRGB(150,140,200);hintNoGame.TextSize=11
 hintNoGame.Font=Enum.Font.GothamBold;hintNoGame.ZIndex=203
 
-local hintBtns={}
+local hintCards={}
 for i=1,4 do
     local col=(i-1)%2;local row=math.floor((i-1)/2)
-    local btn=Instance.new("TextButton",hintPage)
-    btn.Size=UDim2.new(0.5,-8,0,26)
-    btn.Position=UDim2.new(col*0.5,col==0 and 4 or 4,0,row*30)
-    btn.BackgroundColor3=Color3.fromRGB(25,15,50);btn.BorderSizePixel=0
-    btn.Text="";btn.TextColor3=Color3.fromRGB(210,190,255)
-    btn.TextSize=10;btn.Font=Enum.Font.GothamBold
-    btn.TextScaled=true;btn.ZIndex=203;btn.Visible=false
-    mkCorner(btn,6);mkStroke(btn,Color3.fromRGB(100,60,180),1)
-    Instance.new("UITextSizeConstraint",btn).MaxTextSize=11
-    hintBtns[i]=btn
+    local xOff=col==0 and 0 or (CARD_GAP)
+    local xScale=col*0.5
+    local card=Instance.new("Frame",hintPage)
+    card.Size=UDim2.new(0.5,-CARD_GAP,0,CARD_H)
+    card.Position=UDim2.new(xScale,col==0 and 0 or CARD_GAP,0,row*(CARD_H+CARD_GAP))
+    card.BackgroundColor3=Color3.fromRGB(18,12,36);card.BorderSizePixel=0
+    card.ZIndex=203;card.Visible=false
+    mkCorner(card,7);mkStroke(card,Color3.fromRGB(100,60,180),1)
+
+    local img=Instance.new("ImageLabel",card)
+    img.Size=UDim2.new(1,-4,0,CARD_IMG_H);img.Position=UDim2.new(0,2,0,2)
+    img.BackgroundColor3=Color3.fromRGB(10,8,22);img.BorderSizePixel=0
+    img.Image="";img.ScaleType=Enum.ScaleType.Fit;img.ZIndex=204
+    mkCorner(img,5)
+
+    local noFlagLbl=Instance.new("TextLabel",card)
+    noFlagLbl.Size=UDim2.new(1,-4,0,CARD_IMG_H);noFlagLbl.Position=UDim2.new(0,2,0,2)
+    noFlagLbl.BackgroundColor3=Color3.fromRGB(10,8,22);noFlagLbl.BorderSizePixel=0
+    noFlagLbl.Text="";noFlagLbl.TextColor3=Color3.fromRGB(180,120,80)
+    noFlagLbl.TextSize=9;noFlagLbl.Font=Enum.Font.Gotham
+    noFlagLbl.TextWrapped=true;noFlagLbl.ZIndex=204;noFlagLbl.Visible=false
+    mkCorner(noFlagLbl,5)
+
+    local nameLbl=Instance.new("TextLabel",card)
+    nameLbl.Size=UDim2.new(1,-4,0,CARD_TXT_H)
+    nameLbl.Position=UDim2.new(0,2,0,CARD_IMG_H+4)
+    nameLbl.BackgroundTransparency=1;nameLbl.Text=""
+    nameLbl.TextColor3=Color3.fromRGB(220,200,255);nameLbl.TextSize=10
+    nameLbl.Font=Enum.Font.GothamBold;nameLbl.TextScaled=false
+    nameLbl.TextTruncate=Enum.TextTruncate.AtEnd
+    nameLbl.ZIndex=204
+
+    hintCards[i]={card=card,img=img,noFlagLbl=noFlagLbl,nameLbl=nameLbl}
 end
 
-local hvContainer,hvShow,hvHide=makeFlagViewer(hintPage,64)
+local hintConns={}
 local selectedHintBtn=nil
+local hvContainer,hvShow,hvHide=makeFlagViewer(hintPage,0)
+hvContainer.Visible=false
 
-local function setHintFlag(name,btn)
-    if selectedHintBtn==btn then
-        selectedHintBtn=nil
-        for _,b in ipairs(hintBtns) do b.BackgroundColor3=Color3.fromRGB(25,15,50) end
-        hvHide();hintPage.Size=UDim2.new(1,-8,0,64)
-        refreshMenuHeight();return
+local function setHintFlag() end
+
+local function loadCardFlag(c,name)
+    local iso=COUNTRY_ISO[name]
+    c.img.Image=""
+    c.img.Visible=false
+    c.noFlagLbl.Visible=false
+    if not iso then
+        c.noFlagLbl.Text="?"
+        c.noFlagLbl.Visible=true
+        return
     end
-    selectedHintBtn=btn
-    for _,b in ipairs(hintBtns) do b.BackgroundColor3=Color3.fromRGB(25,15,50) end
-    btn.BackgroundColor3=Color3.fromRGB(60,30,110)
-    hvShow(name)
-    hintPage.Size=UDim2.new(1,-8,0,64+116)
-    refreshMenuHeight()
+    if flagCache[iso] then
+        c.img.Image=flagCache[iso];c.img.Visible=true;return
+    end
+    task.spawn(function()
+        local url="https://flagcdn.com/w160/"..iso..".png"
+        local fname="dziflag_"..iso..".png"
+        local reqFn=nil
+        if syn and syn.request then reqFn=syn.request
+        elseif request then reqFn=request
+        elseif http_request then reqFn=http_request end
+        if reqFn and writefile and getcustomasset then
+            local ok,res=pcall(reqFn,{Url=url,Method="GET"})
+            if ok and res and res.Body and #res.Body>100 then
+                pcall(writefile,fname,res.Body)
+                local ok2,asset=pcall(getcustomasset,fname)
+                if ok2 and asset then
+                    flagCache[iso]=asset
+                    if c.img.Parent then c.img.Image=asset;c.img.Visible=true end
+                    return
+                end
+            end
+        end
+        local ok3=pcall(function() c.img.Image=url end)
+        if ok3 then
+            task.wait(1.5)
+            if c.img.Parent and c.img.Image~="" then
+                c.img.Visible=true
+            else
+                c.noFlagLbl.Text="?"
+                c.noFlagLbl.Visible=true
+            end
+        else
+            c.noFlagLbl.Text="?"
+            c.noFlagLbl.Visible=true
+        end
+    end)
 end
 
 function refreshMenuHeight()
@@ -975,25 +1040,25 @@ end
 local function updateHintBtns(list)
     for _,c in ipairs(hintConns) do c:Disconnect() end
     hintConns={}
-    selectedHintBtn=nil;hvHide()
-
     local n=#list
     hintNoGame.Visible=(n==0)
     for i=1,4 do
-        local btn=hintBtns[i]
+        local c=hintCards[i]
         if list[i] then
-            btn.Text=list[i];btn.Visible=true
-            btn.BackgroundColor3=Color3.fromRGB(25,15,50)
-            local country=list[i]
-            local c=btn.MouseButton1Click:Connect(function()
-                if btn.Text==country then setHintFlag(country,btn) end
-            end)
-            hintConns[#hintConns+1]=c
+            local name=list[i]
+            c.nameLbl.Text=name
+            c.img.Image=""
+            c.img.Visible=false
+            c.noFlagLbl.Visible=false
+            c.card.Visible=true
+            loadCardFlag(c,name)
         else
-            btn.Visible=false
+            c.card.Visible=false
         end
     end
-    hintPage.Size=UDim2.new(1,-8,0,n>0 and 64 or 40)
+    local rows=n>2 and 2 or (n>0 and 1 or 0)
+    local h=rows*(CARD_H+CARD_GAP)+(n>0 and 0 or 40)
+    hintPage.Size=UDim2.new(1,-8,0,n>0 and h or 40)
     if activeTab=="Gợi ý" then refreshMenuHeight() end
 end
 
