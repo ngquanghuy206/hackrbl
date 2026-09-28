@@ -1238,58 +1238,119 @@ RunService.Heartbeat:Connect(function()
             if #matched>=4 then break end
         end
 
-        -- Tìm tên cờ đang hiện trên bàn
-        -- Game thường có SurfaceGui hoặc BillboardGui với tên nước
+        -- Tìm tên cờ đáp án từ game
+        -- Scan TẤT CẢ GUI trong game (workspace SurfaceGui, BillboardGui, PlayerGui khác)
         local flagName=nil
         pcall(function()
-            local workspace=game:GetService("Workspace")
-            local function scanPart(obj,depth)
-                if depth>8 then return end
-                if obj:IsA("SurfaceGui") or obj:IsA("BillboardGui") or obj:IsA("ScreenGui") then
-                    for _,ch in ipairs(obj:GetDescendants()) do
-                        if (ch:IsA("TextLabel") or ch:IsA("TextButton")) and ch.Visible then
-                            local t=ch.Text
-                            if t and #t>=2 and #t<=60 then
-                                local n=norm(t)
-                                local skip=false
-                                for _,bad in ipairs(BLACKLIST) do
-                                    if n:find(bad,1,true) then skip=true;break end
-                                end
-                                if not skip and not n:match("^[%d%$%#%+]") then
-                                    local m=tryMatch(n)
-                                    if m then flagName=m;return end
+            -- 1. Scan Workspace - tìm SurfaceGui/BillboardGui trên bàn
+            local function scanDesc(root)
+                for _,obj in ipairs(root:GetDescendants()) do
+                    if (obj:IsA("TextLabel") or obj:IsA("TextButton")) then
+                        local t=obj.Text
+                        if t and #t>=2 and #t<=50 then
+                            local n=norm(t)
+                            -- Chỉ match nếu text này khớp đúng 1 trong matched
+                            for _,m in ipairs(matched) do
+                                if norm(m)==n then
+                                    -- Kiểm tra parent là SurfaceGui/BillboardGui (trên bàn chơi)
+                                    local p=obj.Parent
+                                    while p and p~=game do
+                                        if p:IsA("SurfaceGui") or p:IsA("BillboardGui") then
+                                            flagName=m;return
+                                        end
+                                        p=p.Parent
+                                    end
                                 end
                             end
                         end
                     end
                 end
-                for _,ch in ipairs(obj:GetChildren()) do
-                    scanPart(ch,depth+1)
-                end
             end
-            -- Scan workspace để tìm tên cờ từ bàn chơi
-            for _,obj in ipairs(workspace:GetChildren()) do
-                if flagName then break end
-                scanPart(obj,0)
+            pcall(scanDesc, game:GetService("Workspace"))
+
+            -- 2. Nếu không tìm được, thử scan ReplicatedStorage/Folder chứa giá trị
+            if not flagName then
+                pcall(function()
+                    local rs=game:GetService("ReplicatedStorage")
+                    for _,obj in ipairs(rs:GetDescendants()) do
+                        if obj:IsA("StringValue") or obj:IsA("ObjectValue") then
+                            local t=obj.Value or obj.Name
+                            if type(t)=="string" and #t>=2 and #t<=50 then
+                                local n=norm(t)
+                                for _,m in ipairs(matched) do
+                                    if norm(m)==n then flagName=m;return end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+
+            -- 3. Scan PlayerGui của các player khác
+            if not flagName then
+                pcall(function()
+                    for _,plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                        if plr~=player then
+                            pcall(function()
+                                for _,obj in ipairs(plr.PlayerGui:GetDescendants()) do
+                                    if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
+                                        local t=obj.Text
+                                        if t and #t>=2 and #t<=50 then
+                                            local n=norm(t)
+                                            for _,m in ipairs(matched) do
+                                                if norm(m)==n then flagName=m;return end
+                                            end
+                                        end
+                                    end
+                                end
+                            end)
+                        end
+                        if flagName then break end
+                    end
+                end)
             end
         end)
 
-        -- Nếu tìm được tên cờ và nó trùng 1 trong 4 gợi ý → highlight
+        -- Nếu scan GUI chưa ra, thử đọc ISO từ Decal/Texture trong Workspace
+        if not flagName then
+            pcall(function()
+                for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                    if obj:IsA("Decal") or obj:IsA("Texture") or obj:IsA("ImageLabel") then
+                        local tex=obj.Texture or obj.Image or ""
+                        -- flagcdn.com/w160/xx.png → extract ISO
+                        local iso=tex:match("flagcdn%.com/[^/]+/([a-z][a-z])%.png")
+                            or tex:match("flagcdn%.com/([a-z][a-z])%.png")
+                        if iso then
+                            -- Tìm tên nước từ ISO
+                            for name,code in pairs(COUNTRY_ISO) do
+                                if code==iso then
+                                    -- Check có trong matched không
+                                    for _,m in ipairs(matched) do
+                                        if norm(m)==norm(name) then
+                                            flagName=name;break
+                                        end
+                                    end
+                                end
+                                if flagName then break end
+                            end
+                        end
+                        if flagName then break end
+                    end
+                end
+            end)
+        end
+
+        -- Highlight card đúng
         if flagName and #matched>0 then
-            local found=false
-            for _,m in ipairs(matched) do
-                if norm(m)==norm(flagName) then found=true;break end
-            end
-            if found and flagName~=currentFlagName then
+            if flagName~=currentFlagName then
                 currentFlagName=flagName
                 highlightCards(flagName)
-            elseif not found then
+            end
+        else
+            if currentFlagName~=nil then
                 currentFlagName=nil
                 highlightCards(nil)
             end
-        else
-            currentFlagName=nil
-            highlightCards(nil)
         end
 
         if not listsEq(matched,lastHints) then
