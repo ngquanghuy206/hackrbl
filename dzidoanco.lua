@@ -606,12 +606,8 @@ local TitleBar=Instance.new("Frame",MenuPanel)
 TitleBar.Size=UDim2.new(1,0,0,28);TitleBar.BackgroundTransparency=1;TitleBar.ZIndex=201
 makeDrag(MenuPanel,TitleBar)
 
-local titleIco=Instance.new("ImageLabel",TitleBar)
-titleIco.Size=UDim2.new(0,14,0,14);titleIco.Position=UDim2.new(0,6,0.5,-7)
-titleIco.BackgroundTransparency=1;titleIco.Image="rbxassetid://6031280882"
-titleIco.ImageColor3=Color3.fromRGB(200,160,255);titleIco.ZIndex=203
 local TitleLbl=Instance.new("TextLabel",TitleBar)
-TitleLbl.Size=UDim2.new(1,-50,1,0);TitleLbl.Position=UDim2.new(0,24,0,0)
+TitleLbl.Size=UDim2.new(1,-50,1,0);TitleLbl.Position=UDim2.new(0,8,0,0)
 TitleLbl.BackgroundTransparency=1;TitleLbl.Text="DZI ĐOÁN CỜ"
 TitleLbl.TextColor3=Color3.fromRGB(200,160,255);TitleLbl.TextSize=11
 TitleLbl.Font=Enum.Font.GothamBold
@@ -631,33 +627,13 @@ MenuContent.BackgroundTransparency=1;MenuContent.ZIndex=201;MenuContent.Visible=
 
 local tabBtns={};local tabPages={}
 
-local TAB_ICONS={
-    ["Admin"]="rbxassetid://7059346373",
-    ["Server"]="rbxassetid://6031068421",
-    ["Gợi ý"]="rbxassetid://6031280882",
-}
-
 local function makeTab(name,icon,idx)
     local tb=Instance.new("TextButton",MenuContent)
     tb.Size=UDim2.new(0,76,0,26);tb.Position=UDim2.new(0,6+(idx-1)*82,0,4)
     tb.BackgroundColor3=Color3.fromRGB(25,15,50);tb.BorderSizePixel=0
-    tb.Text="";tb.TextColor3=Color3.fromRGB(180,150,255)
+    tb.Text=name;tb.TextColor3=Color3.fromRGB(180,150,255)
     tb.TextSize=10;tb.Font=Enum.Font.GothamBold;tb.ZIndex=202;mkCorner(tb,6)
     mkStroke(tb,Color3.fromRGB(100,60,180),1);tabBtns[name]=tb
-
-    if TAB_ICONS[name] then
-        local ico=Instance.new("ImageLabel",tb)
-        ico.Size=UDim2.new(0,14,0,14);ico.Position=UDim2.new(0,6,0.5,-7)
-        ico.BackgroundTransparency=1;ico.Image=TAB_ICONS[name]
-        ico.ImageColor3=Color3.fromRGB(180,150,255);ico.ZIndex=203
-    end
-    local nameLbl=Instance.new("TextLabel",tb)
-    nameLbl.Size=UDim2.new(1,-24,1,0);nameLbl.Position=UDim2.new(0,22,0,0)
-    nameLbl.BackgroundTransparency=1;nameLbl.Text=name
-    nameLbl.TextColor3=Color3.fromRGB(180,150,255);nameLbl.TextSize=10
-    nameLbl.Font=Enum.Font.GothamBold;nameLbl.ZIndex=203
-    nameLbl.TextXAlignment=Enum.TextXAlignment.Left
-    tb._nameLbl=nameLbl
 
     local page=Instance.new("Frame",MenuContent)
     page.Size=UDim2.new(1,-8,0,10)
@@ -724,30 +700,21 @@ local function openURL(url, btn)
 end
 
 local ROW_ICONS={
-    ["person"]="rbxassetid://6031094670",
-    ["mask"]="rbxassetid://6031280882",
-    ["cake"]="rbxassetid://6031068421",
-    ["pin"]="rbxassetid://6031225819",
+    ["person"]=">",["mask"]="~",["cake"]="*",["pin"]="+",
 }
 local function mkRow(parent, icon, label, value, y)
     local row=Instance.new("Frame",parent)
     row.Size=UDim2.new(1,0,0,20);row.Position=UDim2.new(0,0,0,y)
     row.BackgroundColor3=Color3.fromRGB(22,15,45);row.BorderSizePixel=0;row.ZIndex=203
     mkCorner(row,5)
-    if ROW_ICONS[icon] then
-        local ico=Instance.new("ImageLabel",row)
-        ico.Size=UDim2.new(0,13,0,13);ico.Position=UDim2.new(0,4,0.5,-6)
-        ico.BackgroundTransparency=1;ico.Image=ROW_ICONS[icon]
-        ico.ImageColor3=Color3.fromRGB(200,160,255);ico.ZIndex=204
-    else
-        local ico=Instance.new("TextLabel",row)
-        ico.Size=UDim2.new(0,22,1,0);ico.Position=UDim2.new(0,2,0,0)
-        ico.BackgroundTransparency=1;ico.Text=icon
-        ico.TextSize=11;ico.Font=Enum.Font.GothamBold
-        ico.TextColor3=Color3.fromRGB(200,160,255);ico.ZIndex=204
-    end
+    local icoLbl=Instance.new("TextLabel",row)
+    icoLbl.Size=UDim2.new(0,18,1,0);icoLbl.Position=UDim2.new(0,2,0,0)
+    icoLbl.BackgroundTransparency=1
+    icoLbl.Text=ROW_ICONS[icon] or icon
+    icoLbl.TextSize=10;icoLbl.Font=Enum.Font.GothamBold
+    icoLbl.TextColor3=Color3.fromRGB(200,160,255);icoLbl.ZIndex=204
     local lbl=Instance.new("TextLabel",row)
-    lbl.Size=UDim2.new(0.42,0,1,0);lbl.Position=UDim2.new(0,22,0,0)
+    lbl.Size=UDim2.new(0.42,0,1,0);lbl.Position=UDim2.new(0,20,0,0)
     lbl.BackgroundTransparency=1;lbl.Text=label
     lbl.TextSize=9;lbl.Font=Enum.Font.GothamBold
     lbl.TextColor3=Color3.fromRGB(140,120,200);lbl.ZIndex=204
@@ -791,17 +758,12 @@ local clockBg=Instance.new("Frame",flagPage)
 clockBg.Size=UDim2.new(1,0,0,24);clockBg.Position=UDim2.new(0,0,0,120)
 clockBg.BackgroundColor3=Color3.fromRGB(30,12,60);clockBg.BorderSizePixel=0;clockBg.ZIndex=202
 mkCorner(clockBg,6);mkStroke(clockBg,Color3.fromRGB(180,100,255),1)
-local clockIco=Instance.new("ImageLabel",clockBg)
-clockIco.Size=UDim2.new(0,13,0,13);clockIco.Position=UDim2.new(0,6,0.5,-6)
-clockIco.BackgroundTransparency=1;clockIco.Image="rbxassetid://6031094676"
-clockIco.ImageColor3=Color3.fromRGB(255,220,80);clockIco.ZIndex=204
 local clockLbl=Instance.new("TextLabel",clockBg)
-clockLbl.Size=UDim2.new(1,-26,1,0);clockLbl.Position=UDim2.new(0,22,0,0)
+clockLbl.Size=UDim2.new(1,-8,1,0);clockLbl.Position=UDim2.new(0,4,0,0)
 clockLbl.BackgroundTransparency=1
 clockLbl.Text="--:--:--   |   --/--/----"
 clockLbl.TextColor3=Color3.fromRGB(255,220,80);clockLbl.TextSize=10
 clockLbl.Font=Enum.Font.GothamBold;clockLbl.ZIndex=203
-clockLbl.TextXAlignment=Enum.TextXAlignment.Left
 
 local function updateClock()
     local t = os.time() + 7*3600
@@ -821,16 +783,13 @@ divLbl.Size=UDim2.new(1,0,0,16);divLbl.Position=UDim2.new(0,0,0,148)
 divLbl.BackgroundTransparency=1;divLbl.Text="────  Liên hệ  ────"
 divLbl.TextColor3=Color3.fromRGB(160,100,255);divLbl.TextSize=10
 divLbl.Font=Enum.Font.GothamBold;divLbl.ZIndex=203
-local linkIco=Instance.new("ImageLabel",flagPage)
-linkIco.Size=UDim2.new(0,12,0,12);linkIco.Position=UDim2.new(0.5,-50,0,150)
-linkIco.BackgroundTransparency=1;linkIco.Image="rbxassetid://6031094670"
-linkIco.ImageColor3=Color3.fromRGB(160,100,255);linkIco.ZIndex=203
+
 
 local socialLinks = {
-    {label="Facebook", img="rbxassetid://5673787769", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", c1=Color3.fromRGB(10,60,180), c2=Color3.fromRGB(24,119,242)},
-    {label="Telegram", img="rbxassetid://5673789623", url="https://t.me/dzimeomeo", c1=Color3.fromRGB(0,95,160), c2=Color3.fromRGB(0,136,204)},
-    {label="Discord",  img="rbxassetid://5673788181", url="https://discord.gg/FEEet5G3u", c1=Color3.fromRGB(55,60,180), c2=Color3.fromRGB(88,101,242)},
-    {label="Zalo",     img="rbxassetid://6031094672", url="https://zalo.me/84993329535", c1=Color3.fromRGB(0,130,55), c2=Color3.fromRGB(0,180,75)},
+    {label="Facebook", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", c1=Color3.fromRGB(10,60,180), c2=Color3.fromRGB(24,119,242)},
+    {label="Telegram", url="https://t.me/dzimeomeo", c1=Color3.fromRGB(0,95,160), c2=Color3.fromRGB(0,136,204)},
+    {label="Discord",  url="https://discord.gg/FEEet5G3u", c1=Color3.fromRGB(55,60,180), c2=Color3.fromRGB(88,101,242)},
+    {label="Zalo",     url="https://zalo.me/84993329535", c1=Color3.fromRGB(0,130,55), c2=Color3.fromRGB(0,180,75)},
 }
 
 for i,s in ipairs(socialLinks) do
@@ -844,22 +803,13 @@ for i,s in ipairs(socialLinks) do
     local gradient=Instance.new("UIGradient",btn)
     gradient.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,s.c2),ColorSequenceKeypoint.new(1,s.c1)})
     gradient.Rotation=135
-    local icoImg=Instance.new("ImageLabel",btn)
-    icoImg.Size=UDim2.new(0,16,0,16);icoImg.Position=UDim2.new(0,8,0.5,-8)
-    icoImg.BackgroundTransparency=1;icoImg.Image=s.img
-    icoImg.ZIndex=204
-    local txtLbl=Instance.new("TextLabel",btn)
-    txtLbl.Size=UDim2.new(1,-30,1,0);txtLbl.Position=UDim2.new(0,28,0,0)
-    txtLbl.BackgroundTransparency=1;txtLbl.Text=s.label
-    txtLbl.TextColor3=Color3.fromRGB(255,255,255);txtLbl.TextSize=11
-    txtLbl.Font=Enum.Font.GothamBold;txtLbl.ZIndex=204
-    txtLbl.TextXAlignment=Enum.TextXAlignment.Left
+    btn.Text=s.label
+    btn.TextColor3=Color3.fromRGB(255,255,255);btn.TextSize=11
+    btn.Font=Enum.Font.GothamBold
     local url=s.url
     btn.MouseButton1Click:Connect(function()
-        openURL(url,txtLbl)
+        openURL(url,btn)
     end)
-    btn.MouseEnter:Connect(function() gradient.Rotation=90 end)
-    btn.MouseLeave:Connect(function() gradient.Rotation=135 end)
 end
 
 flagPage.Size=UDim2.new(1,-8,0,234)
@@ -894,10 +844,7 @@ hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160);hopBtn.BorderSizePixel=0
 hopBtn.Text="Chuyển server đông người";hopBtn.TextColor3=Color3.fromRGB(200,230,255)
 hopBtn.TextSize=11;hopBtn.Font=Enum.Font.GothamBold;hopBtn.ZIndex=203
 mkCorner(hopBtn,8);mkStroke(hopBtn,Color3.fromRGB(80,140,255),1)
-local hopIco=Instance.new("ImageLabel",hopBtn)
-hopIco.Size=UDim2.new(0,16,0,16);hopIco.Position=UDim2.new(0,8,0.5,-8)
-hopIco.BackgroundTransparency=1;hopIco.Image="rbxassetid://6031094670"
-hopIco.ImageColor3=Color3.fromRGB(180,220,255);hopIco.ZIndex=204
+
 
 local isHopping=false
 hopBtn.MouseButton1Click:Connect(function()
@@ -1097,14 +1044,7 @@ local function switchTab(name)
         local isActive=(n==name)
         local btn=tabBtns[n]
         btn.BackgroundColor3=isActive and Color3.fromRGB(60,30,120) or Color3.fromRGB(25,15,50)
-        if btn._nameLbl then
-            btn._nameLbl.TextColor3=isActive and Color3.fromRGB(255,220,100) or Color3.fromRGB(180,150,255)
-        end
-        for _,ch in ipairs(btn:GetChildren()) do
-            if ch:IsA("ImageLabel") then
-                ch.ImageColor3=isActive and Color3.fromRGB(255,220,100) or Color3.fromRGB(180,150,255)
-            end
-        end
+        btn.TextColor3=isActive and Color3.fromRGB(255,220,100) or Color3.fromRGB(180,150,255)
     end
     activeTab=name;refreshMenuHeight()
 end
