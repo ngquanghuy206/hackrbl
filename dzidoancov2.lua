@@ -378,6 +378,109 @@ local ALIASES = {
     ["tristan da cunha"]="Tristan da Cunha",["tristan"]="Tristan da Cunha",
     ["french southern territories"]="French Southern Territories",["lanh tho phia nam phap"]="French Southern Territories",
     ["us minor outlying"]="US Minor Outlying Islands",["dao nho my"]="US Minor Outlying Islands",
+    -- TEN GAME THUC TE TU ANH
+    -- "Sa mac phia Tay" / "Tay Sahara"
+    ["sa mac phia tay"]="Tây Sahara",["sa mạc phía tây"]="Tây Sahara",
+    ["tay sahara"]="Tây Sahara",["western sahara"]="Tây Sahara",
+    -- "Quan dao Bac Mariana"
+    ["quan dao bac mariana"]="Northern Mariana",["quần đảo bắc mariana"]="Northern Mariana",
+    ["bac mariana"]="Northern Mariana",["northern mariana islands"]="Northern Mariana",
+    -- "Quan dao Cocos (Keeling)"
+    ["quan dao cocos keeling"]="Cocos Islands",["quần đảo cocos keeling"]="Cocos Islands",
+    ["quan dao cocos"]="Cocos Islands",["cocos keeling"]="Cocos Islands",
+    -- "Dao Man" / "Đảo Man"
+    ["dao man"]="Isle of Man",["đảo man"]="Isle of Man",["isle of man"]="Isle of Man",
+    -- "Quan Dao Faroe" / "Quan dao Faroe"
+    ["quan dao faroe"]="Quần Đảo Faroe",["quần đảo faroe"]="Quần Đảo Faroe",["faroe"]="Quần Đảo Faroe",
+    -- "Ma Cao" / "Macao"
+    ["macao"]="Ma Cao",["ma cao"]="Ma Cao",["macau"]="Ma Cao",
+    -- "Bonaire, Sint Eustatius va Saba"
+    ["bonaire sint eustatius va saba"]="Bonaire Sint Eustatius Saba",
+    ["bonaire sint eustatius và saba"]="Bonaire Sint Eustatius Saba",
+    ["bonaire"]="Bonaire Sint Eustatius Saba",
+    -- "Bosnia va Herzegovina"
+    ["bosnia va herzegovina"]="Bosnia",["bosnia và herzegovina"]="Bosnia",
+    ["bosnia herzegovina"]="Bosnia",["bo xni a"]="Bosnia",
+    -- "Cote d Ivoire" / "Côte d'Ivoire"
+    ["cote d ivoire"]="Bờ Biển Ngà",["côte d ivoire"]="Bờ Biển Ngà",["côte d'ivoire"]="Bờ Biển Ngà",
+    ["bo bien nga"]="Bờ Biển Ngà",["ivory coast"]="Bờ Biển Ngà",
+    -- "Nuoc Phi-Lip-Pin" / "Nước Phi-Líp-Pin"
+    ["nuoc phi lip pin"]="Philippines",["nước phi líp pin"]="Philippines",
+    ["phi lip pin"]="Philippines",["phi-lip-pin"]="Philippines",
+    ["nước phi-líp-pin"]="Philippines",["nuoc phi-lip-pin"]="Philippines",
+    -- "Cac Tieu Vuong Quoc A Rap Thong Nhat"
+    ["cac tieu vuong quoc a rap thong nhat"]="Các Tiểu Vương Quốc Ả Rập",
+    ["các tiểu vương quốc ả rập thống nhất"]="Các Tiểu Vương Quốc Ả Rập",
+    ["tieu vuong quoc a rap thong nhat"]="Các Tiểu Vương Quốc Ả Rập",
+    -- "Cong Hoa Congo" (Congo Brazzaville - khac voi DR Congo)
+    ["cong hoa congo"]="Congo",["cộng hòa congo"]="Congo",
+    ["congo brazzaville"]="Congo",["republic of the congo"]="Congo",
+    -- "Tay Sahara" da co, dam bao
+    -- "Quần đảo Faroe" da co
+    -- "Eswatini"
+    ["eswatini"]="Eswatini",["swaziland"]="Eswatini",
+    -- "Quân đảo Bắc Mariana"  
+    ["quân đảo bắc mariana"]="Northern Mariana",
+    -- Them cac ten tieng Viet co the gap
+    ["nước phi-líp-pin"]="Philippines",
+    ["guernsey"]="Guernsey",["gu ern xi"]="Guernsey",
+    ["gambia"]="Gambia",["gam bi a"]="Gambia",
+    ["niue"]="Niue",["niu e"]="Niue",
+    ["tokelau"]="Tokelau",["to ke lau"]="Tokelau",
+    ["mauritius"]="Mauritius",["mau ri ti us"]="Mauritius",
+    ["gabon"]="Gabon",
+    ["paraguay"]="Paraguay",
+    ["ecuador"]="Ecuador",
+    ["rwanda"]="Rwanda",
+    ["uganda"]="Uganda",["u gan da"]="Uganda",
+    ["haiti"]="Haiti",["ha i ti"]="Haiti",
+    ["bangadesh"]="Bangladesh",["banglades"]="Bangladesh",["bangadesh"]="Bangladesh",
+    -- TEN GAME HAY DUNG (tu anh)
+    -- "Nước Đức", "Nước Áo", "Nước Séc" etc
+    ["nuoc duc"]="Đức",["nuoc ao"]="Áo",["nuoc sec"]="Séc",
+    ["nuoc anh"]="Anh",["nuoc phap"]="Pháp",["nuoc y"]="Ý",
+    ["nuoc bi"]="Bỉ",["nuoc ha lan"]="Hà Lan",["nuoc nga"]="Nga",
+    ["nuoc ba lan"]="Ba Lan",["nuoc ukraine"]="Ukraine",
+    ["nuoc hy lap"]="Hy Lạp",["nuoc hungary"]="Hungary",
+    ["nuoc romania"]="Romania",["nuoc bulgaria"]="Bulgaria",
+    ["nuoc serbia"]="Serbia",["nuoc croatia"]="Croatia",
+    ["nuoc slovakia"]="Slovakia",["nuoc sec"]="Séc",
+    ["nuoc estonia"]="Estonia",["nuoc latvia"]="Latvia",
+    ["nuoc lithuania"]="Lithuania",["nuoc moldova"]="Moldova",
+    ["nuoc belarus"]="Belarus",["nuoc iceland"]="Iceland",
+    ["nuoc ireland"]="Ireland",["nuoc dan mach"]="Đan Mạch",
+    ["nuoc na uy"]="Na Uy",["nuoc thuy dien"]="Thụy Điển",
+    ["nuoc phan lan"]="Phần Lan",["nuoc thuy si"]="Thụy Sĩ",
+    ["nuoc lien bang nga"]="Nga",
+    -- Vatican (game goi "Thanh pho Vatican")
+    ["thanh pho vatican"]="Vatican",["toa thanh vatican"]="Vatican",
+    ["thanh pho va ti can"]="Vatican",["holy see"]="Vatican",
+    -- Nước Áo (game goi "Nuoc Ao" hoac "Ao")
+    ["nuoc ao"]="Áo",["ao"]="Áo",["austria"]="Áo",
+    -- Séc (game goi "Nuoc Sec" hoac "Sec")
+    ["nuoc sec"]="Séc",["nuoc cong hoa sec"]="Séc",
+    -- Bangadesh (game viet sai "Bangadesh")
+    ["bangadesh"]="Bangladesh",["banglades"]="Bangladesh",
+    ["bang la det"]="Bangladesh",
+    -- Hồng Kông
+    ["hong kong"]="Hồng Kông",["hk"]="Hồng Kông",
+    -- Cộng Hòa Congo / Congo (2 loai)
+    ["cong hoa congo"]="Congo",["republic congo"]="Congo",
+    ["cong hoa dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    ["dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    ["ch dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    -- Tên tiếng Anh chuẩn cho các nước hay bị miss
+    ["nước đức"]="Đức",["nước áo"]="Áo",["nước séc"]="Séc",
+    ["nước anh"]="Anh",["nước pháp"]="Pháp",["nước ý"]="Ý",
+    ["nước bỉ"]="Bỉ",["nước hà lan"]="Hà Lan",
+    ["nước nga"]="Nga",["nước ba lan"]="Ba Lan",
+    ["nước ukraine"]="Ukraine",["nước hy lạp"]="Hy Lạp",
+    ["nước iceland"]="Iceland",["nước ireland"]="Ireland",
+    ["thành phố vatican"]="Vatican",
+    ["hồng kông"]="Hồng Kông",["hong kông"]="Hồng Kông",
+    ["bangadesh"]="Bangladesh",
+    ["cộng hòa congo"]="Congo",
+    ["cộng hòa dân chủ congo"]="Cộng Hòa Dân Chủ Congo",
     ["vn"]="Việt Nam",["th"]="Thái Lan",["ph"]="Philippines",
     ["sg"]="Singapore",["id"]="Indonesia",["mm"]="Myanmar",
     ["kh"]="Campuchia",["bn"]="Brunei",["tl"]="Timor-Leste",
@@ -585,6 +688,13 @@ end
 local function mkCorner(p,r) Instance.new("UICorner",p).CornerRadius=UDim.new(0,r or 8) end
 local function mkStroke(p,c,t) local s=Instance.new("UIStroke",p);s.Color=c;s.Thickness=t or 1.5;return s end
 
+pcall(function()
+    local oldGui=player.PlayerGui:FindFirstChild("DziDoanCo")
+    if oldGui then oldGui:Destroy() end
+    local oldGui2=player.PlayerGui:FindFirstChild("DziAutoFlag")
+    if oldGui2 then oldGui2:Destroy() end
+end)
+task.wait(0.05)
 local ScreenGui=Instance.new("ScreenGui")
 ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
@@ -1029,6 +1139,33 @@ local BLACKLIST={
     "cuc doan","khó","kho","de","trung","cuc",
 }
 
+local currentFlagName = nil
+
+local COLOR_CORRECT  = Color3.fromRGB(30, 180, 60)
+local COLOR_NORMAL   = Color3.fromRGB(18, 12, 36)
+local COLOR_STROKE_C = Color3.fromRGB(50, 220, 80)
+local COLOR_STROKE_N = Color3.fromRGB(100, 60, 180)
+
+local function highlightCards(correctName)
+    for i=1,4 do
+        local cd=hintCards[i]
+        if cd.card.Visible then
+            local isRight = correctName and (norm(cd.nameLbl.Text)==norm(correctName))
+            cd.card.BackgroundColor3 = isRight and COLOR_CORRECT or COLOR_NORMAL
+            local stroke=cd.card:FindFirstChildOfClass("UIStroke")
+            if stroke then
+                stroke.Color = isRight and COLOR_STROKE_C or COLOR_STROKE_N
+                stroke.Thickness = isRight and 2.5 or 1
+            end
+            if isRight then
+                cd.nameLbl.TextColor3=Color3.fromRGB(255,255,180)
+            else
+                cd.nameLbl.TextColor3=Color3.fromRGB(220,200,255)
+            end
+        end
+    end
+end
+
 local lastHints={};local hintConns={}
 
 local function listsEq(a,b)
@@ -1060,6 +1197,14 @@ local function updateHintBtns(list)
     local h=rows*(CARD_H+CARD_GAP)+(n>0 and 0 or 40)
     hintPage.Size=UDim2.new(1,-8,0,n>0 and h or 40)
     if activeTab=="Gợi ý" then refreshMenuHeight() end
+    -- Reset màu về mặc định
+    for i=1,4 do
+        local cd=hintCards[i]
+        cd.card.BackgroundColor3=COLOR_NORMAL
+        local stroke=cd.card:FindFirstChildOfClass("UIStroke")
+        if stroke then stroke.Color=COLOR_STROKE_N;stroke.Thickness=1 end
+        cd.nameLbl.TextColor3=Color3.fromRGB(220,200,255)
+    end
 end
 
 local tick0=0
@@ -1093,12 +1238,70 @@ RunService.Heartbeat:Connect(function()
             if #matched>=4 then break end
         end
 
+        -- Tìm tên cờ đang hiện trên bàn
+        -- Game thường có SurfaceGui hoặc BillboardGui với tên nước
+        local flagName=nil
+        pcall(function()
+            local workspace=game:GetService("Workspace")
+            local function scanPart(obj,depth)
+                if depth>8 then return end
+                if obj:IsA("SurfaceGui") or obj:IsA("BillboardGui") or obj:IsA("ScreenGui") then
+                    for _,ch in ipairs(obj:GetDescendants()) do
+                        if (ch:IsA("TextLabel") or ch:IsA("TextButton")) and ch.Visible then
+                            local t=ch.Text
+                            if t and #t>=2 and #t<=60 then
+                                local n=norm(t)
+                                local skip=false
+                                for _,bad in ipairs(BLACKLIST) do
+                                    if n:find(bad,1,true) then skip=true;break end
+                                end
+                                if not skip and not n:match("^[%d%$%#%+]") then
+                                    local m=tryMatch(n)
+                                    if m then flagName=m;return end
+                                end
+                            end
+                        end
+                    end
+                end
+                for _,ch in ipairs(obj:GetChildren()) do
+                    scanPart(ch,depth+1)
+                end
+            end
+            -- Scan workspace để tìm tên cờ từ bàn chơi
+            for _,obj in ipairs(workspace:GetChildren()) do
+                if flagName then break end
+                scanPart(obj,0)
+            end
+        end)
+
+        -- Nếu tìm được tên cờ và nó trùng 1 trong 4 gợi ý → highlight
+        if flagName and #matched>0 then
+            local found=false
+            for _,m in ipairs(matched) do
+                if norm(m)==norm(flagName) then found=true;break end
+            end
+            if found and flagName~=currentFlagName then
+                currentFlagName=flagName
+                highlightCards(flagName)
+            elseif not found then
+                currentFlagName=nil
+                highlightCards(nil)
+            end
+        else
+            currentFlagName=nil
+            highlightCards(nil)
+        end
+
         if not listsEq(matched,lastHints) then
             lastHints=matched
             updateHintBtns(matched)
             if #matched>=1 and activeTab~="Gợi ý" then
                 switchTab("Gợi ý")
             end
+            -- Re-highlight sau khi update cards
+            task.defer(function()
+                if currentFlagName then highlightCards(currentFlagName) end
+            end)
         end
     end)
 end)
