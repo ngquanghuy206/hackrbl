@@ -568,6 +568,21 @@ local ALIASES = {
     ["eswatini"]="Eswatini",["swaziland"]="Eswatini",
     ["dong timor"]="Timor-Leste",["timor leste"]="Timor-Leste",
     ["bac macedonia"]="Bắc Macedonia",["north macedonia"]="Bắc Macedonia",
+    -- Alias bo sung tu anh
+    ["thanh pho vatican"]="Vatican",["thành phố vatican"]="Vatican",
+    ["toa thanh vatican"]="Vatican",["tòa thánh vatican"]="Vatican",
+    ["holy see"]="Vatican",
+    ["curacao"]="Curazao",["curazao"]="Curazao",["cu ra cao"]="Curazao",
+    ["quan dao virgin anh"]="Quần Đảo Virgin Anh",["quần đảo virgin anh"]="Quần Đảo Virgin Anh",
+    ["british virgin islands"]="Quần Đảo Virgin Anh",
+    ["nuoc phi lip pin"]="Philippines",["nước phi líp pin"]="Philippines",
+    ["nước phi-líp-pin"]="Philippines",["phi lip pin"]="Philippines",
+    ["bonaire sint eustatius va saba"]="Bonaire Sint Eustatius Saba",
+    ["bonaire, sint eustatius và saba"]="Bonaire Sint Eustatius Saba",
+    ["estonia"]="Estonia",["ex to ni a"]="Estonia",
+    ["kenya"]="Kenya",["libya"]="Libya",
+    ["costa rica"]="Costa Rica",["palestine"]="Palestine",
+    ["ba lan"]="Ba Lan",["poland"]="Ba Lan",
 }
 
 for k,v in pairs(ALIASES) do ANSWER_MAP[k]=v end
@@ -1003,6 +1018,21 @@ hintNoGame.BackgroundTransparency=1;hintNoGame.Text="⏳ Chờ cờ xuất hiệ
 hintNoGame.TextColor3=Color3.fromRGB(150,140,200);hintNoGame.TextSize=11
 hintNoGame.Font=Enum.Font.GothamBold;hintNoGame.ZIndex=203
 
+local answerBanner=Instance.new("Frame",hintPage)
+answerBanner.Size=UDim2.new(1,0,0,22)
+answerBanner.BackgroundColor3=Color3.fromRGB(20,100,35)
+answerBanner.BorderSizePixel=0;answerBanner.ZIndex=205
+answerBanner.Visible=false
+mkCorner(answerBanner,6);mkStroke(answerBanner,Color3.fromRGB(50,220,80),1.5)
+
+local answerLbl=Instance.new("TextLabel",answerBanner)
+answerLbl.Size=UDim2.new(1,0,1,0)
+answerLbl.BackgroundTransparency=1
+answerLbl.Text=""
+answerLbl.TextColor3=Color3.fromRGB(180,255,180)
+answerLbl.TextSize=11;answerLbl.Font=Enum.Font.GothamBold
+answerLbl.ZIndex=206
+
 local hintCards={}
 for i=1,4 do
     local col=(i-1)%2;local row=math.floor((i-1)/2)
@@ -1010,7 +1040,7 @@ for i=1,4 do
     local xScale=col*0.5
     local card=Instance.new("Frame",hintPage)
     card.Size=UDim2.new(0.5,-CARD_GAP,0,CARD_H)
-    card.Position=UDim2.new(xScale,col==0 and 0 or CARD_GAP,0,row*(CARD_H+CARD_GAP))
+    card.Position=UDim2.new(xScale,col==0 and 0 or CARD_GAP,0,26+row*(CARD_H+CARD_GAP))
     card.BackgroundColor3=Color3.fromRGB(18,12,36);card.BorderSizePixel=0
     card.ZIndex=203;card.Visible=false
     mkCorner(card,7);mkStroke(card,Color3.fromRGB(100,60,180),1)
@@ -1157,12 +1187,19 @@ local function highlightCards(correctName)
                 stroke.Color = isRight and COLOR_STROKE_C or COLOR_STROKE_N
                 stroke.Thickness = isRight and 2.5 or 1
             end
-            if isRight then
-                cd.nameLbl.TextColor3=Color3.fromRGB(255,255,180)
-            else
-                cd.nameLbl.TextColor3=Color3.fromRGB(220,200,255)
-            end
+            cd.nameLbl.TextColor3 = isRight
+                and Color3.fromRGB(255,255,180)
+                or Color3.fromRGB(220,200,255)
         end
+    end
+    -- Banner "Đáp án đúng"
+    if correctName then
+        answerBanner.Visible=true
+        answerLbl.Text="Đáp án đúng: "..correctName
+        answerBanner.Position=UDim2.new(0,0,0,2)
+    else
+        answerBanner.Visible=false
+        answerLbl.Text=""
     end
 end
 
@@ -1194,10 +1231,13 @@ local function updateHintBtns(list)
         end
     end
     local rows=n>2 and 2 or (n>0 and 1 or 0)
-    local h=rows*(CARD_H+CARD_GAP)+(n>0 and 0 or 40)
+    local h=26+rows*(CARD_H+CARD_GAP)+(n>0 and 0 or 40)
     hintPage.Size=UDim2.new(1,-8,0,n>0 and h or 40)
     if activeTab=="Gợi ý" then refreshMenuHeight() end
-    -- Reset màu về mặc định
+    -- Reset mau ve mac dinh, an banner
+    answerBanner.Visible=false
+    answerLbl.Text=""
+    currentFlagName=nil
     for i=1,4 do
         local cd=hintCards[i]
         cd.card.BackgroundColor3=COLOR_NORMAL
@@ -1238,120 +1278,112 @@ RunService.Heartbeat:Connect(function()
             if #matched>=4 then break end
         end
 
-        -- Tìm tên cờ đáp án từ game
-        -- Scan TẤT CẢ GUI trong game (workspace SurfaceGui, BillboardGui, PlayerGui khác)
+        -- Tim ten co dap an tu game
         local flagName=nil
+        local nameCount={}
+
         pcall(function()
-            -- 1. Scan Workspace - tìm SurfaceGui/BillboardGui trên bàn
-            local function scanDesc(root)
+            -- Dem so lan xuat hien cua moi ten trong TẤT CẢ GUI (tru GUI cua minh)
+            local function countTexts(root)
                 for _,obj in ipairs(root:GetDescendants()) do
                     if (obj:IsA("TextLabel") or obj:IsA("TextButton")) then
                         local t=obj.Text
-                        if t and #t>=2 and #t<=50 then
+                        if t and #t>=2 and #t<=60 then
                             local n=norm(t)
-                            -- Chỉ match nếu text này khớp đúng 1 trong matched
+                            -- Chi dem neu khop voi 1 trong 4 matched
                             for _,m in ipairs(matched) do
                                 if norm(m)==n then
-                                    -- Kiểm tra parent là SurfaceGui/BillboardGui (trên bàn chơi)
-                                    local p=obj.Parent
-                                    while p and p~=game do
-                                        if p:IsA("SurfaceGui") or p:IsA("BillboardGui") then
-                                            flagName=m;return
-                                        end
-                                        p=p.Parent
-                                    end
+                                    nameCount[m]=(nameCount[m] or 0)+1
+                                    break
                                 end
                             end
                         end
                     end
                 end
             end
-            pcall(scanDesc, game:GetService("Workspace"))
 
-            -- 2. Nếu không tìm được, thử scan ReplicatedStorage/Folder chứa giá trị
-            if not flagName then
-                pcall(function()
-                    local rs=game:GetService("ReplicatedStorage")
-                    for _,obj in ipairs(rs:GetDescendants()) do
-                        if obj:IsA("StringValue") or obj:IsA("ObjectValue") then
-                            local t=obj.Value or obj.Name
-                            if type(t)=="string" and #t>=2 and #t<=50 then
-                                local n=norm(t)
-                                for _,m in ipairs(matched) do
-                                    if norm(m)==n then flagName=m;return end
-                                end
-                            end
-                        end
-                    end
-                end)
+            -- Scan PlayerGui cac player khac
+            for _,plr in ipairs(game:GetService("Players"):GetPlayers()) do
+                if plr~=player then
+                    pcall(function() countTexts(plr.PlayerGui) end)
+                end
             end
 
-            -- 3. Scan PlayerGui của các player khác
-            if not flagName then
-                pcall(function()
-                    for _,plr in ipairs(game:GetService("Players"):GetPlayers()) do
-                        if plr~=player then
-                            pcall(function()
-                                for _,obj in ipairs(plr.PlayerGui:GetDescendants()) do
-                                    if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
-                                        local t=obj.Text
-                                        if t and #t>=2 and #t<=50 then
-                                            local n=norm(t)
-                                            for _,m in ipairs(matched) do
-                                                if norm(m)==n then flagName=m;return end
-                                            end
-                                        end
-                                    end
-                                end
-                            end)
-                        end
-                        if flagName then break end
-                    end
-                end)
-            end
-        end)
-
-        -- Nếu scan GUI chưa ra, thử đọc ISO từ Decal/Texture trong Workspace
-        if not flagName then
+            -- Scan Workspace SurfaceGui/BillboardGui
             pcall(function()
                 for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
-                    if obj:IsA("Decal") or obj:IsA("Texture") or obj:IsA("ImageLabel") then
-                        local tex=obj.Texture or obj.Image or ""
-                        -- flagcdn.com/w160/xx.png → extract ISO
-                        local iso=tex:match("flagcdn%.com/[^/]+/([a-z][a-z])%.png")
-                            or tex:match("flagcdn%.com/([a-z][a-z])%.png")
-                        if iso then
-                            -- Tìm tên nước từ ISO
-                            for name,code in pairs(COUNTRY_ISO) do
-                                if code==iso then
-                                    -- Check có trong matched không
+                    if obj:IsA("SurfaceGui") or obj:IsA("BillboardGui") then
+                        for _,ch in ipairs(obj:GetDescendants()) do
+                            if ch:IsA("TextLabel") or ch:IsA("TextButton") then
+                                local t=ch.Text
+                                if t and #t>=2 and #t<=60 then
+                                    local n=norm(t)
                                     for _,m in ipairs(matched) do
-                                        if norm(m)==norm(name) then
-                                            flagName=name;break
+                                        if norm(m)==n then
+                                            nameCount[m]=(nameCount[m] or 0)+10
+                                            break
                                         end
                                     end
                                 end
-                                if flagName then break end
                             end
                         end
-                        if flagName then break end
                     end
                 end
             end)
-        end
 
-        -- Highlight card đúng
+            -- Scan ReplicatedStorage StringValue
+            pcall(function()
+                local rs=game:GetService("ReplicatedStorage")
+                for _,obj in ipairs(rs:GetDescendants()) do
+                    if obj:IsA("StringValue") then
+                        local n=norm(obj.Value or "")
+                        for _,m in ipairs(matched) do
+                            if norm(m)==n then
+                                nameCount[m]=(nameCount[m] or 0)+20
+                                break
+                            end
+                        end
+                    end
+                end
+            end)
+
+            -- Scan Decal/Texture ISO code
+            pcall(function()
+                for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                    if obj:IsA("Decal") or obj:IsA("Texture") then
+                        local tex=obj.Texture or ""
+                        local iso=tex:match("flagcdn%.com/[^/]+/([a-z][a-z])%.png")
+                            or tex:match("/([a-z][a-z])%.png$")
+                        if iso then
+                            for name,code in pairs(COUNTRY_ISO) do
+                                if code==iso then
+                                    for _,m in ipairs(matched) do
+                                        if norm(m)==norm(name) then
+                                            nameCount[m]=(nameCount[m] or 0)+50
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
+            -- Chon ten co so lan dem cao nhat (>1 = xuat hien o nhieu noi)
+            local maxCount=1
+            for name,cnt in pairs(nameCount) do
+                if cnt>maxCount then maxCount=cnt;flagName=name end
+            end
+        end)
+
+        -- Highlight card dung - giu xanh mai, chi doi khi co goi y moi
         if flagName and #matched>0 then
             if flagName~=currentFlagName then
                 currentFlagName=flagName
                 highlightCards(flagName)
             end
-        else
-            if currentFlagName~=nil then
-                currentFlagName=nil
-                highlightCards(nil)
-            end
         end
+        -- Khong reset neu khong tim duoc - giu xanh cho den khi co goi y moi
 
         if not listsEq(matched,lastHints) then
             lastHints=matched
