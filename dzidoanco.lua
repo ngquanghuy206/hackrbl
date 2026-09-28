@@ -496,7 +496,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
     local iso = COUNTRY_ISO[name]
     if not iso then
         imgLabel.Visible = false
-        noFlagLabel.Text = "❌ Không có cờ:\n" .. name
+        noFlagLabel.Text = "X Khong co co:\n" .. name
         noFlagLabel.Visible = true
         nameLbl.Text = name; nameLbl.Visible = true
         return
@@ -505,7 +505,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
     imgLabel.Visible = false
     noFlagLabel.Text = "⏳ Đang tải cờ..."
     noFlagLabel.Visible = true
-    nameLbl.Text = "🏳 " .. name; nameLbl.Visible = true
+    nameLbl.Text = ">> " .. name; nameLbl.Visible = true
 
     if flagCache[iso] then
         imgLabel.Image = flagCache[iso]
@@ -556,7 +556,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
         end
 
         imgLabel.Visible = false
-        noFlagLabel.Text = "❌ Executor không hỗ trợ load ảnh\n(" .. iso .. ")"
+        noFlagLabel.Text = "X Executor khong ho tro load anh\n(" .. iso .. ")"
         noFlagLabel.Visible = true
     end)
 end
@@ -705,7 +705,7 @@ local function makeFlagViewer(parent, yOffset)
     return container,show,hide
 end
 
-local flagPage=makeTab("Admin","👤",1)
+local flagPage=makeTab("Admin","",1)
 
 local function openURL(url, btn)
     local opened = false
@@ -717,17 +717,17 @@ local function openURL(url, btn)
     if not opened then
         pcall(function() if setclipboard then setclipboard(url) end end)
         if btn then
-            btn.Text="📋 Đã copy link!"
+            btn.Text="Đã copy link!"
             task.delay(2, function() if btn.Parent then btn.Text=origText end end)
         end
     end
 end
 
 local ROW_ICONS={
-    ["👤"]="rbxassetid://6031094670",
-    ["🎭"]="rbxassetid://6031280882",
-    ["🎂"]="rbxassetid://6031068421",
-    ["📍"]="rbxassetid://6031225819",
+    ["person"]="rbxassetid://6031094670",
+    ["mask"]="rbxassetid://6031280882",
+    ["cake"]="rbxassetid://6031068421",
+    ["pin"]="rbxassetid://6031225819",
 }
 local function mkRow(parent, icon, label, value, y)
     local row=Instance.new("Frame",parent)
@@ -771,25 +771,37 @@ local titleRow=Instance.new("Frame",adBg)
 titleRow.Size=UDim2.new(1,0,0,26);titleRow.Position=UDim2.new(0,0,0,0)
 titleRow.BackgroundColor3=Color3.fromRGB(60,20,120);titleRow.BorderSizePixel=0;titleRow.ZIndex=203
 mkCorner(titleRow,8)
+local adminIco=Instance.new("ImageLabel",titleRow)
+adminIco.Size=UDim2.new(0,14,0,14);adminIco.Position=UDim2.new(0,8,0.5,-7)
+adminIco.BackgroundTransparency=1;adminIco.Image="rbxassetid://6031094670"
+adminIco.ImageColor3=Color3.fromRGB(255,230,100);adminIco.ZIndex=205
 local titleLbl=Instance.new("TextLabel",titleRow)
-titleLbl.Size=UDim2.new(1,0,1,0);titleLbl.BackgroundTransparency=1
-titleLbl.Text="👑  THÔNG TIN ADMIN";titleLbl.TextColor3=Color3.fromRGB(255,230,100)
+titleLbl.Size=UDim2.new(1,-28,1,0);titleLbl.Position=UDim2.new(0,26,0,0)
+titleLbl.BackgroundTransparency=1
+titleLbl.Text="THÔNG TIN ADMIN";titleLbl.TextColor3=Color3.fromRGB(255,230,100)
 titleLbl.TextSize=11;titleLbl.Font=Enum.Font.GothamBold;titleLbl.ZIndex=204
+titleLbl.TextXAlignment=Enum.TextXAlignment.Left
 
-mkRow(adBg,"👤","Tên","Nguyễn Hoàng Khánh Nam",30)
-mkRow(adBg,"🎭","Biệt danh","dzi",53)
-mkRow(adBg,"🎂","Sinh","30 / 05 / 2006",76)
-mkRow(adBg,"📍","Đến từ","Hà Đông, Hà Nội 🇻🇳",99)
+mkRow(adBg,"person","Tên","Nguyễn Hoàng Khánh Nam",30)
+mkRow(adBg,"mask","Biệt danh","dzi",53)
+mkRow(adBg,"cake","Sinh","30 / 05 / 2006",76)
+mkRow(adBg,"pin","Đến từ","Ha Dong, Ha Noi, VN",99)
 
 local clockBg=Instance.new("Frame",flagPage)
 clockBg.Size=UDim2.new(1,0,0,24);clockBg.Position=UDim2.new(0,0,0,120)
 clockBg.BackgroundColor3=Color3.fromRGB(30,12,60);clockBg.BorderSizePixel=0;clockBg.ZIndex=202
 mkCorner(clockBg,6);mkStroke(clockBg,Color3.fromRGB(180,100,255),1)
+local clockIco=Instance.new("ImageLabel",clockBg)
+clockIco.Size=UDim2.new(0,13,0,13);clockIco.Position=UDim2.new(0,6,0.5,-6)
+clockIco.BackgroundTransparency=1;clockIco.Image="rbxassetid://6031094676"
+clockIco.ImageColor3=Color3.fromRGB(255,220,80);clockIco.ZIndex=204
 local clockLbl=Instance.new("TextLabel",clockBg)
-clockLbl.Size=UDim2.new(1,0,1,0);clockLbl.BackgroundTransparency=1
-clockLbl.Text="🕐  --:--:--   📅  --/--/----"
+clockLbl.Size=UDim2.new(1,-26,1,0);clockLbl.Position=UDim2.new(0,22,0,0)
+clockLbl.BackgroundTransparency=1
+clockLbl.Text="--:--:--   |   --/--/----"
 clockLbl.TextColor3=Color3.fromRGB(255,220,80);clockLbl.TextSize=10
 clockLbl.Font=Enum.Font.GothamBold;clockLbl.ZIndex=203
+clockLbl.TextXAlignment=Enum.TextXAlignment.Left
 
 local function updateClock()
     local t = os.time() + 7*3600
@@ -799,16 +811,20 @@ local function updateClock()
     local function isLeap(yr) return (yr%4==0 and yr%100~=0) or yr%400==0 end
     while true do local dy=isLeap(y) and 366 or 365;if day<dy then break end;day=day-dy;y=y+1 end
     for i=1,12 do local dm=dpm[i];if i==2 and isLeap(y) then dm=29 end;if day<dm then m=i;d=day+1;break end;day=day-dm end
-    clockLbl.Text=string.format("🕐  %02d:%02d:%02d   📅  %02d/%02d/%04d",hour,min,sec,d,m,y)
+    clockLbl.Text=string.format("%02d:%02d:%02d   |   %02d/%02d/%04d",hour,min,sec,d,m,y)
 end
 updateClock()
 task.spawn(function() while flagPage.Parent do task.wait(1);pcall(updateClock) end end)
 
 local divLbl=Instance.new("TextLabel",flagPage)
 divLbl.Size=UDim2.new(1,0,0,16);divLbl.Position=UDim2.new(0,0,0,148)
-divLbl.BackgroundTransparency=1;divLbl.Text="── 🔗  Liên hệ ──"
+divLbl.BackgroundTransparency=1;divLbl.Text="────  Liên hệ  ────"
 divLbl.TextColor3=Color3.fromRGB(160,100,255);divLbl.TextSize=10
 divLbl.Font=Enum.Font.GothamBold;divLbl.ZIndex=203
+local linkIco=Instance.new("ImageLabel",flagPage)
+linkIco.Size=UDim2.new(0,12,0,12);linkIco.Position=UDim2.new(0.5,-50,0,150)
+linkIco.BackgroundTransparency=1;linkIco.Image="rbxassetid://6031094670"
+linkIco.ImageColor3=Color3.fromRGB(160,100,255);linkIco.ZIndex=203
 
 local socialLinks = {
     {label="Facebook", img="rbxassetid://5673787769", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", c1=Color3.fromRGB(10,60,180), c2=Color3.fromRGB(24,119,242)},
@@ -848,7 +864,7 @@ end
 
 flagPage.Size=UDim2.new(1,-8,0,234)
 
-local svPage=makeTab("Server","🌐",2)
+local svPage=makeTab("Server","",2)
 svPage.Size=UDim2.new(1,-8,0,118)
 
 local function mkLbl(parent,text,y,h,tc,fs)
@@ -897,8 +913,8 @@ hopBtn.MouseButton1Click:Connect(function()
         elseif http_request then reqFn=http_request end
 
         if not reqFn then
-            svStatusLbl.Text="❌ Executor không hỗ trợ HTTP"
-            hopBtn.Text="🔄  Chuyển server đông người"
+            svStatusLbl.Text="[X] Executor khong ho tro HTTP"
+            hopBtn.Text="Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
@@ -907,16 +923,16 @@ hopBtn.MouseButton1Click:Connect(function()
         local url="https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Desc&limit=100"
         local ok,res=pcall(reqFn,{Url=url,Method="GET"})
         if not ok or not res then
-            svStatusLbl.Text="❌ Request thất bại"
-            hopBtn.Text="🔄  Chuyển server đông người"
+            svStatusLbl.Text="[X] Request that bai"
+            hopBtn.Text="Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
 
         local ok2,data=pcall(function() return HttpService:JSONDecode(res.Body) end)
         if not ok2 or not data or not data.data then
-            svStatusLbl.Text="❌ Parse JSON thất bại"
-            hopBtn.Text="🔄  Chuyển server đông người"
+            svStatusLbl.Text="[X] Parse JSON that bai"
+            hopBtn.Text="Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
@@ -932,7 +948,7 @@ hopBtn.MouseButton1Click:Connect(function()
         end
 
         if best then
-            svStatusLbl.Text="✅ Tìm thấy server!"
+            svStatusLbl.Text="[OK] Tim thay server!"
             svResultLbl.Text=bestCount.."/"..best.maxPlayers.." người | "..string.sub(best.id,1,8).."..."
             hopBtn.Text="Đang chuyển..."
             task.wait(0.8)
@@ -940,15 +956,15 @@ hopBtn.MouseButton1Click:Connect(function()
                 TeleportService:TeleportToPlaceInstance(placeId,best.id,player)
             end)
             if not ok3 then
-                svStatusLbl.Text="❌ Teleport lỗi: "..(tostring(err):sub(1,40))
-                hopBtn.Text="🔄  Chuyển server đông người"
+                svStatusLbl.Text="[X] Teleport loi: "..(tostring(err):sub(1,40))
+                hopBtn.Text="Chuyển server đông người"
                 hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
                 isHopping=false
             end
         else
-            svStatusLbl.Text="❌ Không tìm thấy (thử giảm min)"
+            svStatusLbl.Text="[X] Khong tim thay (thu giam min)"
             svResultLbl.Text=""
-            hopBtn.Text="🔄  Chuyển server đông người"
+            hopBtn.Text="Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false
         end
@@ -960,7 +976,7 @@ local CARD_GAP=4
 local CARD_IMG_H=44
 local CARD_TXT_H=18
 
-local hintPage=makeTab("Gợi ý","🎮",3)
+local hintPage=makeTab("Gợi ý","",3)
 hintPage.Size=UDim2.new(1,-8,0,40)
 
 local hintNoGame=Instance.new("TextLabel",hintPage)
