@@ -585,6 +585,14 @@ end
 local function mkCorner(p,r) Instance.new("UICorner",p).CornerRadius=UDim.new(0,r or 8) end
 local function mkStroke(p,c,t) local s=Instance.new("UIStroke",p);s.Color=c;s.Thickness=t or 1.5;return s end
 
+pcall(function()
+    local old=player.PlayerGui:FindFirstChild("DziDoanCo")
+    if old then old:Destroy() end
+    local old2=player.PlayerGui:FindFirstChild("DziAutoFlag")
+    if old2 then old2:Destroy() end
+end)
+task.wait(0.05)
+
 local ScreenGui=Instance.new("ScreenGui")
 ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
