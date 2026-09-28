@@ -378,6 +378,52 @@ local ALIASES = {
     ["tristan da cunha"]="Tristan da Cunha",["tristan"]="Tristan da Cunha",
     ["french southern territories"]="French Southern Territories",["lanh tho phia nam phap"]="French Southern Territories",
     ["us minor outlying"]="US Minor Outlying Islands",["dao nho my"]="US Minor Outlying Islands",
+    -- TEN GAME HAY DUNG (tu anh)
+    -- "Nước Đức", "Nước Áo", "Nước Séc" etc
+    ["nuoc duc"]="Đức",["nuoc ao"]="Áo",["nuoc sec"]="Séc",
+    ["nuoc anh"]="Anh",["nuoc phap"]="Pháp",["nuoc y"]="Ý",
+    ["nuoc bi"]="Bỉ",["nuoc ha lan"]="Hà Lan",["nuoc nga"]="Nga",
+    ["nuoc ba lan"]="Ba Lan",["nuoc ukraine"]="Ukraine",
+    ["nuoc hy lap"]="Hy Lạp",["nuoc hungary"]="Hungary",
+    ["nuoc romania"]="Romania",["nuoc bulgaria"]="Bulgaria",
+    ["nuoc serbia"]="Serbia",["nuoc croatia"]="Croatia",
+    ["nuoc slovakia"]="Slovakia",["nuoc sec"]="Séc",
+    ["nuoc estonia"]="Estonia",["nuoc latvia"]="Latvia",
+    ["nuoc lithuania"]="Lithuania",["nuoc moldova"]="Moldova",
+    ["nuoc belarus"]="Belarus",["nuoc iceland"]="Iceland",
+    ["nuoc ireland"]="Ireland",["nuoc dan mach"]="Đan Mạch",
+    ["nuoc na uy"]="Na Uy",["nuoc thuy dien"]="Thụy Điển",
+    ["nuoc phan lan"]="Phần Lan",["nuoc thuy si"]="Thụy Sĩ",
+    ["nuoc lien bang nga"]="Nga",
+    -- Vatican (game goi "Thanh pho Vatican")
+    ["thanh pho vatican"]="Vatican",["toa thanh vatican"]="Vatican",
+    ["thanh pho va ti can"]="Vatican",["holy see"]="Vatican",
+    -- Nước Áo (game goi "Nuoc Ao" hoac "Ao")
+    ["nuoc ao"]="Áo",["ao"]="Áo",["austria"]="Áo",
+    -- Séc (game goi "Nuoc Sec" hoac "Sec")
+    ["nuoc sec"]="Séc",["nuoc cong hoa sec"]="Séc",
+    -- Bangadesh (game viet sai "Bangadesh")
+    ["bangadesh"]="Bangladesh",["banglades"]="Bangladesh",
+    ["bang la det"]="Bangladesh",
+    -- Hồng Kông
+    ["hong kong"]="Hồng Kông",["hk"]="Hồng Kông",
+    -- Cộng Hòa Congo / Congo (2 loai)
+    ["cong hoa congo"]="Congo",["republic congo"]="Congo",
+    ["cong hoa dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    ["dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    ["ch dan chu congo"]="Cộng Hòa Dân Chủ Congo",
+    -- Tên tiếng Anh chuẩn cho các nước hay bị miss
+    ["nước đức"]="Đức",["nước áo"]="Áo",["nước séc"]="Séc",
+    ["nước anh"]="Anh",["nước pháp"]="Pháp",["nước ý"]="Ý",
+    ["nước bỉ"]="Bỉ",["nước hà lan"]="Hà Lan",
+    ["nước nga"]="Nga",["nước ba lan"]="Ba Lan",
+    ["nước ukraine"]="Ukraine",["nước hy lạp"]="Hy Lạp",
+    ["nước iceland"]="Iceland",["nước ireland"]="Ireland",
+    ["thành phố vatican"]="Vatican",
+    ["hồng kông"]="Hồng Kông",["hong kông"]="Hồng Kông",
+    ["bangadesh"]="Bangladesh",
+    ["cộng hòa congo"]="Congo",
+    ["cộng hòa dân chủ congo"]="Cộng Hòa Dân Chủ Congo",
     ["vn"]="Việt Nam",["th"]="Thái Lan",["ph"]="Philippines",
     ["sg"]="Singapore",["id"]="Indonesia",["mm"]="Myanmar",
     ["kh"]="Campuchia",["bn"]="Brunei",["tl"]="Timor-Leste",
@@ -496,7 +542,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
     local iso = COUNTRY_ISO[name]
     if not iso then
         imgLabel.Visible = false
-        noFlagLabel.Text = "X Khong co co:\n" .. name
+        noFlagLabel.Text = "❌ Không có cờ:\n" .. name
         noFlagLabel.Visible = true
         nameLbl.Text = name; nameLbl.Visible = true
         return
@@ -505,7 +551,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
     imgLabel.Visible = false
     noFlagLabel.Text = "⏳ Đang tải cờ..."
     noFlagLabel.Visible = true
-    nameLbl.Text = ">> " .. name; nameLbl.Visible = true
+    nameLbl.Text = "🏳 " .. name; nameLbl.Visible = true
 
     if flagCache[iso] then
         imgLabel.Image = flagCache[iso]
@@ -556,7 +602,7 @@ local function loadFlagAsync(name, imgLabel, noFlagLabel, nameLbl)
         end
 
         imgLabel.Visible = false
-        noFlagLabel.Text = "X Executor khong ho tro load anh\n(" .. iso .. ")"
+        noFlagLabel.Text = "❌ Executor không hỗ trợ load ảnh\n(" .. iso .. ")"
         noFlagLabel.Visible = true
     end)
 end
@@ -586,13 +632,12 @@ local function mkCorner(p,r) Instance.new("UICorner",p).CornerRadius=UDim.new(0,
 local function mkStroke(p,c,t) local s=Instance.new("UIStroke",p);s.Color=c;s.Thickness=t or 1.5;return s end
 
 pcall(function()
-    local old=player.PlayerGui:FindFirstChild("DziDoanCo")
-    if old then old:Destroy() end
-    local old2=player.PlayerGui:FindFirstChild("DziAutoFlag")
-    if old2 then old2:Destroy() end
+    local oldGui=player.PlayerGui:FindFirstChild("DziDoanCo")
+    if oldGui then oldGui:Destroy() end
+    local oldGui2=player.PlayerGui:FindFirstChild("DziAutoFlag")
+    if oldGui2 then oldGui2:Destroy() end
 end)
 task.wait(0.05)
-
 local ScreenGui=Instance.new("ScreenGui")
 ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
@@ -616,7 +661,7 @@ makeDrag(MenuPanel,TitleBar)
 
 local TitleLbl=Instance.new("TextLabel",TitleBar)
 TitleLbl.Size=UDim2.new(1,-50,1,0);TitleLbl.Position=UDim2.new(0,8,0,0)
-TitleLbl.BackgroundTransparency=1;TitleLbl.Text="DZI ĐOÁN CỜ"
+TitleLbl.BackgroundTransparency=1;TitleLbl.Text="🏴 DZI ĐOÁN CỜ"
 TitleLbl.TextColor3=Color3.fromRGB(200,160,255);TitleLbl.TextSize=11
 TitleLbl.Font=Enum.Font.GothamBold
 TitleLbl.TextXAlignment=Enum.TextXAlignment.Left;TitleLbl.ZIndex=202
@@ -634,12 +679,11 @@ MenuContent.Position=UDim2.new(0,0,0,28)
 MenuContent.BackgroundTransparency=1;MenuContent.ZIndex=201;MenuContent.Visible=true
 
 local tabBtns={};local tabPages={}
-
 local function makeTab(name,icon,idx)
     local tb=Instance.new("TextButton",MenuContent)
     tb.Size=UDim2.new(0,76,0,26);tb.Position=UDim2.new(0,6+(idx-1)*82,0,4)
     tb.BackgroundColor3=Color3.fromRGB(25,15,50);tb.BorderSizePixel=0
-    tb.Text=name;tb.TextColor3=Color3.fromRGB(180,150,255)
+    tb.Text=icon.." "..name;tb.TextColor3=Color3.fromRGB(180,150,255)
     tb.TextSize=10;tb.Font=Enum.Font.GothamBold;tb.ZIndex=202;mkCorner(tb,6)
     mkStroke(tb,Color3.fromRGB(100,60,180),1);tabBtns[name]=tb
 
@@ -689,7 +733,63 @@ local function makeFlagViewer(parent, yOffset)
     return container,show,hide
 end
 
-local flagPage=makeTab("Admin","",1)
+local flagPage=makeTab("Admin","👤",1)
+flagPage.Size=UDim2.new(1,-8,0,200)
+
+local function mkInfoLbl(parent,text,y,h,tc,fs,align)
+    local l=Instance.new("TextLabel",parent)
+    l.Size=UDim2.new(1,0,0,h);l.Position=UDim2.new(0,0,0,y)
+    l.BackgroundTransparency=1;l.Text=text
+    l.TextColor3=tc or Color3.fromRGB(220,200,255)
+    l.TextSize=fs or 11;l.Font=Enum.Font.GothamBold
+    l.TextWrapped=true;l.ZIndex=203
+    l.TextXAlignment=align or Enum.TextXAlignment.Center
+    return l
+end
+
+mkInfoLbl(flagPage,"👑 THÔNG TIN ADMIN",0,18,Color3.fromRGB(200,160,255),12)
+mkInfoLbl(flagPage,"Tên: Nguyễn Hoàng Khánh Nam",20,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,'Biệt danh: "dzi"',38,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,"Sinh: 30/05/2006",56,16,Color3.fromRGB(180,220,255),10)
+mkInfoLbl(flagPage,"Đến từ: Hà Đông, Hà Nội, Việt Nam",74,16,Color3.fromRGB(180,220,255),10)
+
+local clockLbl=mkInfoLbl(flagPage,"🕐 --:--:--  |  --/--/----",92,16,Color3.fromRGB(255,220,100),10)
+
+local function updateClock()
+    local t = os.time() + 7*3600
+    local sec  = t % 60
+    local min  = math.floor(t/60) % 60
+    local hour = math.floor(t/3600) % 24
+    local day  = math.floor(t/86400)
+    local y,m,d = 1970,1,1
+    local dpm = {31,28,31,30,31,30,31,31,30,31,30,31}
+    local function isLeap(yr) return (yr%4==0 and yr%100~=0) or yr%400==0 end
+    while true do
+        local dy = isLeap(y) and 366 or 365
+        if day < dy then break end
+        day = day - dy; y = y+1
+    end
+    for i=1,12 do
+        local dm = dpm[i]; if i==2 and isLeap(y) then dm=29 end
+        if day < dm then m=i; d=day+1; break end
+        day=day-dm
+    end
+    clockLbl.Text=string.format("🕐 %02d:%02d:%02d  |  %02d/%02d/%04d",hour,min,sec,d,m,y)
+end
+updateClock()
+
+task.spawn(function()
+    while flagPage.Parent do
+        task.wait(1)
+        pcall(updateClock)
+    end
+end)
+
+local sep=Instance.new("Frame",flagPage)
+sep.Size=UDim2.new(1,0,0,1);sep.Position=UDim2.new(0,0,0,112)
+sep.BackgroundColor3=Color3.fromRGB(100,60,180);sep.BorderSizePixel=0;sep.ZIndex=203
+
+mkInfoLbl(flagPage,"🔗 Liên hệ",116,16,Color3.fromRGB(200,160,255),11)
 
 local function openURL(url, btn)
     local opened = false
@@ -701,123 +801,35 @@ local function openURL(url, btn)
     if not opened then
         pcall(function() if setclipboard then setclipboard(url) end end)
         if btn then
-            btn.Text="Đã copy link!"
-            task.delay(2, function() if btn.Parent then btn.Text=origText end end)
+            btn.Text="📋 Đã copy!"
+            task.delay(1.5, function() if btn.Parent then btn.Text=origText end end)
         end
     end
 end
 
-local ROW_ICONS={
-    ["person"]=">",["mask"]="~",["cake"]="*",["pin"]="+",
-}
-local function mkRow(parent, icon, label, value, y)
-    local row=Instance.new("Frame",parent)
-    row.Size=UDim2.new(1,0,0,20);row.Position=UDim2.new(0,0,0,y)
-    row.BackgroundColor3=Color3.fromRGB(22,15,45);row.BorderSizePixel=0;row.ZIndex=203
-    mkCorner(row,5)
-    local icoLbl=Instance.new("TextLabel",row)
-    icoLbl.Size=UDim2.new(0,18,1,0);icoLbl.Position=UDim2.new(0,2,0,0)
-    icoLbl.BackgroundTransparency=1
-    icoLbl.Text=ROW_ICONS[icon] or icon
-    icoLbl.TextSize=10;icoLbl.Font=Enum.Font.GothamBold
-    icoLbl.TextColor3=Color3.fromRGB(200,160,255);icoLbl.ZIndex=204
-    local lbl=Instance.new("TextLabel",row)
-    lbl.Size=UDim2.new(0.42,0,1,0);lbl.Position=UDim2.new(0,20,0,0)
-    lbl.BackgroundTransparency=1;lbl.Text=label
-    lbl.TextSize=9;lbl.Font=Enum.Font.GothamBold
-    lbl.TextColor3=Color3.fromRGB(140,120,200);lbl.ZIndex=204
-    lbl.TextXAlignment=Enum.TextXAlignment.Left
-    local val=Instance.new("TextLabel",row)
-    val.Size=UDim2.new(0.56,-4,1,0);val.Position=UDim2.new(0.44,0,0,0)
-    val.BackgroundTransparency=1;val.Text=value
-    val.TextSize=9;val.Font=Enum.Font.GothamBold
-    val.TextColor3=Color3.fromRGB(230,215,255);val.ZIndex=204
-    val.TextXAlignment=Enum.TextXAlignment.Left
-    val.TextTruncate=Enum.TextTruncate.AtEnd
-    return row
-end
-
-local adBg=Instance.new("Frame",flagPage)
-adBg.Size=UDim2.new(1,0,0,116);adBg.Position=UDim2.new(0,0,0,0)
-adBg.BackgroundColor3=Color3.fromRGB(14,9,30);adBg.BorderSizePixel=0;adBg.ZIndex=202
-mkCorner(adBg,8);mkStroke(adBg,Color3.fromRGB(120,70,210),1)
-
-local titleRow=Instance.new("Frame",adBg)
-titleRow.Size=UDim2.new(1,0,0,26);titleRow.Position=UDim2.new(0,0,0,0)
-titleRow.BackgroundColor3=Color3.fromRGB(60,20,120);titleRow.BorderSizePixel=0;titleRow.ZIndex=203
-mkCorner(titleRow,8)
-local titleLbl=Instance.new("TextLabel",titleRow)
-titleLbl.Size=UDim2.new(1,0,1,0);titleLbl.Position=UDim2.new(0,0,0,0)
-titleLbl.BackgroundTransparency=1
-titleLbl.Text="THÔNG TIN ADMIN";titleLbl.TextColor3=Color3.fromRGB(255,230,100)
-titleLbl.TextSize=11;titleLbl.Font=Enum.Font.GothamBold;titleLbl.ZIndex=204
-
-mkRow(adBg,"person","Tên","Nguyễn Hoàng Khánh Nam",30)
-mkRow(adBg,"mask","Biệt danh","dzi",53)
-mkRow(adBg,"cake","Sinh","30 / 05 / 2006",76)
-mkRow(adBg,"pin","Đến từ","Ha Dong, Ha Noi, VN",99)
-
-local clockBg=Instance.new("Frame",flagPage)
-clockBg.Size=UDim2.new(1,0,0,24);clockBg.Position=UDim2.new(0,0,0,120)
-clockBg.BackgroundColor3=Color3.fromRGB(30,12,60);clockBg.BorderSizePixel=0;clockBg.ZIndex=202
-mkCorner(clockBg,6);mkStroke(clockBg,Color3.fromRGB(180,100,255),1)
-local clockLbl=Instance.new("TextLabel",clockBg)
-clockLbl.Size=UDim2.new(1,-8,1,0);clockLbl.Position=UDim2.new(0,4,0,0)
-clockLbl.BackgroundTransparency=1
-clockLbl.Text="--:--:--   |   --/--/----"
-clockLbl.TextColor3=Color3.fromRGB(255,220,80);clockLbl.TextSize=10
-clockLbl.Font=Enum.Font.GothamBold;clockLbl.ZIndex=203
-
-local function updateClock()
-    local t = os.time() + 7*3600
-    local sec=t%60;local min=math.floor(t/60)%60;local hour=math.floor(t/3600)%24
-    local day=math.floor(t/86400);local y,m,d=1970,1,1
-    local dpm={31,28,31,30,31,30,31,31,30,31,30,31}
-    local function isLeap(yr) return (yr%4==0 and yr%100~=0) or yr%400==0 end
-    while true do local dy=isLeap(y) and 366 or 365;if day<dy then break end;day=day-dy;y=y+1 end
-    for i=1,12 do local dm=dpm[i];if i==2 and isLeap(y) then dm=29 end;if day<dm then m=i;d=day+1;break end;day=day-dm end
-    clockLbl.Text=string.format("%02d:%02d:%02d   |   %02d/%02d/%04d",hour,min,sec,d,m,y)
-end
-updateClock()
-task.spawn(function() while flagPage.Parent do task.wait(1);pcall(updateClock) end end)
-
-local divLbl=Instance.new("TextLabel",flagPage)
-divLbl.Size=UDim2.new(1,0,0,16);divLbl.Position=UDim2.new(0,0,0,148)
-divLbl.BackgroundTransparency=1;divLbl.Text="────  Liên hệ  ────"
-divLbl.TextColor3=Color3.fromRGB(160,100,255);divLbl.TextSize=10
-divLbl.Font=Enum.Font.GothamBold;divLbl.ZIndex=203
-
-
 local socialLinks = {
-    {label="Facebook", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", c1=Color3.fromRGB(10,60,180), c2=Color3.fromRGB(24,119,242)},
-    {label="Telegram", url="https://t.me/dzimeomeo", c1=Color3.fromRGB(0,95,160), c2=Color3.fromRGB(0,136,204)},
-    {label="Discord",  url="https://discord.gg/FEEet5G3u", c1=Color3.fromRGB(55,60,180), c2=Color3.fromRGB(88,101,242)},
-    {label="Zalo",     url="https://zalo.me/84993329535", c1=Color3.fromRGB(0,130,55), c2=Color3.fromRGB(0,180,75)},
+    {label="📘 Facebook", url="https://www.facebook.com/share/1DPKeN5Kdy/?mibextid=wwXIfr", color=Color3.fromRGB(24,119,242)},
+    {label="✈️ Telegram", url="https://t.me/dzimeomeo", color=Color3.fromRGB(0,136,204)},
+    {label="💬 Discord", url="https://discord.gg/FEEet5G3u", color=Color3.fromRGB(88,101,242)},
+    {label="💚 Zalo", url="https://zalo.me/84993329535", color=Color3.fromRGB(0,180,80)},
 }
 
-for i,s in ipairs(socialLinks) do
-    local col=(i-1)%2;local row=math.floor((i-1)/2)
+for i, s in ipairs(socialLinks) do
+    local col=(i-1)%2; local row=math.floor((i-1)/2)
     local btn=Instance.new("TextButton",flagPage)
-    btn.Size=UDim2.new(0.5,-5,0,32)
-    btn.Position=UDim2.new(col*0.5,col==0 and 0 or 5,0,166+row*36)
-    btn.BackgroundColor3=s.c2;btn.BorderSizePixel=0
-    btn.Text="";btn.ZIndex=203
-    mkCorner(btn,9);mkStroke(btn,s.c1,1)
-    local gradient=Instance.new("UIGradient",btn)
-    gradient.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,s.c2),ColorSequenceKeypoint.new(1,s.c1)})
-    gradient.Rotation=135
-    btn.Text=s.label
-    btn.TextColor3=Color3.fromRGB(255,255,255);btn.TextSize=11
-    btn.Font=Enum.Font.GothamBold
+    btn.Size=UDim2.new(0.5,-6,0,28)
+    btn.Position=UDim2.new(col*0.5,col==0 and 2 or 4,0,134+row*32)
+    btn.BackgroundColor3=s.color;btn.BorderSizePixel=0
+    btn.Text=s.label;btn.TextColor3=Color3.fromRGB(255,255,255)
+    btn.TextSize=10;btn.Font=Enum.Font.GothamBold;btn.ZIndex=203
+    mkCorner(btn,7)
     local url=s.url
-    btn.MouseButton1Click:Connect(function()
-        openURL(url,btn)
-    end)
+    btn.MouseButton1Click:Connect(function() openURL(url, btn) end)
 end
 
-flagPage.Size=UDim2.new(1,-8,0,234)
+flagPage.Size=UDim2.new(1,-8,0,200)
 
-local svPage=makeTab("Server","",2)
+local svPage=makeTab("Server","🌐",2)
 svPage.Size=UDim2.new(1,-8,0,118)
 
 local function mkLbl(parent,text,y,h,tc,fs)
@@ -844,15 +856,14 @@ local svResultLbl=mkLbl(svPage,"",62,22,Color3.fromRGB(100,255,150))
 local hopBtn=Instance.new("TextButton",svPage)
 hopBtn.Size=UDim2.new(1,0,0,30);hopBtn.Position=UDim2.new(0,0,0,86)
 hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160);hopBtn.BorderSizePixel=0
-hopBtn.Text="Chuyển server đông người";hopBtn.TextColor3=Color3.fromRGB(200,230,255)
+hopBtn.Text="🔄  Chuyển server đông người";hopBtn.TextColor3=Color3.fromRGB(200,230,255)
 hopBtn.TextSize=11;hopBtn.Font=Enum.Font.GothamBold;hopBtn.ZIndex=203
 mkCorner(hopBtn,8);mkStroke(hopBtn,Color3.fromRGB(80,140,255),1)
-
 
 local isHopping=false
 hopBtn.MouseButton1Click:Connect(function()
     if isHopping then return end
-    isHopping=true;hopBtn.Text="Đang tìm..."
+    isHopping=true;hopBtn.Text="⏳ Đang tìm..."
     hopBtn.BackgroundColor3=Color3.fromRGB(15,40,100)
     svStatusLbl.Text="Đang query server list...";svResultLbl.Text=""
 
@@ -863,8 +874,8 @@ hopBtn.MouseButton1Click:Connect(function()
         elseif http_request then reqFn=http_request end
 
         if not reqFn then
-            svStatusLbl.Text="[X] Executor khong ho tro HTTP"
-            hopBtn.Text="Chuyển server đông người"
+            svStatusLbl.Text="❌ Executor không hỗ trợ HTTP"
+            hopBtn.Text="🔄  Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
@@ -873,16 +884,16 @@ hopBtn.MouseButton1Click:Connect(function()
         local url="https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Desc&limit=100"
         local ok,res=pcall(reqFn,{Url=url,Method="GET"})
         if not ok or not res then
-            svStatusLbl.Text="[X] Request that bai"
-            hopBtn.Text="Chuyển server đông người"
+            svStatusLbl.Text="❌ Request thất bại"
+            hopBtn.Text="🔄  Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
 
         local ok2,data=pcall(function() return HttpService:JSONDecode(res.Body) end)
         if not ok2 or not data or not data.data then
-            svStatusLbl.Text="[X] Parse JSON that bai"
-            hopBtn.Text="Chuyển server đông người"
+            svStatusLbl.Text="❌ Parse JSON thất bại"
+            hopBtn.Text="🔄  Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false;return
         end
@@ -898,23 +909,23 @@ hopBtn.MouseButton1Click:Connect(function()
         end
 
         if best then
-            svStatusLbl.Text="[OK] Tim thay server!"
+            svStatusLbl.Text="✅ Tìm thấy server!"
             svResultLbl.Text=bestCount.."/"..best.maxPlayers.." người | "..string.sub(best.id,1,8).."..."
-            hopBtn.Text="Đang chuyển..."
+            hopBtn.Text="✈️  Đang chuyển..."
             task.wait(0.8)
             local ok3,err=pcall(function()
                 TeleportService:TeleportToPlaceInstance(placeId,best.id,player)
             end)
             if not ok3 then
-                svStatusLbl.Text="[X] Teleport loi: "..(tostring(err):sub(1,40))
-                hopBtn.Text="Chuyển server đông người"
+                svStatusLbl.Text="❌ Teleport lỗi: "..(tostring(err):sub(1,40))
+                hopBtn.Text="🔄  Chuyển server đông người"
                 hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
                 isHopping=false
             end
         else
-            svStatusLbl.Text="[X] Khong tim thay (thu giam min)"
+            svStatusLbl.Text="❌ Không tìm thấy (thử giảm min)"
             svResultLbl.Text=""
-            hopBtn.Text="Chuyển server đông người"
+            hopBtn.Text="🔄  Chuyển server đông người"
             hopBtn.BackgroundColor3=Color3.fromRGB(20,60,160)
             isHopping=false
         end
@@ -926,12 +937,12 @@ local CARD_GAP=4
 local CARD_IMG_H=44
 local CARD_TXT_H=18
 
-local hintPage=makeTab("Gợi ý","",3)
+local hintPage=makeTab("Gợi ý","🎮",3)
 hintPage.Size=UDim2.new(1,-8,0,40)
 
 local hintNoGame=Instance.new("TextLabel",hintPage)
 hintNoGame.Size=UDim2.new(1,0,0,30);hintNoGame.Position=UDim2.new(0,0,0,4)
-hintNoGame.BackgroundTransparency=1;hintNoGame.Text="Chờ cờ xuất hiện..."
+hintNoGame.BackgroundTransparency=1;hintNoGame.Text="⏳ Chờ cờ xuất hiện..."
 hintNoGame.TextColor3=Color3.fromRGB(150,140,200);hintNoGame.TextSize=11
 hintNoGame.Font=Enum.Font.GothamBold;hintNoGame.ZIndex=203
 
@@ -1044,10 +1055,8 @@ end
 local function switchTab(name)
     for n,pg in pairs(tabPages) do
         pg.Visible=(n==name)
-        local isActive=(n==name)
-        local btn=tabBtns[n]
-        btn.BackgroundColor3=isActive and Color3.fromRGB(60,30,120) or Color3.fromRGB(25,15,50)
-        btn.TextColor3=isActive and Color3.fromRGB(255,220,100) or Color3.fromRGB(180,150,255)
+        tabBtns[n].BackgroundColor3=n==name
+            and Color3.fromRGB(60,30,120) or Color3.fromRGB(25,15,50)
     end
     activeTab=name;refreshMenuHeight()
 end
