@@ -738,16 +738,11 @@ local titleRow=Instance.new("Frame",adBg)
 titleRow.Size=UDim2.new(1,0,0,26);titleRow.Position=UDim2.new(0,0,0,0)
 titleRow.BackgroundColor3=Color3.fromRGB(60,20,120);titleRow.BorderSizePixel=0;titleRow.ZIndex=203
 mkCorner(titleRow,8)
-local adminIco=Instance.new("ImageLabel",titleRow)
-adminIco.Size=UDim2.new(0,14,0,14);adminIco.Position=UDim2.new(0,8,0.5,-7)
-adminIco.BackgroundTransparency=1;adminIco.Image="rbxassetid://6031094670"
-adminIco.ImageColor3=Color3.fromRGB(255,230,100);adminIco.ZIndex=205
 local titleLbl=Instance.new("TextLabel",titleRow)
-titleLbl.Size=UDim2.new(1,-28,1,0);titleLbl.Position=UDim2.new(0,26,0,0)
+titleLbl.Size=UDim2.new(1,0,1,0);titleLbl.Position=UDim2.new(0,0,0,0)
 titleLbl.BackgroundTransparency=1
 titleLbl.Text="THÔNG TIN ADMIN";titleLbl.TextColor3=Color3.fromRGB(255,230,100)
 titleLbl.TextSize=11;titleLbl.Font=Enum.Font.GothamBold;titleLbl.ZIndex=204
-titleLbl.TextXAlignment=Enum.TextXAlignment.Left
 
 mkRow(adBg,"person","Tên","Nguyễn Hoàng Khánh Nam",30)
 mkRow(adBg,"mask","Biệt danh","dzi",53)
