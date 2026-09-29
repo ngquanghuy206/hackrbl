@@ -1445,61 +1445,8 @@ local function updateHintBtns(list)
     end
 end
 
--- ===== DETECT LÁ CỜ GAME TỪ DECAL/TEXTURE =====
-local lastGameISO=nil
-local gameFlagTick=0
-RunService.Heartbeat:Connect(function()
-    gameFlagTick+=1;if gameFlagTick<30 then return end;gameFlagTick=0
-    pcall(function()
-        local foundISO=nil
-        -- Quét Decal/Texture trong Workspace tìm ISO code
-        for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
-            if obj:IsA("Decal") or obj:IsA("Texture") then
-                local tex=obj.Texture or ""
-                local iso=tex:match("flagcdn%.com/[^/]+/([a-z][a-z])%.png")
-                    or tex:match("flagcdn%.com/([a-z][a-z])%.png")
-                    or tex:match("/([a-z][a-z])%.png$")
-                if iso and #iso==2 then
-                    -- Kiểm tra ISO này có trong danh sách không
-                    for _,code in pairs(COUNTRY_ISO) do
-                        if code==iso then foundISO=iso;break end
-                    end
-                    if foundISO then break end
-                end
-            end
-        end
-
-        if foundISO and foundISO~=lastGameISO then
-            lastGameISO=foundISO
-            showGameFlag(foundISO)
-            -- Tự động so sánh với 4 gợi ý hiện tại
-            task.defer(function()
-                for i=1,4 do
-                    local cd=hintCards[i]
-                    if cd.card.Visible then
-                        local name=cd.nameLbl.Text
-                        local iso=COUNTRY_ISO[name]
-                        if iso and iso==foundISO then
-                            currentFlagName=name
-                            answerBanner.Visible=true
-                            answerLbl.Text="✅ Đáp án đúng: "..name
-                            highlightCards(name)
-                            break
-                        end
-                    end
-                end
-                recalcHintLayout(4)
-                if activeTab=="Gợi ý" then refreshMenuHeight() end
-            end)
-        elseif not foundISO and lastGameISO then
-            lastGameISO=nil
-            hideGameFlag()
-            recalcHintLayout(4)
-            if activeTab=="Gợi ý" then refreshMenuHeight() end
-        end
-    end)
-end)
 -- ===== END DETECT LÁ CỜ GAME =====
+-- NOTE: showGameFlag sẽ được gọi khi flagName được tìm ra từ logic scan bên dưới
 
 local tick0=0
 local questionChangedAt=0  -- Thoi diem doi cau hoi moi nhat (os.clock())
@@ -1713,6 +1660,9 @@ RunService.Heartbeat:Connect(function()
             if flagName~=currentFlagName then
                 currentFlagName=flagName
                 highlightCards(flagName)
+                -- Hiển thị lá cờ đáp án lên khung lớn
+                local iso=COUNTRY_ISO[flagName]
+                if iso then showGameFlag(iso) end
             end
         end
         -- Khong reset neu khong tim duoc - giu xanh cho den khi co goi y moi
@@ -1720,6 +1670,8 @@ RunService.Heartbeat:Connect(function()
         if not listsEq(matched,lastHints) then
             lastHints=matched
             questionChangedAt=os.clock()  -- Bat dau cooldown
+            -- Ẩn cờ game khi câu hỏi mới
+            hideGameFlag()
             updateHintBtns(matched)
             if #matched>=1 then
                 -- Tu dong mo menu neu dang thu nho
