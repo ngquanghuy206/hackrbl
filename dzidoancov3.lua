@@ -747,7 +747,16 @@ task.wait(0.05)
 local ScreenGui=Instance.new("ScreenGui")
 ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
-ScreenGui.Parent=player.PlayerGui
+ScreenGui.IgnoreGuiInset=true
+local _guiParented=false
+pcall(function()
+    if syn and syn.protect_gui then syn.protect_gui(ScreenGui) end
+    ScreenGui.Parent=game:GetService("CoreGui");_guiParented=true
+end)
+if not _guiParented then pcall(function()
+    if gethui then ScreenGui.Parent=gethui();_guiParented=true end
+end) end
+if not _guiParented then ScreenGui.Parent=player.PlayerGui end
 
 local MENU_W=260
 local menuOpen=true
@@ -940,7 +949,7 @@ end
 flagPage.Size=UDim2.new(1,-8,0,260)
 
 -- Nút DEBUG trong tab Admin
-local debugCopyBtn  -- khai bao truoc de dung trong callback debugScanBtn
+local debugCopyBtn  -- khai bao truoc de tranh nil crash
 local debugScanBtn=Instance.new("TextButton",flagPage)
 debugScanBtn.Size=UDim2.new(1,-4,0,26)
 debugScanBtn.Position=UDim2.new(0,2,0,202)
