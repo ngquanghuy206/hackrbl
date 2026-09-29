@@ -1646,10 +1646,76 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
+            -- PHUONG PHAP 3: Scan ten Model/Part co chua ten nuoc trong Workspace (flag model)
+            pcall(function()
+                for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                    -- Game thuong dat ten Model/Folder theo ten nuoc hoac luu trong StringValue/Attribute
+                    local checkName = nil
+                    if obj:IsA("Model") or obj:IsA("Folder") or obj:IsA("Part") or obj:IsA("UnionOperation") then
+                        checkName = obj.Name or ""
+                    elseif obj:IsA("StringValue") or obj:IsA("LocalizationTable") then
+                        checkName = (obj.Value or "")..(obj.Name or "")
+                    end
+                    if checkName and #checkName>=2 and #checkName<=60 then
+                        local n=norm(checkName)
+                        local mm=tryMatch(n)
+                        if mm then
+                            for _,m in ipairs(matched) do
+                                if norm(m)==norm(mm) then
+                                    nameCount[m]=(nameCount[m] or 0)+30
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    -- Scan Attributes
+                    pcall(function()
+                        for attrName,attrVal in pairs(obj:GetAttributes()) do
+                            local v=tostring(attrVal or "")
+                            if #v>=2 and #v<=60 then
+                                local n=norm(v)
+                                local mm=tryMatch(n)
+                                if mm then
+                                    for _,m in ipairs(matched) do
+                                        if norm(m)==norm(mm) then
+                                            nameCount[m]=(nameCount[m] or 0)+40
+                                            break
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+
+            -- PHUONG PHAP 4: Scan BillboardGui/SurfaceGui trong Workspace (ten nuoc hien tren nen co)
+            pcall(function()
+                for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                    if obj:IsA("SurfaceGui") or obj:IsA("BillboardGui") then
+                        for _,ch in ipairs(obj:GetDescendants()) do
+                            if ch:IsA("TextLabel") or ch:IsA("TextButton") then
+                                local t=ch.Text
+                                if t and #t>=2 and #t<=60 then
+                                    local mm=tryMatch(norm(t))
+                                    if mm then
+                                        for _,m in ipairs(matched) do
+                                            if norm(m)==norm(mm) then
+                                                nameCount[m]=(nameCount[m] or 0)+50
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
             -- Chon ten co diem cao nhat
-            -- Nguong=25: chi banner game (+50) hoac button xanh la (+60) moi trigger
-            -- Player GUI chi cho +1/nguoi -> can 26+ nguoi = khong the false positive
-            local maxCount=25
+            -- Ha nguong xuong 20 de detect duoc khi chi co 1 nguon (model name, attribute, billboard)
+            local maxCount=20
             for name,cnt in pairs(nameCount) do
                 if cnt>maxCount then maxCount=cnt;flagName=name end
             end
