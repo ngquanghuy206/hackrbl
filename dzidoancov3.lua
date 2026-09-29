@@ -787,7 +787,6 @@ MenuContent.BackgroundTransparency=1;MenuContent.ZIndex=201;MenuContent.Visible=
 local tabBtns={};local tabPages={}
 local function makeTab(name,icon,idx)
     local tb=Instance.new("TextButton",MenuContent)
-    -- 4 tabs, mỗi tab 58px, gap 4px, padding trái 4px: 4*58 + 3*4 + 4 = 248 ≈ OK
     tb.Size=UDim2.new(0,58,0,24);tb.Position=UDim2.new(0,4+(idx-1)*62,0,4)
     tb.BackgroundColor3=Color3.fromRGB(25,15,50);tb.BorderSizePixel=0
     tb.Text=icon.." "..name;tb.TextColor3=Color3.fromRGB(180,150,255)
@@ -844,7 +843,7 @@ end
 
 local flagPage=makeTab("Admin","👤",1)
 local svPage=makeTab("Server","🌐",2)
-local corePage=makeTab("Cờ mẫu","🏳",3)
+local corePage=makeTab("Co mau","🏳",3)
 flagPage.Size=UDim2.new(1,-8,0,200)
 
 local function mkInfoLbl(parent,text,y,h,tc,fs,align)
@@ -1181,13 +1180,14 @@ local GAME_FLAG_H=110  -- Chiều cao khung lá cờ game
 local GAME_FLAG_LABEL_H=18
 local GAME_FLAG_TOTAL=GAME_FLAG_H+GAME_FLAG_LABEL_H+8  -- Tổng chiều cao vùng cờ game
 
--- ===== TAB CỜ MẪU =====
-corePage.Size=UDim2.new(1,-8,0,160)
+
+-- ===== TAB CO MAU =====
+corePage.Size=UDim2.new(1,-8,0,144)
 
 local coreSearchBox=Instance.new("TextBox",corePage)
 coreSearchBox.Size=UDim2.new(1,0,0,26);coreSearchBox.Position=UDim2.new(0,0,0,0)
 coreSearchBox.BackgroundColor3=Color3.fromRGB(20,14,40);coreSearchBox.BorderSizePixel=0
-coreSearchBox.Text="";coreSearchBox.PlaceholderText="🔍 Tìm tên nước..."
+coreSearchBox.Text="";coreSearchBox.PlaceholderText="Gõ tên nước..."
 coreSearchBox.TextColor3=Color3.fromRGB(220,200,255)
 coreSearchBox.PlaceholderColor3=Color3.fromRGB(100,90,140)
 coreSearchBox.TextSize=11;coreSearchBox.Font=Enum.Font.Gotham;coreSearchBox.ZIndex=203
@@ -1196,66 +1196,66 @@ mkCorner(coreSearchBox,6)
 local coreSuggFrame=Instance.new("Frame",corePage)
 coreSuggFrame.Size=UDim2.new(1,0,0,0);coreSuggFrame.Position=UDim2.new(0,0,0,30)
 coreSuggFrame.BackgroundColor3=Color3.fromRGB(18,12,38);coreSuggFrame.BorderSizePixel=0
-coreSuggFrame.ZIndex=210;coreSuggFrame.Visible=false;mkCorner(coreSuggFrame,6)
+coreSuggFrame.ZIndex=215;coreSuggFrame.Visible=false;mkCorner(coreSuggFrame,6)
 mkStroke(coreSuggFrame,Color3.fromRGB(100,60,180),1)
 
-local CSUGG_N=5
 local coreSuggBtns={}
-for i=1,CSUGG_N do
+for i=1,5 do
     local sb=Instance.new("TextButton",coreSuggFrame)
     sb.Size=UDim2.new(1,-4,0,22);sb.Position=UDim2.new(0,2,0,(i-1)*23+2)
     sb.BackgroundTransparency=1;sb.Text=""
     sb.TextColor3=Color3.fromRGB(220,200,255);sb.TextSize=11
-    sb.Font=Enum.Font.Gotham;sb.ZIndex=211
+    sb.Font=Enum.Font.Gotham;sb.ZIndex=216
     sb.TextXAlignment=Enum.TextXAlignment.Left;coreSuggBtns[i]=sb
 end
 
 local coreFlagImg=Instance.new("ImageLabel",corePage)
-coreFlagImg.Size=UDim2.new(1,-4,0,88);coreFlagImg.Position=UDim2.new(0,2,0,30)
+coreFlagImg.Size=UDim2.new(1,-4,0,86);coreFlagImg.Position=UDim2.new(0,2,0,30)
 coreFlagImg.BackgroundColor3=Color3.fromRGB(15,10,30);coreFlagImg.BorderSizePixel=0
 coreFlagImg.Image="";coreFlagImg.ScaleType=Enum.ScaleType.Fit
 coreFlagImg.ZIndex=204;coreFlagImg.Visible=false;mkCorner(coreFlagImg,8)
 
 local coreFlagNoImg=Instance.new("TextLabel",corePage)
-coreFlagNoImg.Size=UDim2.new(1,-4,0,88);coreFlagNoImg.Position=UDim2.new(0,2,0,30)
+coreFlagNoImg.Size=UDim2.new(1,-4,0,86);coreFlagNoImg.Position=UDim2.new(0,2,0,30)
 coreFlagNoImg.BackgroundColor3=Color3.fromRGB(15,10,30);coreFlagNoImg.BorderSizePixel=0
-coreFlagNoImg.Text="← gõ tên nước để xem cờ"
+coreFlagNoImg.Text="Gox ten nuoc de xem co"
 coreFlagNoImg.TextColor3=Color3.fromRGB(140,120,180);coreFlagNoImg.TextSize=11
 coreFlagNoImg.Font=Enum.Font.GothamBold;coreFlagNoImg.TextWrapped=true
 coreFlagNoImg.TextXAlignment=Enum.TextXAlignment.Center
 coreFlagNoImg.ZIndex=204;coreFlagNoImg.Visible=true;mkCorner(coreFlagNoImg,8)
 
 local coreFlagLbl=Instance.new("TextLabel",corePage)
-coreFlagLbl.Size=UDim2.new(1,0,0,18);coreFlagLbl.Position=UDim2.new(0,0,0,122)
+coreFlagLbl.Size=UDim2.new(1,0,0,18);coreFlagLbl.Position=UDim2.new(0,0,0,120)
 coreFlagLbl.BackgroundTransparency=1;coreFlagLbl.Text=""
 coreFlagLbl.TextColor3=Color3.fromRGB(200,255,200);coreFlagLbl.TextSize=11
 coreFlagLbl.Font=Enum.Font.GothamBold;coreFlagLbl.ZIndex=203
+coreFlagLbl.TextXAlignment=Enum.TextXAlignment.Center
 
 local function showCoreFlag(name)
     coreSuggFrame.Visible=false
     coreFlagImg.Visible=false;coreFlagNoImg.Visible=true
-    coreFlagNoImg.Text="⏳ Đang tải..."
-    coreFlagLbl.Text="🏳 "..name
+    coreFlagNoImg.Text="Dang tai..."
+    coreFlagLbl.Text=name
     loadFlagAsync(name, coreFlagImg, coreFlagNoImg, coreFlagLbl)
     corePage.Size=UDim2.new(1,-8,0,144)
-    if activeTab=="Cờ mẫu" then refreshMenuHeight() end
+    if activeTab=="Co mau" then refreshMenuHeight() end
 end
 
 local function updateCoreSugg(q)
     q=norm(q)
     if #q<1 then coreSuggFrame.Visible=false;return end
     local results={};local seen={}
-    for name,_ in pairs(COUNTRY_ISO) do
-        local nname=norm(name)
-        if nname:find(q,1,true) and not seen[name] then
-            seen[name]=true;results[#results+1]=name
+    for name2,_ in pairs(COUNTRY_ISO) do
+        local nname=norm(name2)
+        if nname:find(q,1,true) and not seen[name2] then
+            seen[name2]=true;results[#results+1]=name2
         end
-        if #results>=CSUGG_N then break end
+        if #results>=5 then break end
     end
     if #results==0 then coreSuggFrame.Visible=false;return end
     coreSuggFrame.Visible=true
-    coreSuggFrame.Size=UDim2.new(1,0,0,math.min(#results,CSUGG_N)*23+4)
-    for i=1,CSUGG_N do
+    coreSuggFrame.Size=UDim2.new(1,0,0,#results*23+4)
+    for i=1,5 do
         if results[i] then
             local country=results[i]
             coreSuggBtns[i].Text="  "..country;coreSuggBtns[i].Visible=true
@@ -1263,9 +1263,7 @@ local function updateCoreSugg(q)
                 coreSearchBox.Text=country
                 showCoreFlag(country)
             end)
-        else
-            coreSuggBtns[i].Visible=false
-        end
+        else coreSuggBtns[i].Visible=false end
     end
 end
 
@@ -1516,7 +1514,7 @@ end
 
 tabBtns["Admin"].MouseButton1Click:Connect(function() switchTab("Admin") end)
 tabBtns["Server"].MouseButton1Click:Connect(function() switchTab("Server") end)
-tabBtns["Cờ mẫu"].MouseButton1Click:Connect(function() switchTab("Cờ mẫu") end)
+tabBtns["Co mau"].MouseButton1Click:Connect(function() switchTab("Co mau") end)
 tabBtns["Gợi ý"].MouseButton1Click:Connect(function() switchTab("Gợi ý") end)
 
 ToggleMenu.MouseButton1Click:Connect(function()
