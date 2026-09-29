@@ -1671,7 +1671,159 @@ local function updateHintBtns(list)
 end
 
 -- ===== END DETECT LÁ CỜ GAME =====
--- NOTE: showGameFlag sẽ được gọi khi flagName được tìm ra từ logic scan bên dưới
+
+-- ===== HOOK REMOTE EVENTS =====
+-- Từ scan log: RE/RoundUIState, RE/RoundAction, RE/RoundWrongGuess, RE/RoundTilePulseStart
+local wrongGuesses = {}  -- tập hợp đáp án SAI trong round này
+
+local function onRemoteData(args)
+    -- Duyệt toàn bộ args, tìm string khớp tên nước
+    local function checkVal(v)
+        if type(v)=="string" and #v>=2 and #v<=80 then
+            local n=norm(v)
+            local m=tryMatch(n)
+            if m then return m end
+        end
+        if type(v)=="table" then
+            for _,sub in pairs(v) do
+                local r=checkVal(sub)
+                if r then return r end
+            end
+        end
+        return nil
+    end
+    for _,v in ipairs(args) do
+        local found=checkVal(v)
+        if found then return found end
+    end
+    return nil
+end
+
+local function hookRemotes()
+    local RS=game:GetService("ReplicatedStorage")
+    local remoteNames={
+        "RE/RoundUIState",
+        "RE/RoundAction",
+        "RE/RoundTilePulseStart",
+        "RE/RoundTilePulseStop",
+        "RE/RoundWrongGuess",
+        "RE/RoundCamera",
+    }
+    for _,rname in ipairs(remoteNames) do
+        local re=RS:FindFirstChild(rname,true)
+        if re and re:IsA("RemoteEvent") then
+            re.OnClientEvent:Connect(function(...)
+                local args={...}
+                pcall(function()
+                    -- RoundWrongGuess: đáp án sai → lưu lại để loại trừ
+                    if rname=="RE/RoundWrongGuess" then
+                        local wrong=onRemoteData(args)
+                        if wrong then wrongGuesses[wrong]=true end
+                        return
+                    end
+
+                    -- RoundTilePulseStop: round kết thúc → reset
+                    if rname=="RE/RoundTilePulseStop" then
+                        wrongGuesses={}
+                        return
+                    end
+
+                    -- Các remote khác: tìm đáp án đúng
+                    local found=onRemoteData(args)
+                    if found and not wrongGuesses[found] then
+                        -- Kiểm tra có trong 4 lựa chọn hiện tại không
+                        local inList=false
+                        for _,c in ipairs(hintCards) do
+                            if c.card.Visible and norm(c.nameLbl.Text)==norm(found) then
+                                inList=true; break
+                            end
+                        end
+                        if inList then
+                            currentFlagName=found
+                            highlightCards(found)
+                            local iso=COUNTRY_ISO[found]
+                            if iso then showGameFlag(iso) end
+                            if not menuOpen then
+                                menuOpen=true; ToggleMenu.Text="▼"
+                            end
+                            if activeTab~="Gợi ý" then switchTab("Gợi ý") end
+                            refreshMenuHeight()
+                        end
+                    end
+
+                    -- RoundUIState: thường có dạng {action="start"/"end", country="..."}
+                    -- parse table nếu args[1] là table
+                    if type(args[1])=="table" then
+                        local t=args[1]
+                        -- Tìm field "country", "answer", "correct", "flag", "name"
+                        local keys={"country","answer","correct","flag","name","countryName","flagName"}
+                        for _,k in ipairs(keys) do
+                            local val=t[k]
+                            if type(val)=="string" then
+                                local m=tryMatch(norm(val))
+                                if m and not wrongGuesses[m] then
+                                    local inList=false
+                                    for _,c in ipairs(hintCards) do
+                                        if c.card.Visible and norm(c.nameLbl.Text)==norm(m) then
+                                            inList=true; break
+                                        end
+                                    end
+                                    if inList then
+                                        currentFlagName=m
+                                        highlightCards(m)
+                                        local iso=COUNTRY_ISO[m]
+                                        if iso then showGameFlag(iso) end
+                                        if not menuOpen then
+                                            menuOpen=true; ToggleMenu.Text="▼"
+                                        end
+                                        if activeTab~="Gợi ý" then switchTab("Gợi ý") end
+                                        refreshMenuHeight()
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end)
+        end
+    end
+
+    -- Hook thêm bằng __namecall để bắt FireServer (player bấm chọn)
+    -- Khi player đúng, server fire lại RoundAction với đáp án
+    pcall(function()
+        local mt=getrawmetatable(game)
+        local old=mt.__namecall
+        setreadonly(mt,false)
+        mt.__namecall=newcclosure(function(self,...)
+            local method=getnamecallmethod()
+            local result=old(self,...)
+            -- Bắt khi RE fire về client (OnClientEvent đã xử lý)
+            -- Bắt thêm InvokeServer nếu game dùng RemoteFunction
+            if method=="InvokeServer" or method=="FireServer" then
+                pcall(function()
+                    local args2={...}
+                    local found2=onRemoteData(args2)
+                    if found2 and not wrongGuesses[found2] then
+                        local inList=false
+                        for _,c in ipairs(hintCards) do
+                            if c.card.Visible and norm(c.nameLbl.Text)==norm(found2) then
+                                inList=true; break
+                            end
+                        end
+                        if inList then
+                            currentFlagName=found2
+                            highlightCards(found2)
+                        end
+                    end
+                end)
+            end
+            return result
+        end)
+        setreadonly(mt,true)
+    end)
+end
+
+task.defer(hookRemotes)
 
 local tick0=0
 local questionChangedAt=0  -- Thoi diem doi cau hoi moi nhat (os.clock())
