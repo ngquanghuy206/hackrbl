@@ -1295,7 +1295,7 @@ end
 
 local tick0=0
 RunService.Heartbeat:Connect(function()
-    tick0+=1;if tick0<8 then return end;tick0=0
+    tick0+=1;if tick0<4 then return end;tick0=0
     pcall(function()
         local texts={}
         local function collect(obj)
@@ -1421,14 +1421,15 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- PHUONG PHAP 1: Quet LOCAL PlayerGui tim text CHUA ten nuoc
-            -- Bat "Dap an dung: Panama", text banner game sau khi Tiet lo
+            -- PHUONG PHAP 1: Chi quet TextLABEL co chua TU KHOA dap an
+            -- Vi du "Dap an dung: Congo" -> chac chan dung
+            -- KHONG quet TextButton game (vi button "Cong Hoa Congo" cung chua "congo"!)
             pcall(function()
+                local ansKw={"dap an","correct","dung la","ket qua","answer","da dung"}
                 for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
-                    if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
+                    if obj:IsA("TextLabel") and obj.Visible then
                         local t=obj.Text
-                        if t and #t>3 then
-                            -- Bo qua GUI cua chinh script
+                        if t and #t>6 then
                             local p=obj;local own=false
                             repeat
                                 if p.Name=="DziDoanCo" then own=true;break end
@@ -1436,10 +1437,15 @@ RunService.Heartbeat:Connect(function()
                             until not p or not p.Parent
                             if not own then
                                 local n=norm(t)
-                                for _,m in ipairs(matched) do
-                                    local mn=norm(m)
-                                    if #n>#mn and n:find(mn,1,true) then
-                                        nameCount[m]=(nameCount[m] or 0)+30
+                                local hasKw=false
+                                for _,kw in ipairs(ansKw) do
+                                    if n:find(kw,1,true) then hasKw=true;break end
+                                end
+                                if hasKw then
+                                    for _,m in ipairs(matched) do
+                                        if n:find(norm(m),1,true) then
+                                            nameCount[m]=(nameCount[m] or 0)+50
+                                        end
                                     end
                                 end
                             end
@@ -1449,11 +1455,10 @@ RunService.Heartbeat:Connect(function()
             end)
 
             -- PHUONG PHAP 2: Phat hien button doi sang MAU XANH LA sau Tiet lo
-            -- Game thuong highlight button dung thanh xanh la khi reveal
+            -- Chi dung khop chinh xac (tryMatch), KHONG dung contains tranh false positive
             pcall(function()
                 for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
                     if (obj:IsA("TextButton") or obj:IsA("TextLabel")) and obj.Visible then
-                        -- Bo qua GUI script
                         local p=obj;local own=false
                         repeat
                             if p.Name=="DziDoanCo" then own=true;break end
@@ -1462,32 +1467,17 @@ RunService.Heartbeat:Connect(function()
                         if not own then
                             local bg=obj.BackgroundColor3
                             local r,g,b=bg.R,bg.G,bg.B
-                            -- Mau xanh la: G cao hon R va B ro rang
                             local isGreen=(g>0.35 and g>r*1.4 and g>b*1.4)
                             if isGreen then
                                 local t=obj.Text
                                 if t and #t>=2 then
-                                    local n=norm(t)
-                                    local mm=tryMatch(n)
-                                    if mm then
-                                        nameCount[mm]=(nameCount[mm] or 0)+60
-                                    end
-                                    -- Cung kiem tra text chua ten nuoc (frame xanh la)
-                                    for _,m in ipairs(matched) do
-                                        local mn=norm(m)
-                                        if #n>#mn and n:find(mn,1,true) then
-                                            nameCount[m]=(nameCount[m] or 0)+60
-                                        end
-                                    end
+                                    local mm=tryMatch(norm(t))
+                                    if mm then nameCount[mm]=(nameCount[mm] or 0)+60 end
                                 end
-                                -- Kiem tra ca text cua con (ImageLabel co text rieng)
                                 for _,ch in ipairs(obj:GetDescendants()) do
-                                    if (ch:IsA("TextLabel") or ch:IsA("TextButton")) and ch.Text then
-                                        local tn=norm(ch.Text)
-                                        local mm2=tryMatch(tn)
-                                        if mm2 then
-                                            nameCount[mm2]=(nameCount[mm2] or 0)+60
-                                        end
+                                    if ch:IsA("TextLabel") and ch.Text then
+                                        local mm2=tryMatch(norm(ch.Text))
+                                        if mm2 then nameCount[mm2]=(nameCount[mm2] or 0)+60 end
                                     end
                                 end
                             end
@@ -1496,25 +1486,55 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- PHUONG PHAP 3: Scan ReplicatedStorage ten + value
-            -- Mot so game luu ten dap an vao RS voi Name la ten nuoc
+            -- PHUONG PHAP 3: Quet StringValue + Attribute trong RS va Workspace
+            -- Co the tim duoc dap an truoc khi Tiet lo
             pcall(function()
-                local rs=game:GetService("ReplicatedStorage")
-                for _,obj in ipairs(rs:GetDescendants()) do
-                    -- Kiem tra ca Name cua object
-                    local nameN=norm(obj.Name or "")
-                    local mm=tryMatch(nameN)
-                    if mm then
-                        for _,m in ipairs(matched) do
-                            if m==mm then nameCount[m]=(nameCount[m] or 0)+15;break end
+                local function scanInstance(root)
+                    for _,obj in ipairs(root:GetDescendants()) do
+                        -- StringValue: kiem tra ca Name va Value
+                        if obj:IsA("StringValue") or obj:IsA("StringValue") then
+                            local vals={norm(obj.Value or ""),norm(obj.Name or "")}
+                            for _,v in ipairs(vals) do
+                                if #v>=2 then
+                                    local mm=tryMatch(v)
+                                    if mm then
+                                        for _,m in ipairs(matched) do
+                                            if m==mm then
+                                                nameCount[m]=(nameCount[m] or 0)+20
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        -- Attributes cua moi object
+                        local ok,attrs=pcall(function() return obj:GetAttributes() end)
+                        if ok and type(attrs)=="table" then
+                            for _,v in pairs(attrs) do
+                                if type(v)=="string" and #v>=2 then
+                                    local mm=tryMatch(norm(v))
+                                    if mm then
+                                        for _,m in ipairs(matched) do
+                                            if m==mm then
+                                                nameCount[m]=(nameCount[m] or 0)+20
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                            end
                         end
                     end
                 end
+                scanInstance(game:GetService("ReplicatedStorage"))
+                -- Quet Workspace nhung gioi han depth de khong lag
+                for _,ch in ipairs(game:GetService("Workspace"):GetChildren()) do
+                    pcall(scanInstance,ch)
+                end
             end)
 
-            -- Chon ten co so lan dem cao nhat
-            -- Nguong=4: tranh nhieu gia (noise +1 tu GUI nguoi khac)
-            -- Ma cac tin hieu that (+30,+60,+50) deu > 4
+            -- Chon ten co diem cao nhat, nguong=4 tranh nhieu gia tu GUI nguoi khac
             local maxCount=4
             for name,cnt in pairs(nameCount) do
                 if cnt>maxCount then maxCount=cnt;flagName=name end
@@ -1533,8 +1553,14 @@ RunService.Heartbeat:Connect(function()
         if not listsEq(matched,lastHints) then
             lastHints=matched
             updateHintBtns(matched)
-            if #matched>=1 and activeTab~="Gợi ý" then
-                switchTab("Gợi ý")
+            if #matched>=1 then
+                -- Tu dong mo menu neu dang thu nho
+                if not menuOpen then
+                    menuOpen=true
+                    ToggleMenu.Text="▼"
+                end
+                if activeTab~="Gợi ý" then switchTab("Gợi ý") end
+                refreshMenuHeight()
             end
             -- Re-highlight sau khi update cards
             task.defer(function()
