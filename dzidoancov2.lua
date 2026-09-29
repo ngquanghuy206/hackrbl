@@ -1294,6 +1294,7 @@ local function updateHintBtns(list)
 end
 
 local tick0=0
+local questionChangedAt=0  -- Thoi diem doi cau hoi moi nhat (os.clock())
 RunService.Heartbeat:Connect(function()
     tick0+=1;if tick0<4 then return end;tick0=0
     pcall(function()
@@ -1335,6 +1336,10 @@ RunService.Heartbeat:Connect(function()
         local nameCount={}
 
         pcall(function()
+            -- COOLDOWN: Cho 2 giay sau khi doi cau hoi moi phat hien dap an
+            -- Tranh false positive tu du lieu cu (stale data) trong GUI nguoi choi
+            if os.clock()-questionChangedAt < 2 then return end
+
             -- Dem so lan xuat hien cua moi ten trong TẤT CẢ GUI (tru GUI cua minh)
             local function countTexts(root)
                 for _,obj in ipairs(root:GetDescendants()) do
@@ -1486,56 +1491,10 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- PHUONG PHAP 3: Quet StringValue + Attribute trong RS va Workspace
-            -- Co the tim duoc dap an truoc khi Tiet lo
-            pcall(function()
-                local function scanInstance(root)
-                    for _,obj in ipairs(root:GetDescendants()) do
-                        -- StringValue: kiem tra ca Name va Value
-                        if obj:IsA("StringValue") or obj:IsA("StringValue") then
-                            local vals={norm(obj.Value or ""),norm(obj.Name or "")}
-                            for _,v in ipairs(vals) do
-                                if #v>=2 then
-                                    local mm=tryMatch(v)
-                                    if mm then
-                                        for _,m in ipairs(matched) do
-                                            if m==mm then
-                                                nameCount[m]=(nameCount[m] or 0)+20
-                                                break
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                        -- Attributes cua moi object
-                        local ok,attrs=pcall(function() return obj:GetAttributes() end)
-                        if ok and type(attrs)=="table" then
-                            for _,v in pairs(attrs) do
-                                if type(v)=="string" and #v>=2 then
-                                    local mm=tryMatch(norm(v))
-                                    if mm then
-                                        for _,m in ipairs(matched) do
-                                            if m==mm then
-                                                nameCount[m]=(nameCount[m] or 0)+20
-                                                break
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-                scanInstance(game:GetService("ReplicatedStorage"))
-                -- Quet Workspace nhung gioi han depth de khong lag
-                for _,ch in ipairs(game:GetService("Workspace"):GetChildren()) do
-                    pcall(scanInstance,ch)
-                end
-            end)
-
-            -- Chon ten co diem cao nhat, nguong=4 tranh nhieu gia tu GUI nguoi khac
-            local maxCount=4
+            -- Chon ten co diem cao nhat
+            -- Nguong=25: chi banner game (+50) hoac button xanh la (+60) moi trigger
+            -- Player GUI chi cho +1/nguoi -> can 26+ nguoi = khong the false positive
+            local maxCount=25
             for name,cnt in pairs(nameCount) do
                 if cnt>maxCount then maxCount=cnt;flagName=name end
             end
@@ -1552,6 +1511,7 @@ RunService.Heartbeat:Connect(function()
 
         if not listsEq(matched,lastHints) then
             lastHints=matched
+            questionChangedAt=os.clock()  -- Bat dau cooldown
             updateHintBtns(matched)
             if #matched>=1 then
                 -- Tu dong mo menu neu dang thu nho
