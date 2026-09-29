@@ -1421,8 +1421,8 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- THEM: Quet LOCAL PlayerGui cua minh tim text CHUA ten nuoc
-            -- (bat duoc "Dap an dung: Panama", button doi mau, banner game...)
+            -- PHUONG PHAP 1: Quet LOCAL PlayerGui tim text CHUA ten nuoc
+            -- Bat "Dap an dung: Panama", text banner game sau khi Tiet lo
             pcall(function()
                 for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
                     if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
@@ -1438,9 +1438,8 @@ RunService.Heartbeat:Connect(function()
                                 local n=norm(t)
                                 for _,m in ipairs(matched) do
                                     local mn=norm(m)
-                                    -- Text CHUA ten nuoc VA dai hon ten nuoc (co context)
                                     if #n>#mn and n:find(mn,1,true) then
-                                        nameCount[m]=(nameCount[m] or 0)+25
+                                        nameCount[m]=(nameCount[m] or 0)+30
                                     end
                                 end
                             end
@@ -1449,8 +1448,74 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- Chon ten co so lan dem cao nhat (giam nguong xuong 0 de bat ca 1 lan)
-            local maxCount=0
+            -- PHUONG PHAP 2: Phat hien button doi sang MAU XANH LA sau Tiet lo
+            -- Game thuong highlight button dung thanh xanh la khi reveal
+            pcall(function()
+                for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
+                    if (obj:IsA("TextButton") or obj:IsA("TextLabel")) and obj.Visible then
+                        -- Bo qua GUI script
+                        local p=obj;local own=false
+                        repeat
+                            if p.Name=="DziDoanCo" then own=true;break end
+                            p=p.Parent
+                        until not p or not p.Parent
+                        if not own then
+                            local bg=obj.BackgroundColor3
+                            local r,g,b=bg.R,bg.G,bg.B
+                            -- Mau xanh la: G cao hon R va B ro rang
+                            local isGreen=(g>0.35 and g>r*1.4 and g>b*1.4)
+                            if isGreen then
+                                local t=obj.Text
+                                if t and #t>=2 then
+                                    local n=norm(t)
+                                    local mm=tryMatch(n)
+                                    if mm then
+                                        nameCount[mm]=(nameCount[mm] or 0)+60
+                                    end
+                                    -- Cung kiem tra text chua ten nuoc (frame xanh la)
+                                    for _,m in ipairs(matched) do
+                                        local mn=norm(m)
+                                        if #n>#mn and n:find(mn,1,true) then
+                                            nameCount[m]=(nameCount[m] or 0)+60
+                                        end
+                                    end
+                                end
+                                -- Kiem tra ca text cua con (ImageLabel co text rieng)
+                                for _,ch in ipairs(obj:GetDescendants()) do
+                                    if (ch:IsA("TextLabel") or ch:IsA("TextButton")) and ch.Text then
+                                        local tn=norm(ch.Text)
+                                        local mm2=tryMatch(tn)
+                                        if mm2 then
+                                            nameCount[mm2]=(nameCount[mm2] or 0)+60
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
+            -- PHUONG PHAP 3: Scan ReplicatedStorage ten + value
+            -- Mot so game luu ten dap an vao RS voi Name la ten nuoc
+            pcall(function()
+                local rs=game:GetService("ReplicatedStorage")
+                for _,obj in ipairs(rs:GetDescendants()) do
+                    -- Kiem tra ca Name cua object
+                    local nameN=norm(obj.Name or "")
+                    local mm=tryMatch(nameN)
+                    if mm then
+                        for _,m in ipairs(matched) do
+                            if m==mm then nameCount[m]=(nameCount[m] or 0)+15;break end
+                        end
+                    end
+                end
+            end)
+
+            -- Chon ten co so lan dem cao nhat
+            -- Nguong=4: tranh nhieu gia (noise +1 tu GUI nguoi khac)
+            -- Ma cac tin hieu that (+30,+60,+50) deu > 4
+            local maxCount=4
             for name,cnt in pairs(nameCount) do
                 if cnt>maxCount then maxCount=cnt;flagName=name end
             end
