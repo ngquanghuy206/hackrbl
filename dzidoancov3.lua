@@ -933,9 +933,138 @@ for i, s in ipairs(socialLinks) do
     btn.MouseButton1Click:Connect(function() openURL(url, btn) end)
 end
 
-flagPage.Size=UDim2.new(1,-8,0,200)
+flagPage.Size=UDim2.new(1,-8,0,260)
 
-local svPage=makeTab("Server","🌐",2)
+-- Nút DEBUG trong tab Admin
+local debugScanBtn=Instance.new("TextButton",flagPage)
+debugScanBtn.Size=UDim2.new(1,-4,0,26)
+debugScanBtn.Position=UDim2.new(0,2,0,202)
+debugScanBtn.BackgroundColor3=Color3.fromRGB(120,40,10)
+debugScanBtn.BorderSizePixel=0
+debugScanBtn.Text="🔍 DEBUG: Scan data game (xem console F9)"
+debugScanBtn.TextColor3=Color3.fromRGB(255,220,150)
+debugScanBtn.TextSize=9;debugScanBtn.Font=Enum.Font.GothamBold
+debugScanBtn.ZIndex=203;mkCorner(debugScanBtn,6)
+
+debugScanBtn.MouseButton1Click:Connect(function()
+    debugScanBtn.Text="⏳ Đang scan..."
+    task.spawn(function()
+        local log={}
+        local function L(s) log[#log+1]=s; print("[DZI] "..s) end
+        L("===SCAN START===")
+
+        -- Hook RemoteEvent để bắt data real-time
+        pcall(function()
+            local rs=game:GetService("ReplicatedStorage")
+            for _,obj in ipairs(rs:GetDescendants()) do
+                L("RS:"..obj.ClassName..":"..obj.Name)
+                if obj:IsA("StringValue") or obj:IsA("IntValue") then
+                    L("  val="..tostring(obj.Value))
+                end
+                pcall(function()
+                    for k,v in pairs(obj:GetAttributes()) do
+                        L("  attr "..k.."="..tostring(v))
+                    end
+                end)
+            end
+        end)
+
+        -- Workspace top-level objects
+        pcall(function()
+            for _,obj in ipairs(game:GetService("Workspace"):GetChildren()) do
+                L("WS child: "..obj.ClassName..":"..obj.Name)
+                for _,ch in ipairs(obj:GetChildren()) do
+                    L("  WS sub: "..ch.ClassName..":"..ch.Name)
+                    if ch:IsA("StringValue") then L("    val="..tostring(ch.Value)) end
+                end
+            end
+        end)
+
+        -- PlayerGui hidden labels
+        pcall(function()
+            for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
+                if (obj:IsA("TextLabel") or obj:IsA("StringValue")) then
+                    local t=obj:IsA("StringValue") and obj.Value or obj.Text
+                    if t and #t>=2 and #t<=80 and not obj.Visible then
+                        L("GUI hidden: '"..t.."' name="..obj.Name)
+                    end
+                end
+            end
+        end)
+
+        -- Scan tất cả Model có tên khớp nước trong WS
+        pcall(function()
+            for _,obj in ipairs(game:GetService("Workspace"):GetDescendants()) do
+                if obj:IsA("Model") or obj:IsA("Folder") then
+                    local n=norm(obj.Name)
+                    if tryMatch(n) then
+                        L("WS Model/Folder match: "..obj.Name.." parent="..tostring(obj.Parent and obj.Parent.Name))
+                    end
+                end
+                pcall(function()
+                    for k,v in pairs(obj:GetAttributes()) do
+                        local vs=tostring(v)
+                        if #vs>=2 and #vs<=60 then
+                            L("WS attr["..obj.Name.."]."..k.."="..vs)
+                        end
+                    end
+                end)
+            end
+        end)
+
+        L("===SCAN END: "..#log.." lines===")
+        _G.DziLastLog = table.concat(log, "\n")
+        debugScanBtn.Text="✅ Xong! ("..#log.." dòng)"
+        debugCopyBtn.BackgroundColor3=Color3.fromRGB(20,120,40)
+        debugCopyBtn.Text="📋 Copy Log ("..#log.." dòng)"
+        task.delay(4, function()
+            if debugScanBtn.Parent then
+                debugScanBtn.Text="🔍 DEBUG: Scan data game (xem console F9)"
+            end
+        end)
+    end)
+end)
+
+local debugCopyBtn=Instance.new("TextButton",flagPage)
+debugCopyBtn.Size=UDim2.new(1,-4,0,24)
+debugCopyBtn.Position=UDim2.new(0,2,0,230)
+debugCopyBtn.BackgroundColor3=Color3.fromRGB(30,60,30)
+debugCopyBtn.BorderSizePixel=0
+debugCopyBtn.Text="📋 Copy Log (scan trước)"
+debugCopyBtn.TextColor3=Color3.fromRGB(180,255,180)
+debugCopyBtn.TextSize=9;debugCopyBtn.Font=Enum.Font.GothamBold
+debugCopyBtn.ZIndex=203;mkCorner(debugCopyBtn,6)
+
+debugCopyBtn.MouseButton1Click:Connect(function()
+    local logText=_G.DziLastLog
+    if not logText or logText=="" then
+        debugCopyBtn.Text="⚠️ Chưa có log! Bấm scan trước"
+        task.delay(2,function()
+            if debugCopyBtn.Parent then debugCopyBtn.Text="📋 Copy Log (scan trước)" end
+        end)
+        return
+    end
+    local ok=pcall(function()
+        if setclipboard then setclipboard(logText)
+        elseif syn and syn.setclipboard then syn.setclipboard(logText)
+        elseif Clipboard and Clipboard.set then Clipboard.set(logText)
+        else error("no clipboard") end
+    end)
+    if ok then
+        debugCopyBtn.Text="✅ Đã copy! Paste vào chat/note"
+        debugCopyBtn.BackgroundColor3=Color3.fromRGB(10,160,50)
+    else
+        debugCopyBtn.Text="❌ Executor không hỗ trợ copy"
+    end
+    task.delay(3,function()
+        if debugCopyBtn.Parent then
+            debugCopyBtn.BackgroundColor3=Color3.fromRGB(20,120,40)
+            debugCopyBtn.Text="📋 Copy Log"
+        end
+    end)
+end)
+
+
 svPage.Size=UDim2.new(1,-8,0,118)
 
 local function mkLbl(parent,text,y,h,tc,fs)
@@ -1447,132 +1576,6 @@ end
 
 -- ===== END DETECT LÁ CỜ GAME =====
 -- NOTE: showGameFlag sẽ được gọi khi flagName được tìm ra từ logic scan bên dưới
-
--- ===== DEBUG: NÚT SCAN ĐỂ TÌM DATA GAME =====
-local debugBtn=Instance.new("TextButton",ScreenGui)
-debugBtn.Size=UDim2.new(0,MENU_W,0,24)
-debugBtn.Position=UDim2.new(0.5,-MENU_W/2,0,40)  -- sẽ update sau khi menu render
-debugBtn.BackgroundColor3=Color3.fromRGB(150,30,30)
-debugBtn.BorderSizePixel=0
-debugBtn.Text="🔍 DEBUG SCAN"
-debugBtn.TextColor3=Color3.fromRGB(255,255,255)
-debugBtn.TextSize=11;debugBtn.Font=Enum.Font.GothamBold
-debugBtn.ZIndex=300
-mkCorner(debugBtn,6)
-
--- Đặt debug btn ngay dưới MenuPanel
-local function positionDebugBtn()
-    local mp=MenuPanel.Position
-    debugBtn.Position=UDim2.new(mp.X.Scale,mp.X.Offset,mp.Y.Scale,mp.Y.Offset+MenuPanel.Size.Y.Offset+4)
-end
-
--- Scan toàn bộ game tìm data liên quan đến đáp án
-local debugLog={}
-local function debugScan()
-    debugLog={}
-    local function log(s) debugLog[#debugLog+1]=s; print("[DZI DEBUG] "..s) end
-
-    log("=== SCAN BẮT ĐẦU ===")
-
-    -- 1. Scan ReplicatedStorage
-    pcall(function()
-        local rs=game:GetService("ReplicatedStorage")
-        for _,obj in ipairs(rs:GetDescendants()) do
-            if obj:IsA("StringValue") or obj:IsA("IntValue") or obj:IsA("BoolValue") then
-                log("RS StringVal: "..obj.Name.." = "..tostring(obj.Value))
-            elseif obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") then
-                log("RS Remote: "..obj.Name.." | class="..obj.ClassName)
-            elseif obj:IsA("ModuleScript") then
-                log("RS Module: "..obj.Name)
-            end
-        end
-    end)
-
-    -- 2. Scan Workspace StringValue/Attribute trên các object
-    pcall(function()
-        local ws=game:GetService("Workspace")
-        for _,obj in ipairs(ws:GetDescendants()) do
-            if obj:IsA("StringValue") then
-                log("WS StringVal: "..obj.Name.." = "..tostring(obj.Value).." | parent="..tostring(obj.Parent and obj.Parent.Name))
-            end
-            -- Scan attributes
-            pcall(function()
-                for k,v in pairs(obj:GetAttributes()) do
-                    local vs=tostring(v)
-                    if #vs<=80 then
-                        log("WS Attr ["..obj.Name.."]: "..k.."="..vs)
-                    end
-                end
-            end)
-        end
-    end)
-
-    -- 3. Scan PlayerGui của chính mình - tìm hidden TextLabel
-    pcall(function()
-        for _,g in ipairs(player.PlayerGui:GetDescendants()) do
-            if g:IsA("TextLabel") and not g.Visible then
-                local t=g.Text or ""
-                if #t>=2 and #t<=60 then
-                    log("GUI Hidden Label: '"..t.."' | parent="..tostring(g.Parent and g.Parent.Name))
-                end
-            end
-            if g:IsA("StringValue") then
-                log("GUI StringVal: "..g.Name.." = "..tostring(g.Value))
-            end
-        end
-    end)
-
-    -- 4. Tìm Model/Folder trong WS có tên khớp tên nước
-    pcall(function()
-        local ws=game:GetService("Workspace")
-        for _,obj in ipairs(ws:GetDescendants()) do
-            if obj:IsA("Model") or obj:IsA("Folder") then
-                local n=norm(obj.Name)
-                if tryMatch(n) then
-                    log("WS Model/Folder tên nước: "..obj.Name.." | class="..obj.ClassName)
-                end
-            end
-        end
-    end)
-
-    log("=== SCAN XONG: "..#debugLog.." dòng ===")
-
-    -- Hiện popup kết quả
-    local popup=Instance.new("ScreenGui",player.PlayerGui)
-    popup.Name="DziDebugPopup";popup.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
-    local frame=Instance.new("Frame",popup)
-    frame.Size=UDim2.new(0,320,0,400);frame.Position=UDim2.new(0.5,-160,0.5,-200)
-    frame.BackgroundColor3=Color3.fromRGB(5,5,20);frame.BorderSizePixel=0;frame.ZIndex=500
-    mkCorner(frame,10);mkStroke(frame,Color3.fromRGB(200,100,50),2)
-    local title=Instance.new("TextLabel",frame)
-    title.Size=UDim2.new(1,0,0,24);title.BackgroundTransparency=1
-    title.Text="🔍 DEBUG - Xem console (F9)";title.TextColor3=Color3.fromRGB(255,180,80)
-    title.TextSize=11;title.Font=Enum.Font.GothamBold;title.ZIndex=501
-    local scroll=Instance.new("ScrollingFrame",frame)
-    scroll.Size=UDim2.new(1,-8,1,-56);scroll.Position=UDim2.new(0,4,0,26)
-    scroll.BackgroundTransparency=1;scroll.ZIndex=501
-    scroll.ScrollBarThickness=4;scroll.CanvasSize=UDim2.new(0,0,0,#debugLog*14)
-    local list=Instance.new("UIListLayout",scroll);list.SortOrder=Enum.SortOrder.LayoutOrder
-    for i,line in ipairs(debugLog) do
-        local l=Instance.new("TextLabel",scroll)
-        l.Size=UDim2.new(1,0,0,14);l.BackgroundTransparency=1
-        l.Text=line;l.TextColor3=Color3.fromRGB(200,220,255);l.TextSize=9
-        l.Font=Enum.Font.Code;l.TextXAlignment=Enum.TextXAlignment.Left
-        l.TextTruncate=Enum.TextTruncate.AtEnd;l.ZIndex=502;l.LayoutOrder=i
-    end
-    local closeBtn=Instance.new("TextButton",frame)
-    closeBtn.Size=UDim2.new(1,-8,0,24);closeBtn.Position=UDim2.new(0,4,1,-28)
-    closeBtn.BackgroundColor3=Color3.fromRGB(100,20,20);closeBtn.BorderSizePixel=0
-    closeBtn.Text="❌ Đóng";closeBtn.TextColor3=Color3.fromRGB(255,255,255)
-    closeBtn.TextSize=11;closeBtn.Font=Enum.Font.GothamBold;closeBtn.ZIndex=502
-    mkCorner(closeBtn,6)
-    closeBtn.MouseButton1Click:Connect(function() popup:Destroy() end)
-end
-
-debugBtn.MouseButton1Click:Connect(debugScan)
-
-task.defer(positionDebugBtn)
--- ===== END DEBUG =====
 
 local tick0=0
 local questionChangedAt=0  -- Thoi diem doi cau hoi moi nhat (os.clock())
