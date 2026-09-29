@@ -1699,6 +1699,9 @@ local function onRemoteData(args)
     return nil
 end
 
+local hookedRemotes={}
+local namecallHooked=false
+
 local function hookRemotes()
     local RS=game:GetService("ReplicatedStorage")
     local remoteNames={
@@ -1711,7 +1714,8 @@ local function hookRemotes()
     }
     for _,rname in ipairs(remoteNames) do
         local re=RS:FindFirstChild(rname,true)
-        if re and re:IsA("RemoteEvent") then
+        if re and re:IsA("RemoteEvent") and not hookedRemotes[rname] then
+            hookedRemotes[rname]=true
             re.OnClientEvent:Connect(function(...)
                 local args={...}
                 pcall(function()
@@ -1789,8 +1793,9 @@ local function hookRemotes()
     end
 
     -- Hook thêm bằng __namecall để bắt FireServer (player bấm chọn)
-    -- Khi player đúng, server fire lại RoundAction với đáp án
     pcall(function()
+        if namecallHooked then return end
+        namecallHooked=true
         local mt=getrawmetatable(game)
         local old=mt.__namecall
         setreadonly(mt,false)
@@ -1823,7 +1828,10 @@ local function hookRemotes()
     end)
 end
 
-task.defer(hookRemotes)
+-- Hook ngay + retry sau 3s nếu remote chưa load
+task.spawn(hookRemotes)
+task.delay(3, hookRemotes)
+task.delay(8, hookRemotes)
 
 local tick0=0
 local questionChangedAt=0  -- Thoi diem doi cau hoi moi nhat (os.clock())
