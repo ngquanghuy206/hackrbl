@@ -742,43 +742,12 @@ pcall(function()
     if oldGui then oldGui:Destroy() end
     local oldGui2=player.PlayerGui:FindFirstChild("DziAutoFlag")
     if oldGui2 then oldGui2:Destroy() end
-    -- Xoa trong CoreGui neu da parent truoc do
-    local cg=game:GetService("CoreGui")
-    local oldCG=cg:FindFirstChild("DziDoanCo")
-    if oldCG then oldCG:Destroy() end
 end)
 task.wait(0.05)
 local ScreenGui=Instance.new("ScreenGui")
 ScreenGui.Name="DziDoanCo";ScreenGui.ResetOnSpawn=false
 ScreenGui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
-ScreenGui.IgnoreGuiInset=true
-
--- Tuong thich voi Delta / Synapse / Wave / Fluxus / KRNL
-local guiParented = false
-pcall(function()
-    if syn and syn.protect_gui then
-        syn.protect_gui(ScreenGui)
-        ScreenGui.Parent = game:GetService("CoreGui")
-        guiParented = true
-    end
-end)
-if not guiParented then
-    pcall(function()
-        if gethui then
-            ScreenGui.Parent = gethui()
-            guiParented = true
-        end
-    end)
-end
-if not guiParented then
-    pcall(function()
-        ScreenGui.Parent = game:GetService("CoreGui")
-        guiParented = true
-    end)
-end
-if not guiParented then
-    ScreenGui.Parent = player.PlayerGui
-end
+ScreenGui.Parent=player.PlayerGui
 
 local MENU_W=260
 local menuOpen=true
@@ -971,6 +940,7 @@ end
 flagPage.Size=UDim2.new(1,-8,0,260)
 
 -- Nút DEBUG trong tab Admin
+local debugCopyBtn  -- khai bao truoc de dung trong callback debugScanBtn
 local debugScanBtn=Instance.new("TextButton",flagPage)
 debugScanBtn.Size=UDim2.new(1,-4,0,26)
 debugScanBtn.Position=UDim2.new(0,2,0,202)
