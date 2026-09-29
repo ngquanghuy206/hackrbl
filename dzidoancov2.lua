@@ -434,7 +434,30 @@ local ALIASES = {
     ["rwanda"]="Rwanda",
     ["uganda"]="Uganda",["u gan da"]="Uganda",
     ["haiti"]="Haiti",["ha i ti"]="Haiti",
-    ["bangadesh"]="Bangladesh",["banglades"]="Bangladesh",["bangadesh"]="Bangladesh",
+    ["bangadesh"]="Bangladesh",["banglades"]="Bangladesh",
+    -- Ten tieng Viet co "va" thay cho "&" / "and"
+    ["trinidad va tobago"]="Trinidad & Tobago",
+    ["trinidad và tobago"]="Trinidad & Tobago",
+    ["saint vincent va grenadines"]="Saint Vincent & Grenadines",
+    ["saint vincent và grenadines"]="Saint Vincent & Grenadines",
+    ["antigua va barbuda"]="Antigua & Barbuda",
+    ["antigua và barbuda"]="Antigua & Barbuda",
+    ["saint kitts va nevis"]="Saint Kitts & Nevis",
+    ["saint kitts và nevis"]="Saint Kitts & Nevis",
+    ["turks va caicos"]="Turks & Caicos",
+    ["turks và caicos"]="Turks & Caicos",
+    ["sao tome va principe"]="Sao Tome & Principe",
+    ["sao tome và principe"]="Sao Tome & Principe",
+    ["wallis va futuna"]="Wallis & Futuna",
+    ["wallis và futuna"]="Wallis & Futuna",
+    ["south georgia va south sandwich islands"]="South Georgia & South Sandwich Islands",
+    ["heard island va mcdonald islands"]="Heard Island & McDonald Islands",
+    -- Vatican / Thanh pho Vatican
+    ["vatican city"]="Vatican",
+    ["thanh pho vatican"]="Vatican",
+    ["thanh pho va ti can"]="Vatican",
+    ["toa thanh vatican"]="Vatican",
+    ["holy see"]="Vatican",
     -- TEN GAME HAY DUNG (tu anh)
     -- "Nước Đức", "Nước Áo", "Nước Séc" etc
     ["nuoc duc"]="Đức",["nuoc ao"]="Áo",["nuoc sec"]="Séc",
@@ -604,8 +627,19 @@ local function norm(s)
 end
 
 local function tryMatch(n)
-    local s=n:gsub("^nuoc ","")
-    return ANSWER_MAP[s] or ANSWER_MAP[n]
+    if ANSWER_MAP[n] then return ANSWER_MAP[n] end
+    -- Strip cac prefix tieng Viet pho bien
+    local prefixes = {
+        "nuoc ", "thanh pho ", "dao ", "quan dao ",
+        "cong hoa ", "vuong quoc ", "lien bang ",
+    }
+    for _,p in ipairs(prefixes) do
+        if n:sub(1,#p)==p then
+            local s=n:sub(#p+1)
+            if ANSWER_MAP[s] then return ANSWER_MAP[s] end
+        end
+    end
+    return nil
 end
 
 local flagCache = {}
@@ -1160,13 +1194,25 @@ end)
 
 switchTab("Admin")
 
+-- Contains-check: chuoi dai, khong chong lan ten nuoc
 local BLACKLIST={
     "dzi","doan co","hub","players","win","tham gia","cua hang",
     "kho do","troll","hang ngay","goi y","tiet lo","phan hoi",
     "lan thang","chuoi thang","tien mat","bao cao","nguoi moi",
-    "x2","2x","bat dau","de ","kho ","trung binh","luot","lượt",
-    "suy nghi","bao cao","x2 tien","x2 lan","x2 chuo","phan hoi",
-    "cuc doan","khó","kho","de","trung","cuc",
+    "x2 tien","x2 lan","x2 chuo",
+    "bat dau","trung binh","cuc doan","luot",
+    "suy nghi","x2 ","2x ",
+}
+-- Exact-check: chi chặn khi text ĐÚNG BẰNG chuỗi này (tranh chặn "Trung Quốc", "Bangadesh", "Nam Cực")
+local BLACKLIST_EXACT={
+    de=true,       -- "Dễ" difficulty
+    kho=true,      -- "Khó" difficulty  
+    trung=true,    -- "Trung" (mình - difficulty riêng)
+    cuc=true,      -- "Cực" (riêng)
+    ["de "]= true, -- "Dễ " có dấu cách
+    ["kho "]=true, -- "Khó " có dấu cách
+    ["luot"]=true,
+    ["lượt"]=true,
 }
 
 local currentFlagName = nil
@@ -1255,10 +1301,16 @@ RunService.Heartbeat:Connect(function()
         local function collect(obj)
             if(obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
                 local t=obj.Text
-                if t and #t>=2 and #t<=60 then
+                if t and #t>=2 and #t<=80 then
                     local n=norm(t);local skip=false
-                    for _,bad in ipairs(BLACKLIST) do
-                        if n:find(bad,1,true) then skip=true;break end
+                    -- Exact match check (tranh chan "Trung Quoc", "Bangadesh", "Nam Cuc")
+                    if BLACKLIST_EXACT[n] then
+                        skip=true
+                    else
+                        -- Contains check cho chuoi dai
+                        for _,bad in ipairs(BLACKLIST) do
+                            if n:find(bad,1,true) then skip=true;break end
+                        end
                     end
                     if not skip and not n:match("^[%d%$%#%+]") and not n:match("^%s*$") then
                         texts[#texts+1]={text=t,norm=n}
@@ -1369,8 +1421,36 @@ RunService.Heartbeat:Connect(function()
                 end
             end)
 
-            -- Chon ten co so lan dem cao nhat (>1 = xuat hien o nhieu noi)
-            local maxCount=1
+            -- THEM: Quet LOCAL PlayerGui cua minh tim text CHUA ten nuoc
+            -- (bat duoc "Dap an dung: Panama", button doi mau, banner game...)
+            pcall(function()
+                for _,obj in ipairs(player.PlayerGui:GetDescendants()) do
+                    if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Visible then
+                        local t=obj.Text
+                        if t and #t>3 then
+                            -- Bo qua GUI cua chinh script
+                            local p=obj;local own=false
+                            repeat
+                                if p.Name=="DziDoanCo" then own=true;break end
+                                p=p.Parent
+                            until not p or not p.Parent
+                            if not own then
+                                local n=norm(t)
+                                for _,m in ipairs(matched) do
+                                    local mn=norm(m)
+                                    -- Text CHUA ten nuoc VA dai hon ten nuoc (co context)
+                                    if #n>#mn and n:find(mn,1,true) then
+                                        nameCount[m]=(nameCount[m] or 0)+25
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
+            -- Chon ten co so lan dem cao nhat (giam nguong xuong 0 de bat ca 1 lan)
+            local maxCount=0
             for name,cnt in pairs(nameCount) do
                 if cnt>maxCount then maxCount=cnt;flagName=name end
             end
